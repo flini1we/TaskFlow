@@ -6,30 +6,47 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CF7512962D50F6AF009775B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF75128D2D50F6AF009775B5 /* Assets.xcassets */; };
+		CF7512982D50F6AF009775B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF7512902D50F6AF009775B5 /* LaunchScreen.storyboard */; };
+		CF7512992D50F6AF009775B5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF75128C2D50F6AF009775B5 /* AppDelegate.swift */; };
+		CF75129A2D50F6AF009775B5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512912D50F6AF009775B5 /* SceneDelegate.swift */; };
+		CF75129B2D50F6AF009775B5 /* TaskFlow.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CF7512922D50F6AF009775B5 /* TaskFlow.xcdatamodeld */; };
+		CF75129C2D50F6AF009775B5 /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512932D50F6AF009775B5 /* MainController.swift */; };
+		CF7512A02D50F718009775B5 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF75129F2D50F718009775B5 /* MainView.swift */; };
+		CF7512A22D50F71E009775B5 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512A12D50F71E009775B5 /* MainViewModel.swift */; };
+		CF7512A72D513156009775B5 /* MainTableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512A62D513156009775B5 /* MainTableDataSource.swift */; };
+		CF7512AC2D51372D009775B5 /* MainTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512AB2D51372D009775B5 /* MainTableHeaderView.swift */; };
+		CF7512AE2D513811009775B5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512AD2D513811009775B5 /* Constants.swift */; };
+		CF7512B02D513950009775B5 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512AF2D513950009775B5 /* Fonts.swift */; };
+		CF7512B22D513EB7009775B5 /* MainTableSections.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512B12D513EB7009775B5 /* MainTableSections.swift */; };
+		CF7512B52D51468F009775B5 /* TableItemSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512B42D51468F009775B5 /* TableItemSize.swift */; };
+		CF7512B72D51476E009775B5 /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512B62D51476E009775B5 /* MainTableViewCell.swift */; };
+		CF7512BB2D5170E9009775B5 /* TaskCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512BA2D5170E9009775B5 /* TaskCounter.swift */; };
+		CF7512C32D536DB3009775B5 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512C12D536DB3009775B5 /* Task.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		CF7512712D50F669009775B5 /* TaskFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF75128C2D50F6AF009775B5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		CF75128D2D50F6AF009775B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CF75128E2D50F6AF009775B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CF75128F2D50F6AF009775B5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		CF7512912D50F6AF009775B5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		CF7512932D50F6AF009775B5 /* MainController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainController.swift; sourceTree = "<group>"; };
+		CF7512952D50F6AF009775B5 /* TaskFlow.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TaskFlow.xcdatamodel; sourceTree = "<group>"; };
+		CF75129F2D50F718009775B5 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		CF7512A12D50F71E009775B5 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		CF7512A62D513156009775B5 /* MainTableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableDataSource.swift; sourceTree = "<group>"; };
+		CF7512AB2D51372D009775B5 /* MainTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableHeaderView.swift; sourceTree = "<group>"; };
+		CF7512AD2D513811009775B5 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		CF7512AF2D513950009775B5 /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
+		CF7512B12D513EB7009775B5 /* MainTableSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableSections.swift; sourceTree = "<group>"; };
+		CF7512B42D51468F009775B5 /* TableItemSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableItemSize.swift; sourceTree = "<group>"; };
+		CF7512B62D51476E009775B5 /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
+		CF7512BA2D5170E9009775B5 /* TaskCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCounter.swift; sourceTree = "<group>"; };
+		CF7512C12D536DB3009775B5 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CF7512862D50F66C009775B5 /* Exceptions for "TaskFlow" folder in "TaskFlow" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = CF7512702D50F669009775B5 /* TaskFlow */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		CF7512732D50F669009775B5 /* TaskFlow */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				CF7512862D50F66C009775B5 /* Exceptions for "TaskFlow" folder in "TaskFlow" target */,
-			);
-			path = TaskFlow;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		CF75126E2D50F669009775B5 /* Frameworks */ = {
@@ -45,7 +62,7 @@
 		CF7512682D50F669009775B5 = {
 			isa = PBXGroup;
 			children = (
-				CF7512732D50F669009775B5 /* TaskFlow */,
+				CF7512942D50F6AF009775B5 /* TaskFlow */,
 				CF7512722D50F669009775B5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +73,95 @@
 				CF7512712D50F669009775B5 /* TaskFlow.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		CF7512942D50F6AF009775B5 /* TaskFlow */ = {
+			isa = PBXGroup;
+			children = (
+				CF75128E2D50F6AF009775B5 /* Info.plist */,
+				CF7512902D50F6AF009775B5 /* LaunchScreen.storyboard */,
+				CF7512922D50F6AF009775B5 /* TaskFlow.xcdatamodeld */,
+				CF75128D2D50F6AF009775B5 /* Assets.xcassets */,
+				CF75128C2D50F6AF009775B5 /* AppDelegate.swift */,
+				CF7512912D50F6AF009775B5 /* SceneDelegate.swift */,
+				CF75129D2D50F6E5009775B5 /* Sources */,
+			);
+			path = TaskFlow;
+			sourceTree = "<group>";
+		};
+		CF75129D2D50F6E5009775B5 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				CF7512C22D536DB3009775B5 /* Model */,
+				CF7512A32D50F722009775B5 /* Utilities */,
+				CF7512AA2D51371A009775B5 /* CustomViews */,
+				CF75129E2D50F6EC009775B5 /* MainScreen */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		CF75129E2D50F6EC009775B5 /* MainScreen */ = {
+			isa = PBXGroup;
+			children = (
+				CF7512932D50F6AF009775B5 /* MainController.swift */,
+				CF7512A12D50F71E009775B5 /* MainViewModel.swift */,
+				CF75129F2D50F718009775B5 /* MainView.swift */,
+				CF7512A52D513146009775B5 /* Delegate */,
+				CF7512A42D513140009775B5 /* DataSource */,
+				CF7512B32D51447B009775B5 /* TableViewData */,
+			);
+			path = MainScreen;
+			sourceTree = "<group>";
+		};
+		CF7512A32D50F722009775B5 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				CF7512AD2D513811009775B5 /* Constants.swift */,
+				CF7512AF2D513950009775B5 /* Fonts.swift */,
+				CF7512B12D513EB7009775B5 /* MainTableSections.swift */,
+				CF7512B42D51468F009775B5 /* TableItemSize.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		CF7512A42D513140009775B5 /* DataSource */ = {
+			isa = PBXGroup;
+			children = (
+				CF7512A62D513156009775B5 /* MainTableDataSource.swift */,
+			);
+			path = DataSource;
+			sourceTree = "<group>";
+		};
+		CF7512A52D513146009775B5 /* Delegate */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Delegate;
+			sourceTree = "<group>";
+		};
+		CF7512AA2D51371A009775B5 /* CustomViews */ = {
+			isa = PBXGroup;
+			children = (
+				CF7512AB2D51372D009775B5 /* MainTableHeaderView.swift */,
+				CF7512BA2D5170E9009775B5 /* TaskCounter.swift */,
+			);
+			path = CustomViews;
+			sourceTree = "<group>";
+		};
+		CF7512B32D51447B009775B5 /* TableViewData */ = {
+			isa = PBXGroup;
+			children = (
+				CF7512B62D51476E009775B5 /* MainTableViewCell.swift */,
+			);
+			path = TableViewData;
+			sourceTree = "<group>";
+		};
+		CF7512C22D536DB3009775B5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				CF7512C12D536DB3009775B5 /* Task.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -72,9 +178,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				CF7512732D50F669009775B5 /* TaskFlow */,
 			);
 			name = TaskFlow;
 			packageProductDependencies = (
@@ -122,6 +225,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF7512962D50F6AF009775B5 /* Assets.xcassets in Resources */,
+				CF7512982D50F6AF009775B5 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,10 +237,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF7512AC2D51372D009775B5 /* MainTableHeaderView.swift in Sources */,
+				CF7512BB2D5170E9009775B5 /* TaskCounter.swift in Sources */,
+				CF7512992D50F6AF009775B5 /* AppDelegate.swift in Sources */,
+				CF7512A72D513156009775B5 /* MainTableDataSource.swift in Sources */,
+				CF75129A2D50F6AF009775B5 /* SceneDelegate.swift in Sources */,
+				CF7512B52D51468F009775B5 /* TableItemSize.swift in Sources */,
+				CF7512AE2D513811009775B5 /* Constants.swift in Sources */,
+				CF7512C32D536DB3009775B5 /* Task.swift in Sources */,
+				CF75129B2D50F6AF009775B5 /* TaskFlow.xcdatamodeld in Sources */,
+				CF7512A02D50F718009775B5 /* MainView.swift in Sources */,
+				CF7512B02D513950009775B5 /* Fonts.swift in Sources */,
+				CF7512B72D51476E009775B5 /* MainTableViewCell.swift in Sources */,
+				CF75129C2D50F6AF009775B5 /* MainController.swift in Sources */,
+				CF7512A22D50F71E009775B5 /* MainViewModel.swift in Sources */,
+				CF7512B22D513EB7009775B5 /* MainTableSections.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CF7512902D50F6AF009775B5 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF75128F2D50F6AF009775B5 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		CF7512882D50F66C009775B5 /* Debug */ = {
@@ -149,7 +280,6 @@
 				INFOPLIST_FILE = TaskFlow/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -176,7 +306,6 @@
 				INFOPLIST_FILE = TaskFlow/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -333,6 +462,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		CF7512922D50F6AF009775B5 /* TaskFlow.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				CF7512952D50F6AF009775B5 /* TaskFlow.xcdatamodel */,
+			);
+			currentVersion = CF7512952D50F6AF009775B5 /* TaskFlow.xcdatamodel */;
+			path = TaskFlow.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = CF7512692D50F669009775B5 /* Project object */;
 }
