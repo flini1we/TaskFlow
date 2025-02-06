@@ -13,7 +13,8 @@ class MainController: UIViewController {
         view as! MainView
     }
     private let mainViewModel = MainViewModel()
-    private lazy var mainTableViewDataSource = MainTableDataSource(data: [])
+    private lazy var mainTableViewDataSource = MainTableDataSource()
+    private lazy var mainTableViewDelegate = MainTableDelegate()
     
     override func loadView() {
         view = MainView()
@@ -21,5 +22,23 @@ class MainController: UIViewController {
 
     override func viewDidLoad() {
         mainView.mainTableView.dataSource = mainTableViewDataSource
+        mainView.mainTableView.delegate = mainTableViewDelegate
+        
+        mainViewModel.tableStateOnChange = { [weak self] updatedState in
+            guard let self else { return }
+            mainTableViewDelegate.currentState = updatedState
+            mainView.mainTableView.beginUpdates()
+            mainView.mainTableView.endUpdates()
+        }
+        
+        mainTableViewDelegate.firstHeader.onButtonTapped = { [weak self] isHalfScreen in
+            guard let self else { return }
+            mainViewModel.handleHeaderButtonTapped(for: MainTableSections.sooner, isHalfScreen: isHalfScreen)
+        }
+        
+        mainTableViewDelegate.secondHeader.onButtonTapped = { [weak self] isHalfScreen in
+            guard let self else { return }
+            mainViewModel.handleHeaderButtonTapped(for: MainTableSections.later, isHalfScreen: isHalfScreen)
+        }
     }
 }

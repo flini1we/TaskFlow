@@ -9,6 +9,9 @@ import UIKit
 
 class MainTableHeaderView: UIView {
     
+    private var isHalfScreen = true
+    var onButtonTapped: ((Bool) -> Void)?
+    
     private lazy var titleImage: UIImageView = {
         let image = UIImageView()
         image.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
@@ -34,8 +37,8 @@ class MainTableHeaderView: UIView {
         return stack
     }()
     
-    private lazy var tasksCount: TaskCounter = {
-        let counter = TaskCounter()
+    private lazy var tasksCount: TaskCounterView = {
+        let counter = TaskCounterView()
         counter.translatesAutoresizingMaskIntoConstraints = false
         return counter
     }()
@@ -73,20 +76,21 @@ class MainTableHeaderView: UIView {
     init(in section: MainTableSections) {
         super.init(frame: .zero)
         setupUI()
+        
         switch section {
         case .sooner:
             titleLabel.text = "Sooner"
             titleImage.image = UIImage(systemName: "note.text")
-            upOrDownButton.addAction(UIAction { [weak self] _ in
-                guard let self else { return }
-            }, for: .touchUpInside)
         case .later:
             titleLabel.text = "Later"
             titleImage.image = UIImage(systemName: "note")
-            upOrDownButton.addAction(UIAction { [weak self] _ in
-                guard let self else { return }
-            }, for: .touchUpInside)
         }
+        
+        upOrDownButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            onButtonTapped?(isHalfScreen)
+            isHalfScreen.toggle()
+        }, for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -105,8 +109,8 @@ class MainTableHeaderView: UIView {
     
     private func setupLayout() {
         NSLayoutConstraint.activate([
-            dataStackView.heightAnchor.constraint(equalTo: heightAnchor),
-            dataStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -HeaderSize.default.value / 2),
+            dataStackView.heightAnchor.constraint(equalToConstant: HeaderSize.default.value),
+            dataStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             dataStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
             dataStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -Constants.paddingMedium.value),
         ])

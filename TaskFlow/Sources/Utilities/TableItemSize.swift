@@ -7,18 +7,6 @@
 
 import UIKit
 
-enum HeaderSize {
-    
-    case `default`
-    
-    var value: CGFloat {
-        switch self {
-        case .default:
-            return 20
-        }
-    }
-}
-
 enum TableItemSize {
     
     case `default`,
@@ -26,14 +14,17 @@ enum TableItemSize {
          none
     
     var value: CGFloat {
+        let screenHeight = UIScreen.main.bounds.height
+        let safeAreaInsets = UIInsets.topInset + UIInsets.bottomInset
+        let headerHeight = HeaderSize.default.value
+        
         switch self {
         case .default:
-            return UIScreen.main.bounds.height / 2 - HeaderSize.default.value * 2
+            return (screenHeight - safeAreaInsets) / 2 - headerHeight
         case .fullScreen:
-            return UIScreen.main.bounds.height - 2 * HeaderSize.default.value * 2
+            return screenHeight - 2 * headerHeight - safeAreaInsets
         case .none:
             return 0
         }
     }
-         
 }

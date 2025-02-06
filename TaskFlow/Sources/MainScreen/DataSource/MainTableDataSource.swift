@@ -9,17 +9,11 @@ import UIKit
 
 class MainTableDataSource: NSObject, UITableViewDataSource {
     
-    var data: [Int] = []
-    
-    init(data: [Int]) {
-        self.data = data
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { 1 }
     
     func numberOfSections(in tableView: UITableView) -> Int { 2 }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return MainTableViewCell()
+        MainTableViewCell()
     }
 }
