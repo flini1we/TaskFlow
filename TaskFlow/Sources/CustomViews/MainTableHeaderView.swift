@@ -9,13 +9,43 @@ import UIKit
 
 class MainTableHeaderView: UIView {
     
-    private var isHalfScreen = true
+    private var buttonAction: UIAction!
+    private enum SwipeDirection: Int {
+        case up, down
+    }
+    
+    private var isHalfScreen = true {
+        didSet {
+            if isHalfScreen {
+                UIView.animate(withDuration: 0.1) {
+                    self.upOrDownButton.transform = CGAffineTransform(rotationAngle: .pi)
+                } completion: { _ in
+                    self.upOrDownButton.setImage(SystemImages.arrowsUp.image, for: .normal)
+                    UIView.animate(withDuration: 0.1) {
+                        self.upOrDownButton.transform = .identity
+                        self.upOrDownButton.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
+                    }
+                }
+            } else {
+                UIView.animate(withDuration: 0.1) {
+                    self.upOrDownButton.transform = CGAffineTransform(rotationAngle: .pi)
+                } completion: { _ in
+                    self.upOrDownButton.setImage(SystemImages.arrowsDown.image, for: .normal)
+                    UIView.animate(withDuration: 0.1) {
+                        self.upOrDownButton.transform = .identity
+                        self.upOrDownButton.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
+                    }
+                }
+            }
+        }
+    }
+    
     var onButtonTapped: ((Bool) -> Void)?
     
     private lazy var titleImage: UIImageView = {
         let image = UIImageView()
         image.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-        image.tintColor = .label
+        image.tintColor = SelectedColor.backgroundColor
         return image
     }()
     
@@ -30,7 +60,6 @@ class MainTableHeaderView: UIView {
             titleImage,
             titleLabel
         ])
-        
         stack.axis = .horizontal
         stack.spacing = Constants.paddingSmall.value
         stack.alignment = .center
@@ -45,8 +74,7 @@ class MainTableHeaderView: UIView {
     
     private lazy var upOrDownButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "arrow.up.and.line.horizontal.and.arrow.down"), for: .normal)
-        button.tintColor = .label
+        button.tintColor = SelectedColor.backgroundColor
         button.translatesAutoresizingMaskIntoConstraints = false
         button.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
         return button
@@ -77,20 +105,76 @@ class MainTableHeaderView: UIView {
         super.init(frame: .zero)
         setupUI()
         
-        switch section {
-        case .sooner:
-            titleLabel.text = "Sooner"
-            titleImage.image = UIImage(systemName: "note.text")
-        case .later:
-            titleLabel.text = "Later"
-            titleImage.image = UIImage(systemName: "note")
-        }
-        
-        upOrDownButton.addAction(UIAction { [weak self] _ in
+        buttonAction = UIAction { [weak self] _ in
             guard let self else { return }
             onButtonTapped?(isHalfScreen)
             isHalfScreen.toggle()
-        }, for: .touchUpInside)
+        }
+        upOrDownButton.addAction(buttonAction, for: .touchUpInside)
+        upOrDownButton.setImage(SystemImages.arrowsUp.image, for: .normal)
+        
+        switch section {
+        case .sooner:
+            titleLabel.text = "Sooner"
+            titleImage.image = SystemImages.soonerHeader.image
+            
+            setupGestures(direction: .up)
+        case .later:
+            titleLabel.text = "Later"
+            titleImage.image = SystemImages.laterHeader.image
+            
+            setupGestures(direction: .down)
+        }
+    }
+    
+    private func setupGestures(direction: SwipeDirection) {
+        if direction == .up {
+            let downSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleUpperHeaderGesture(_:)))
+            let upSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleUpperHeaderGesture(_:)))
+            
+            downSwipeGesture.direction = .down
+            upSwipeGesture.direction = .up
+            
+            self.addGestureRecognizer(downSwipeGesture)
+            self.addGestureRecognizer(upSwipeGesture)
+        } else {
+            let downSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleLowerHeaderGesture(_:)))
+            let upSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleLowerHeaderGesture(_:)))
+            
+            downSwipeGesture.direction = .down
+            upSwipeGesture.direction = .up
+            
+            self.addGestureRecognizer(downSwipeGesture)
+            self.addGestureRecognizer(upSwipeGesture)
+        }
+    }
+    
+    @objc private func handleUpperHeaderGesture(_ gesture: UISwipeGestureRecognizer) {
+        let direction = gesture.direction
+        if isHalfScreen {
+            if direction == .down {
+                onButtonTapped?(isHalfScreen)
+                isHalfScreen.toggle()
+            }
+        } else {
+            onButtonTapped?(isHalfScreen)
+            isHalfScreen.toggle()
+        }
+    }
+    
+    @objc private func handleLowerHeaderGesture(_ gesture: UISwipeGestureRecognizer) {
+        let direction = gesture.direction
+        if isHalfScreen {
+            if direction == .up {
+                onButtonTapped?(isHalfScreen)
+                isHalfScreen.toggle()
+            }
+        } else {
+            if direction == .down {
+                onButtonTapped?(isHalfScreen)
+                isHalfScreen.toggle()
+            }
+        }
     }
     
     required init?(coder: NSCoder) {

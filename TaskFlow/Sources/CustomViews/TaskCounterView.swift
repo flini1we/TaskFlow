@@ -12,7 +12,7 @@ class TaskCounterView: UIView {
     private lazy var taskCount: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .label
+        label.textColor = SelectedColor.backgroundColor
         label.text = "0"
         return label
     }()

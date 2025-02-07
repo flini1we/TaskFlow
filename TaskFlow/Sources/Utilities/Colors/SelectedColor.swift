@@ -1,0 +1,13 @@
+//
+//  CurrentSelectedColor.swift
+//  TaskFlow
+//
+//  Created by Данил Забинский on 06.02.2025.
+//
+
+import UIKit
+
+class SelectedColor {
+    
+    static let backgroundColor: UIColor = .label
+}

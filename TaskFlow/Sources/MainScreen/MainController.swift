@@ -40,5 +40,9 @@ class MainController: UIViewController {
             guard let self else { return }
             mainViewModel.handleHeaderButtonTapped(for: MainTableSections.later, isHalfScreen: isHalfScreen)
         }
+        
+        
+       
+//        navigationController?.setToolbarHidden(false, animated: false)
     }
 }

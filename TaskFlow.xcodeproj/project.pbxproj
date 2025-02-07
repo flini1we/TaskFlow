@@ -29,6 +29,9 @@
 		CF7512C52D536DF1009775B5 /* TaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512C42D536DF1009775B5 /* TaskTableViewCell.swift */; };
 		CF9EB9562D550E8A00F6C843 /* MainTableDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9552D550E8A00F6C843 /* MainTableDelegate.swift */; };
 		CF9EB9582D55149600F6C843 /* TableStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9572D55149600F6C843 /* TableStates.swift */; };
+		CF9EB95A2D552B7800F6C843 /* SelectedColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9592D552B7800F6C843 /* SelectedColor.swift */; };
+		CF9EB95C2D55389F00F6C843 /* ElementsSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB95B2D55389F00F6C843 /* ElementsSize.swift */; };
+		CF9EB9632D560FD700F6C843 /* SystemImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9622D560FD700F6C843 /* SystemImages.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +59,9 @@
 		CF7512C42D536DF1009775B5 /* TaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewCell.swift; sourceTree = "<group>"; };
 		CF9EB9552D550E8A00F6C843 /* MainTableDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableDelegate.swift; sourceTree = "<group>"; };
 		CF9EB9572D55149600F6C843 /* TableStates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableStates.swift; sourceTree = "<group>"; };
+		CF9EB9592D552B7800F6C843 /* SelectedColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedColor.swift; sourceTree = "<group>"; };
+		CF9EB95B2D55389F00F6C843 /* ElementsSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementsSize.swift; sourceTree = "<group>"; };
+		CF9EB9622D560FD700F6C843 /* SystemImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemImages.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,13 +132,11 @@
 		CF7512A32D50F722009775B5 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				CF7512AD2D513811009775B5 /* Constants.swift */,
-				CF7512AF2D513950009775B5 /* Fonts.swift */,
-				CF7512B12D513EB7009775B5 /* MainTableSections.swift */,
-				CF7512B42D51468F009775B5 /* TableItemSize.swift */,
-				CF6DF32B2D53E80300D5F369 /* HeaderSize.swift */,
-				CF6DF3292D53E7D600D5F369 /* UIInsets.swift */,
-				CF9EB9572D55149600F6C843 /* TableStates.swift */,
+				CF9EB9612D560FCC00F6C843 /* SystemImages */,
+				CF9EB9602D560E1E00F6C843 /* UIElementsSize */,
+				CF9EB95F2D560E0E00F6C843 /* Sections */,
+				CF9EB95E2D560E0000F6C843 /* Constants */,
+				CF9EB95D2D560DF300F6C843 /* Colors */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -177,6 +181,51 @@
 				CF7512C12D536DB3009775B5 /* Task.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		CF9EB95D2D560DF300F6C843 /* Colors */ = {
+			isa = PBXGroup;
+			children = (
+				CF9EB9592D552B7800F6C843 /* SelectedColor.swift */,
+			);
+			path = Colors;
+			sourceTree = "<group>";
+		};
+		CF9EB95E2D560E0000F6C843 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				CF7512AD2D513811009775B5 /* Constants.swift */,
+				CF7512AF2D513950009775B5 /* Fonts.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		CF9EB95F2D560E0E00F6C843 /* Sections */ = {
+			isa = PBXGroup;
+			children = (
+				CF9EB9572D55149600F6C843 /* TableStates.swift */,
+				CF7512B12D513EB7009775B5 /* MainTableSections.swift */,
+			);
+			path = Sections;
+			sourceTree = "<group>";
+		};
+		CF9EB9602D560E1E00F6C843 /* UIElementsSize */ = {
+			isa = PBXGroup;
+			children = (
+				CF7512B42D51468F009775B5 /* TableItemSize.swift */,
+				CF6DF32B2D53E80300D5F369 /* HeaderSize.swift */,
+				CF6DF3292D53E7D600D5F369 /* UIInsets.swift */,
+				CF9EB95B2D55389F00F6C843 /* ElementsSize.swift */,
+			);
+			path = UIElementsSize;
+			sourceTree = "<group>";
+		};
+		CF9EB9612D560FCC00F6C843 /* SystemImages */ = {
+			isa = PBXGroup;
+			children = (
+				CF9EB9622D560FD700F6C843 /* SystemImages.swift */,
+			);
+			path = SystemImages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -252,6 +301,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF9EB95A2D552B7800F6C843 /* SelectedColor.swift in Sources */,
 				CF7512AC2D51372D009775B5 /* MainTableHeaderView.swift in Sources */,
 				CF7512BB2D5170E9009775B5 /* TaskCounterView.swift in Sources */,
 				CF7512992D50F6AF009775B5 /* AppDelegate.swift in Sources */,
@@ -262,6 +312,7 @@
 				CF7512AE2D513811009775B5 /* Constants.swift in Sources */,
 				CF9EB9582D55149600F6C843 /* TableStates.swift in Sources */,
 				CF7512C32D536DB3009775B5 /* Task.swift in Sources */,
+				CF9EB9632D560FD700F6C843 /* SystemImages.swift in Sources */,
 				CF6DF32A2D53E7D600D5F369 /* UIInsets.swift in Sources */,
 				CF7512C52D536DF1009775B5 /* TaskTableViewCell.swift in Sources */,
 				CF75129B2D50F6AF009775B5 /* TaskFlow.xcdatamodeld in Sources */,
@@ -270,6 +321,7 @@
 				CF6DF32C2D53E80300D5F369 /* HeaderSize.swift in Sources */,
 				CF7512B72D51476E009775B5 /* MainTableViewCell.swift in Sources */,
 				CF75129C2D50F6AF009775B5 /* MainController.swift in Sources */,
+				CF9EB95C2D55389F00F6C843 /* ElementsSize.swift in Sources */,
 				CF7512A22D50F71E009775B5 /* MainViewModel.swift in Sources */,
 				CF7512B22D513EB7009775B5 /* MainTableSections.swift in Sources */,
 			);
