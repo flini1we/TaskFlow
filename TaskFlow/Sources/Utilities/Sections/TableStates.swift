@@ -11,5 +11,6 @@ enum TableState {
     
     case `default`,
          upperOpened,
-         lowerOpened
+         lowerOpened,
+         addingTask
 }

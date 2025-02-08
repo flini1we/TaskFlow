@@ -14,6 +14,7 @@ class TaskCounterView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = SelectedColor.backgroundColor
         label.text = "0"
+        label.font = .boldSystemFont(ofSize: Fonts.small.value)
         return label
     }()
     

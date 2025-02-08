@@ -9,7 +9,11 @@ import UIKit
 
 class MainTableHeaderView: UIView {
     
+    var onButtonTapped: ((Bool) -> Void)?
+    var backToDefaultTableViewPosition: (() -> Void)?
+    
     private var buttonAction: UIAction!
+    
     private enum SwipeDirection: Int {
         case up, down
     }
@@ -39,8 +43,6 @@ class MainTableHeaderView: UIView {
             }
         }
     }
-    
-    var onButtonTapped: ((Bool) -> Void)?
     
     private lazy var titleImage: UIImageView = {
         let image = UIImageView()
@@ -101,17 +103,42 @@ class MainTableHeaderView: UIView {
         return stack
     }()
     
+    lazy var createTodoField: UITextField = {
+        let field = UITextField()
+        field.backgroundColor = .systemBackground
+        field.borderStyle = .none
+        field.placeholder = "Add a todo"
+        field.textAlignment = .left
+        field.clearButtonMode = .whileEditing
+        field.delegate = self
+        field.font = .boldSystemFont(ofSize: Fonts.title.value)
+        return field
+    }()
+    
+    private lazy var lightbulbImage: UIImageView = {
+        let lightbulbImage = UIImageView(image: SystemImages.newTodo.image)
+        lightbulbImage.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
+        lightbulbImage.tintColor = .systemYellow
+        lightbulbImage.alpha = 0.2
+        return lightbulbImage
+    }()
+    
+    private lazy var createTodoStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [
+            lightbulbImage,
+            createTodoField
+        ])
+        stack.spacing = Constants.paddingSmall.value
+        stack.alignment = .center
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.alpha = 0
+        return stack
+    }()
+    
     init(in section: MainTableSections) {
         super.init(frame: .zero)
         setupUI()
-        
-        buttonAction = UIAction { [weak self] _ in
-            guard let self else { return }
-            onButtonTapped?(isHalfScreen)
-            isHalfScreen.toggle()
-        }
-        upOrDownButton.addAction(buttonAction, for: .touchUpInside)
-        upOrDownButton.setImage(SystemImages.arrowsUp.image, for: .normal)
+        setupButton()
         
         switch section {
         case .sooner:
@@ -125,6 +152,56 @@ class MainTableHeaderView: UIView {
             
             setupGestures(direction: .down)
         }
+    }
+    
+    func updateButtonImage() { isHalfScreen = true }
+    
+    func changeUpperView() {
+        UIView.animate(withDuration: 0.25) {
+            self.dataStackView.alpha = 0
+        } completion: { [weak self] _ in
+            guard let self else { return }
+            dataStackView.removeFromSuperview()
+            
+            addSubview(createTodoStackView)
+            NSLayoutConstraint.activate([
+                createTodoStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+                createTodoStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
+                createTodoStackView.heightAnchor.constraint(equalTo: self.heightAnchor),
+                createTodoField.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.8)
+            ])
+            
+            UIView.animate(withDuration: 0.25) { self.createTodoStackView.alpha = 1 }
+        }
+    }
+    
+    func getBackUpperView() {
+        UIView.animate(withDuration: 0.25) {
+            self.createTodoStackView.alpha = 0
+        } completion: { _ in
+            self.createTodoStackView.removeFromSuperview()
+            
+            self.addSubview(self.dataStackView)
+            NSLayoutConstraint.activate([
+                self.dataStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+                self.dataStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
+                self.dataStackView.heightAnchor.constraint(equalTo: self.heightAnchor),
+                self.dataStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.85)
+            ])
+            self.backToDefaultTableViewPosition?()
+            
+            UIView.animate(withDuration: 0.25) { self.dataStackView.alpha = 1 }
+        }
+    }
+    
+    private func setupButton() {
+        buttonAction = UIAction { [weak self] _ in
+            guard let self else { return }
+            onButtonTapped?(isHalfScreen)
+            isHalfScreen.toggle()
+        }
+        upOrDownButton.addAction(buttonAction, for: .touchUpInside)
+        upOrDownButton.setImage(SystemImages.arrowsUp.image, for: .normal)
     }
     
     private func setupGestures(direction: SwipeDirection) {
@@ -193,10 +270,38 @@ class MainTableHeaderView: UIView {
     
     private func setupLayout() {
         NSLayoutConstraint.activate([
-            dataStackView.heightAnchor.constraint(equalToConstant: HeaderSize.default.value),
+            dataStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.85),
             dataStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             dataStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
             dataStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -Constants.paddingMedium.value),
         ])
+    }
+}
+
+extension MainTableHeaderView: UITextFieldDelegate {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        let newText = (textField.text! as NSString).replacingCharacters(in: range, with: string)
+        
+        if newText.count >= currentText.count {
+            lightbulbImage.alpha += 0.05
+        } else {
+            lightbulbImage.alpha -= 0.05
+        }
+        
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        getBackUpperView()
+        textField.text = ""
+        lightbulbImage.alpha = 0.2
+        return true
+    }
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        lightbulbImage.alpha = 0.2
+        return true
     }
 }

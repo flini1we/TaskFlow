@@ -19,30 +19,36 @@ class MainController: UIViewController {
     override func loadView() {
         view = MainView()
     }
-
+    
     override func viewDidLoad() {
         mainView.mainTableView.dataSource = mainTableViewDataSource
         mainView.mainTableView.delegate = mainTableViewDelegate
-        
+        mainTableViewDelegate.reloadTalbe = { [weak self] in
+            self?.mainView.updateMainTableView()
+        }
+        mainViewModel.changeLowerButton = { [weak self] in
+            self?.mainTableViewDelegate.updateLowerButton()
+        }
+        mainViewModel.changeUpperButton = { [weak self] in
+            self?.mainTableViewDelegate.updateUpperButton()
+        }
         mainViewModel.tableStateOnChange = { [weak self] updatedState in
-            guard let self else { return }
-            mainTableViewDelegate.currentState = updatedState
-            mainView.mainTableView.beginUpdates()
-            mainView.mainTableView.endUpdates()
+            self?.mainTableViewDelegate.currentState = updatedState
         }
         
         mainTableViewDelegate.firstHeader.onButtonTapped = { [weak self] isHalfScreen in
-            guard let self else { return }
-            mainViewModel.handleHeaderButtonTapped(for: MainTableSections.sooner, isHalfScreen: isHalfScreen)
+            self?.mainViewModel.handleHeaderButtonTapped(for: MainTableSections.sooner, isHalfScreen: isHalfScreen)
         }
-        
         mainTableViewDelegate.secondHeader.onButtonTapped = { [weak self] isHalfScreen in
-            guard let self else { return }
-            mainViewModel.handleHeaderButtonTapped(for: MainTableSections.later, isHalfScreen: isHalfScreen)
+            self?.mainViewModel.handleHeaderButtonTapped(for: MainTableSections.later, isHalfScreen: isHalfScreen)
         }
         
-        
-       
-//        navigationController?.setToolbarHidden(false, animated: false)
+        mainView.changeView = { [weak self] in
+            self?.mainTableViewDelegate.firstHeader.changeUpperView()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                self?.mainTableViewDelegate.firstHeader.createTodoField.becomeFirstResponder()
+                self?.mainTableViewDelegate.currentState = .addingTask
+            }
+        }
     }
 }

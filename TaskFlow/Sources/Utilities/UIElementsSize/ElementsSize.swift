@@ -9,12 +9,12 @@ import UIKit
 
 enum ElementsSize {
     
-    case toolBar
+    case searchBarInToolBar
     
     var value: CGFloat {
         switch self {
-        case .toolBar:
-            return 0
+        case .searchBarInToolBar:
+            return 35
         }
     }
 }

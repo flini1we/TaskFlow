@@ -9,5 +9,5 @@ import UIKit
 
 class SelectedColor {
     
-    static let backgroundColor: UIColor = .label
+    static var backgroundColor: UIColor = .label
 }

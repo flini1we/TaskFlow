@@ -17,12 +17,13 @@ enum TableItemSize {
         let screenHeight = UIScreen.main.bounds.height
         let safeAreaInsets = UIInsets.topInset + UIInsets.bottomInset
         let headerHeight = HeaderSize.default.value
+        let toolbarHeight: CGFloat = 49
         
         switch self {
         case .default:
-            return (screenHeight - safeAreaInsets) / 2 - headerHeight - (ElementsSize.toolBar.value / 2) / 2
+            return (screenHeight - safeAreaInsets) / 2 - headerHeight - toolbarHeight / 2
         case .fullScreen:
-            return screenHeight - 2 * headerHeight - safeAreaInsets - (ElementsSize.toolBar.value / 2)
+            return screenHeight - 2 * headerHeight - safeAreaInsets - toolbarHeight
         case .none:
             return 0
         }
