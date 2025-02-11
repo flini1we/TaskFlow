@@ -14,7 +14,10 @@ enum SystemImages {
          arrowsUp,
          arrowsDown,
          settings,
-         newTodo
+         newTodo,
+         addTodo,
+         hideKeyboard,
+         info
     
     var image: UIImage {
         switch self {
@@ -23,19 +26,19 @@ enum SystemImages {
         case .soonerHeader:
             return UIImage(systemName: "note.text")!
         case .arrowsUp:
-            return UIImage(systemName: "arrow.up.and.line.horizontal.and.arrow.down")!
-            // return UIImage(systemName: "rectangle.expand.vertical")!
-//            return UIImage(systemName: "rectangle.arrowtriangle.2.outward")!
+            return UIImage(systemName: "rectangle.expand.vertical")!
         case .arrowsDown:
-            return UIImage(systemName: "arrow.down.and.line.horizontal.and.arrow.up")!
-//            return UIImage(systemName: "rectangle.compress.vertical")!
-//            return UIImage(systemName: "rectangle.arrowtriangle.2.inward")!
+            return UIImage(systemName: "rectangle.compress.vertical")!
         case .settings:
             return UIImage(systemName: "gear")!
         case .newTodo:
             return UIImage(systemName: "lightbulb.max.fill")!
-            //return (UIImage(systemName: "pencil.and.scribble")?.withTintColor(SelectedColor.backgroundColor, renderingMode: .alwaysOriginal))!
+        case .addTodo:
+            return UIImage(systemName: "plus")!
+        case .hideKeyboard:
+            return UIImage(systemName: "keyboard.chevron.compact.down")!
+        case .info:
+            return UIImage(systemName: "info.circle")!
         }
     }
-         
 }

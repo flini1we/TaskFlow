@@ -9,7 +9,11 @@ import UIKit
 
 class MainView: UIView {
     
+    
     var changeView: (() -> Void)?
+    var getViewBack: (() -> Void)?
+    
+    private var toolbarBottomConstraint: NSLayoutConstraint!
     
     lazy var mainTableView: UITableView = {
         let table = UITableView()
@@ -17,7 +21,7 @@ class MainView: UIView {
         table.separatorStyle = .none
         table.register(MainTableViewCell.self, forCellReuseIdentifier: MainTableViewCell.identifier)
         table.isScrollEnabled = false
-        table.sectionHeaderTopPadding = 0 // отступ от хедера
+        table.sectionHeaderTopPadding = 0
         return table
     }()
     
@@ -25,28 +29,52 @@ class MainView: UIView {
         let button = UIButton()
         button.setImage(SystemImages.settings.image, for: .normal)
         button.tintColor = SelectedColor.backgroundColor
-        button.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        return button
+    }()
+    
+    private lazy var addTodoButton: UIButton = {
+        let button = UIButton()
+        button.sizeToFit()
+        button.setImage(SystemImages.addTodo.image, for: .normal)
+        button.tintColor = SelectedColor.backgroundColor
         button.addAction(UIAction { [weak self] _ in
             self?.changeView?()
         }, for: .touchUpInside)
         return button
     }()
     
-    private lazy var searchBarStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [
-            settingsButton,
-        ])
-        stack.spacing = Constants.paddingSmall.value
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.distribution = .fill
-        return stack
+    private lazy var hideKeyboardButton: UIButton = {
+        let button = UIButton()
+        button.sizeToFit()
+        button.setImage(SystemImages.hideKeyboard.image, for: .normal)
+        button.tintColor = SelectedColor.backgroundColor
+        button.addAction(UIAction { [weak self] _ in
+            self?.getViewBack?()
+        }, for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var infoButton: UIButton = {
+        let button = UIButton()
+        button.setImage(SystemImages.info.image, for: .normal)
+        button.tintColor = SelectedColor.backgroundColor
+        return button
     }()
     
     private lazy var toolBar: UIToolbar = {
-        let toolbar = UIToolbar()
+        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: HeaderSize.default.value))
         toolbar.translatesAutoresizingMaskIntoConstraints = false
-        toolbar.items = [UIBarButtonItem(customView: searchBarStackView)]
         toolbar.barTintColor = .systemBackground
+        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+        
+        let settingsBarButtonItem = UIBarButtonItem(customView: settingsButton)
+        let addTodoBarButtonItem = UIBarButtonItem(customView: addTodoButton)
+        let infoBarButtonItem = UIBarButtonItem(customView: infoButton)
+        let spacer = UIBarButtonItem(systemItem: .flexibleSpace)
+        
+        toolbar.items = [settingsBarButtonItem, spacer, addTodoBarButtonItem, spacer, infoBarButtonItem]
+        toolbar.barTintColor = .systemBackground
+        toolbar.sizeToFit()
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
         return toolbar
     }()
@@ -65,6 +93,30 @@ class MainView: UIView {
         mainTableView.endUpdates()
     }
     
+    func raiseToolbar(_ updatedHeight: CGFloat) {
+        UIView.animate(withDuration: 0.25) {
+            self.toolbarBottomConstraint.constant = -updatedHeight + UIInsets.bottomInset
+            self.layoutIfNeeded()
+        }
+        toolBar.items?[2] = UIBarButtonItem(customView: hideKeyboardButton)
+        animateToolbarButtonChanging(toolBar)
+    }
+    
+    func lowerToolbar() {
+        UIView.animate(withDuration: 0.25) {
+            self.toolbarBottomConstraint.constant = 0
+            self.layoutIfNeeded()
+        }
+        toolBar.items?[2] = UIBarButtonItem(customView: addTodoButton)
+    }
+    
+    private func animateToolbarButtonChanging(_ toolbar: UIToolbar) {
+        UIView.transition(with: toolBar, duration: 0.25, options: .transitionCrossDissolve, animations: {
+            self.toolBar.setNeedsLayout()
+            self.toolBar.layoutIfNeeded()
+        }, completion: nil)
+    }
+    
     private func setupUI() {
         backgroundColor = .systemBackground
         setupSubviews()
@@ -77,6 +129,8 @@ class MainView: UIView {
     }
     
     private func setupLayout() {
+        toolbarBottomConstraint = toolBar.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor)
+        
         NSLayoutConstraint.activate([
             mainTableView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
             mainTableView.heightAnchor.constraint(equalToConstant: TableItemSize.fullScreen.value + 2 * HeaderSize.default.value),
@@ -85,7 +139,7 @@ class MainView: UIView {
         ])
         
         NSLayoutConstraint.activate([
-            toolBar.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+            toolbarBottomConstraint,
             toolBar.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             toolBar.trailingAnchor.constraint(equalTo: self.trailingAnchor),
         ])

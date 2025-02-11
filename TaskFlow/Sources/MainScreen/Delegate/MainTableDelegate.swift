@@ -8,16 +8,26 @@
 import UIKit
 
 class MainTableDelegate: NSObject, UITableViewDelegate {
+        
+    private var mainViewModel: MainViewModel
+    private(set) var firstHeader = MainTableHeaderView(in: .sooner)
+    private(set) var secondHeader = MainTableHeaderView(in: .later)
     
     var currentState: TableState = .default {
         didSet {
-            reloadTalbe?()
+            reloadTable?()
         }
     }
-    var reloadTalbe: (() -> Void)?
+    var reloadTable: (() -> Void)?
     
-    private(set) var firstHeader = MainTableHeaderView(in: .sooner)
-    private(set) var secondHeader = MainTableHeaderView(in: .later)
+    var createdTodo: Todo? {
+        didSet {
+            if let createdTodo {
+                sendCreatedTodoToController?(createdTodo)
+            }
+        }
+    }
+    var sendCreatedTodoToController: ((Todo) -> Void)?
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         switch section {
@@ -30,21 +40,43 @@ class MainTableDelegate: NSObject, UITableViewDelegate {
         }
     }
     
-    override init() {
+    init(viewModel: MainViewModel) {
+        self.mainViewModel = viewModel
         super.init()
+        setupActions()
+        setupBindings()
+    }
+    
+    private func setupActions() {
+        mainViewModel.changeLowerButton = self.updateLowerButton
+        mainViewModel.changeUpperButton = self.updateUpperButton
+    }
+    
+    private func setupBindings() {
         firstHeader.backToDefaultTableViewPosition = { [weak self] in
             self?.currentState = .default
             self?.updateLowerButton()
             self?.updateUpperButton()
         }
+        
+        mainViewModel.tableStateOnChange = { [weak self] updatedState in
+            self?.currentState = updatedState
+        }
+        
+        firstHeader.sendCreatedTodoToDelegate = { [weak self] todo in
+            self?.sendCreatedTodoToController?(todo)
+        }
     }
     
     func updateLowerButton() {
-        secondHeader.updateButtonImage()
+        if !secondHeader.isHalfScreen {
+            secondHeader.isHalfScreen.toggle()
+        }
     }
-    
     func updateUpperButton() {
-        firstHeader.updateButtonImage()
+        if !firstHeader.isHalfScreen {
+            firstHeader.isHalfScreen.toggle()
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -52,24 +84,6 @@ class MainTableDelegate: NSObject, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
-        switch currentState {
-        case .default:
-            return TableItemSize.default.value
-        case .upperOpened:
-            if indexPath.section == 0 {
-                return TableItemSize.fullScreen.value
-            } else {
-                return TableItemSize.none.value
-            }
-        case .lowerOpened:
-            if indexPath.section == 0 {
-                return TableItemSize.none.value
-            } else {
-                return TableItemSize.fullScreen.value
-            }
-        case .addingTask:
-            return TableItemSize.default.value / 1.75
-        }
+        mainViewModel.calculateCellsHeight(at: indexPath, withState: currentState)
     }
 }

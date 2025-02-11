@@ -7,7 +7,9 @@
 
 import Foundation
 
-class MainViewModel {
+class MainViewModel: KeyboardObservable {
+    
+    var keyboardObserver: KeyboardObserver?
     
     private var lastSectionTapped: MainTableSections?
     private var tableState: TableState = .default {
@@ -41,5 +43,37 @@ class MainViewModel {
             }
         }
         lastSectionTapped = section
+    }
+    
+    func calculateCellsHeight(at indexPath: IndexPath, withState state: TableState) -> CGFloat {
+        
+        switch state {
+        case .default:
+            return TableItemSize.default.value
+        case .upperOpened:
+            if indexPath.section == 0 {
+                return TableItemSize.fullScreen.value
+            } else {
+                return TableItemSize.none.value
+            }
+        case .lowerOpened:
+            if indexPath.section == 0 {
+                return TableItemSize.none.value
+            } else {
+                return TableItemSize.fullScreen.value
+            }
+        case .addingTask:
+            return TableItemSize.default.value / 2
+        }
+    }
+    
+    func setupObserver(onShowKeyboard: ((CGRect) -> Void)?,
+                       onHideKeyboard: (() -> Void)?) {
+        
+        keyboardObserver = KeyboardObserver(onShow: { keyboardFrame in
+            onShowKeyboard?(keyboardFrame)
+        }, onHide: {
+            onHideKeyboard?()
+        })
     }
 }

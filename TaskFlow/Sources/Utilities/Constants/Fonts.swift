@@ -22,7 +22,7 @@ enum Fonts: CGFloat {
         case .small:
             return 14
         case .default:
-            return 16
+            return 18
         case .title:
             return 20
         case .big:

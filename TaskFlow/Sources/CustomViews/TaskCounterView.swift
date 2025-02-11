@@ -36,6 +36,8 @@ class TaskCounterView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func updateTaskCount(newValue: Int) { taskCount.text = "\(newValue)" }
+    
     private func setupUI() {
         setupSubviews()
         setupLayout()

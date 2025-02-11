@@ -9,51 +9,31 @@ import UIKit
 
 class MainTableHeaderView: UIView {
     
-    var onButtonTapped: ((Bool) -> Void)?
-    var backToDefaultTableViewPosition: (() -> Void)?
-    
-    private var buttonAction: UIAction!
-    
-    private enum SwipeDirection: Int {
-        case up, down
-    }
-    
-    private var isHalfScreen = true {
+    var isHalfScreen = true {
         didSet {
-            if isHalfScreen {
-                UIView.animate(withDuration: 0.1) {
-                    self.upOrDownButton.transform = CGAffineTransform(rotationAngle: .pi)
-                } completion: { _ in
-                    self.upOrDownButton.setImage(SystemImages.arrowsUp.image, for: .normal)
-                    UIView.animate(withDuration: 0.1) {
-                        self.upOrDownButton.transform = .identity
-                        self.upOrDownButton.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-                    }
-                }
-            } else {
-                UIView.animate(withDuration: 0.1) {
-                    self.upOrDownButton.transform = CGAffineTransform(rotationAngle: .pi)
-                } completion: { _ in
-                    self.upOrDownButton.setImage(SystemImages.arrowsDown.image, for: .normal)
-                    UIView.animate(withDuration: 0.1) {
-                        self.upOrDownButton.transform = .identity
-                        self.upOrDownButton.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-                    }
-                }
+            animateImage()
+        }
+    }
+    var createdTodo: Todo? {
+        didSet {
+            if let createdTodo {
+                sendCreatedTodoToDelegate?(createdTodo)
             }
         }
     }
+    var sendCreatedTodoToDelegate: ((Todo) -> Void)?
+    var onButtonTapped: ((Bool) -> Void)?
+    var backToDefaultTableViewPosition: (() -> Void)?
     
     private lazy var titleImage: UIImageView = {
         let image = UIImageView()
-        image.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
         image.tintColor = SelectedColor.backgroundColor
         return image
     }()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .boldSystemFont(ofSize: Fonts.title.value)
+        label.font = .boldSystemFont(ofSize: Fonts.default.value)
         return label
     }()
     
@@ -69,16 +49,13 @@ class MainTableHeaderView: UIView {
     }()
     
     private lazy var tasksCount: TaskCounterView = {
-        let counter = TaskCounterView()
-        counter.translatesAutoresizingMaskIntoConstraints = false
-        return counter
+        TaskCounterView()
     }()
     
     private lazy var upOrDownButton: UIButton = {
         let button = UIButton()
         button.tintColor = SelectedColor.backgroundColor
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
         return button
     }()
     
@@ -109,15 +86,15 @@ class MainTableHeaderView: UIView {
         field.borderStyle = .none
         field.placeholder = "Add a todo"
         field.textAlignment = .left
+        field.returnKeyType = .continue
         field.clearButtonMode = .whileEditing
         field.delegate = self
-        field.font = .boldSystemFont(ofSize: Fonts.title.value)
+        field.font = .boldSystemFont(ofSize: Fonts.default.value)
         return field
     }()
     
     private lazy var lightbulbImage: UIImageView = {
         let lightbulbImage = UIImageView(image: SystemImages.newTodo.image)
-        lightbulbImage.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
         lightbulbImage.tintColor = .systemYellow
         lightbulbImage.alpha = 0.2
         return lightbulbImage
@@ -154,7 +131,17 @@ class MainTableHeaderView: UIView {
         }
     }
     
-    func updateButtonImage() { isHalfScreen = true }
+    func animateImage() {
+        UIView.animate(withDuration: 0.1) {
+            self.upOrDownButton.transform = CGAffineTransform(rotationAngle: .pi)
+        } completion: { _ in
+            let image = self.isHalfScreen ? SystemImages.arrowsUp.image : SystemImages.arrowsDown.image
+            self.upOrDownButton.setImage(image, for: .normal)
+            UIView.animate(withDuration: 0.1) {
+                self.upOrDownButton.transform = .identity
+            }
+        }
+    }
     
     func changeUpperView() {
         UIView.animate(withDuration: 0.25) {
@@ -195,12 +182,10 @@ class MainTableHeaderView: UIView {
     }
     
     private func setupButton() {
-        buttonAction = UIAction { [weak self] _ in
+        upOrDownButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             onButtonTapped?(isHalfScreen)
-            isHalfScreen.toggle()
-        }
-        upOrDownButton.addAction(buttonAction, for: .touchUpInside)
+        }, for: .touchUpInside)
         upOrDownButton.setImage(SystemImages.arrowsUp.image, for: .normal)
     }
     
@@ -231,11 +216,9 @@ class MainTableHeaderView: UIView {
         if isHalfScreen {
             if direction == .down {
                 onButtonTapped?(isHalfScreen)
-                isHalfScreen.toggle()
             }
         } else {
             onButtonTapped?(isHalfScreen)
-            isHalfScreen.toggle()
         }
     }
     
@@ -244,12 +227,10 @@ class MainTableHeaderView: UIView {
         if isHalfScreen {
             if direction == .up {
                 onButtonTapped?(isHalfScreen)
-                isHalfScreen.toggle()
             }
         } else {
             if direction == .down {
                 onButtonTapped?(isHalfScreen)
-                isHalfScreen.toggle()
             }
         }
     }
@@ -273,7 +254,6 @@ class MainTableHeaderView: UIView {
             dataStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.85),
             dataStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             dataStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
-            dataStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -Constants.paddingMedium.value),
         ])
     }
 }
@@ -289,11 +269,13 @@ extension MainTableHeaderView: UITextFieldDelegate {
         } else {
             lightbulbImage.alpha -= 0.05
         }
-        
         return true
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if let todoTitle = textField.text, !todoTitle.isEmpty {
+            createdTodo = Todo(id: UUID(), title: todoTitle)
+        }
         getBackUpperView()
         textField.text = ""
         lightbulbImage.alpha = 0.2

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF2760AA2D58CE2C002A6DED /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2760A92D58CE2C002A6DED /* TodoTableViewCell.swift */; };
+		CF2760AC2D58D516002A6DED /* TodoCellSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2760AB2D58D516002A6DED /* TodoCellSize.swift */; };
 		CF6DF32A2D53E7D600D5F369 /* UIInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6DF3292D53E7D600D5F369 /* UIInsets.swift */; };
 		CF6DF32C2D53E80300D5F369 /* HeaderSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6DF32B2D53E80300D5F369 /* HeaderSize.swift */; };
 		CF7512962D50F6AF009775B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF75128D2D50F6AF009775B5 /* Assets.xcassets */; };
@@ -25,16 +27,20 @@
 		CF7512B52D51468F009775B5 /* TableItemSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512B42D51468F009775B5 /* TableItemSize.swift */; };
 		CF7512B72D51476E009775B5 /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512B62D51476E009775B5 /* MainTableViewCell.swift */; };
 		CF7512BB2D5170E9009775B5 /* TaskCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512BA2D5170E9009775B5 /* TaskCounterView.swift */; };
-		CF7512C32D536DB3009775B5 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512C12D536DB3009775B5 /* Task.swift */; };
-		CF7512C52D536DF1009775B5 /* TaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512C42D536DF1009775B5 /* TaskTableViewCell.swift */; };
+		CF7512C32D536DB3009775B5 /* Todo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512C12D536DB3009775B5 /* Todo.swift */; };
 		CF9EB9562D550E8A00F6C843 /* MainTableDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9552D550E8A00F6C843 /* MainTableDelegate.swift */; };
 		CF9EB9582D55149600F6C843 /* TableStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9572D55149600F6C843 /* TableStates.swift */; };
 		CF9EB95A2D552B7800F6C843 /* SelectedColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9592D552B7800F6C843 /* SelectedColor.swift */; };
 		CF9EB95C2D55389F00F6C843 /* ElementsSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB95B2D55389F00F6C843 /* ElementsSize.swift */; };
 		CF9EB9632D560FD700F6C843 /* SystemImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9622D560FD700F6C843 /* SystemImages.swift */; };
+		CFD41ECA2D5A6C4C00AEBC57 /* MainTableViewDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41EC92D5A6C4C00AEBC57 /* MainTableViewDiffableDataSource.swift */; };
+		CFD41ED02D5B42E900AEBC57 /* KeyboardObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41ECF2D5B42E900AEBC57 /* KeyboardObserver.swift */; };
+		CFD41ED32D5B761700AEBC57 /* SwipeDirections.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41ED22D5B761700AEBC57 /* SwipeDirections.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CF2760A92D58CE2C002A6DED /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
+		CF2760AB2D58D516002A6DED /* TodoCellSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoCellSize.swift; sourceTree = "<group>"; };
 		CF6DF3292D53E7D600D5F369 /* UIInsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIInsets.swift; sourceTree = "<group>"; };
 		CF6DF32B2D53E80300D5F369 /* HeaderSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderSize.swift; sourceTree = "<group>"; };
 		CF7512712D50F669009775B5 /* TaskFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -55,13 +61,15 @@
 		CF7512B42D51468F009775B5 /* TableItemSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableItemSize.swift; sourceTree = "<group>"; };
 		CF7512B62D51476E009775B5 /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 		CF7512BA2D5170E9009775B5 /* TaskCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCounterView.swift; sourceTree = "<group>"; };
-		CF7512C12D536DB3009775B5 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
-		CF7512C42D536DF1009775B5 /* TaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewCell.swift; sourceTree = "<group>"; };
+		CF7512C12D536DB3009775B5 /* Todo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Todo.swift; sourceTree = "<group>"; };
 		CF9EB9552D550E8A00F6C843 /* MainTableDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableDelegate.swift; sourceTree = "<group>"; };
 		CF9EB9572D55149600F6C843 /* TableStates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableStates.swift; sourceTree = "<group>"; };
 		CF9EB9592D552B7800F6C843 /* SelectedColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedColor.swift; sourceTree = "<group>"; };
 		CF9EB95B2D55389F00F6C843 /* ElementsSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementsSize.swift; sourceTree = "<group>"; };
 		CF9EB9622D560FD700F6C843 /* SystemImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemImages.swift; sourceTree = "<group>"; };
+		CFD41EC92D5A6C4C00AEBC57 /* MainTableViewDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewDiffableDataSource.swift; sourceTree = "<group>"; };
+		CFD41ECF2D5B42E900AEBC57 /* KeyboardObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardObserver.swift; sourceTree = "<group>"; };
+		CFD41ED22D5B761700AEBC57 /* SwipeDirections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeDirections.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +116,7 @@
 		CF75129D2D50F6E5009775B5 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				CFD41ECE2D5B42DF00AEBC57 /* Observers */,
 				CF7512A32D50F722009775B5 /* Utilities */,
 				CF7512C22D536DB3009775B5 /* Model */,
 				CF7512AA2D51371A009775B5 /* CustomViews */,
@@ -132,6 +141,7 @@
 		CF7512A32D50F722009775B5 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				CFD41ED12D5B760D00AEBC57 /* GestureDirections */,
 				CF9EB9612D560FCC00F6C843 /* SystemImages */,
 				CF9EB9602D560E1E00F6C843 /* UIElementsSize */,
 				CF9EB95F2D560E0E00F6C843 /* Sections */,
@@ -144,6 +154,7 @@
 		CF7512A42D513140009775B5 /* DataSource */ = {
 			isa = PBXGroup;
 			children = (
+				CFD41EC92D5A6C4C00AEBC57 /* MainTableViewDiffableDataSource.swift */,
 				CF7512A62D513156009775B5 /* MainTableDataSource.swift */,
 			);
 			path = DataSource;
@@ -170,7 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				CF7512B62D51476E009775B5 /* MainTableViewCell.swift */,
-				CF7512C42D536DF1009775B5 /* TaskTableViewCell.swift */,
+				CF2760A92D58CE2C002A6DED /* TodoTableViewCell.swift */,
 			);
 			path = TableViewData;
 			sourceTree = "<group>";
@@ -178,7 +189,7 @@
 		CF7512C22D536DB3009775B5 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				CF7512C12D536DB3009775B5 /* Task.swift */,
+				CF7512C12D536DB3009775B5 /* Todo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -216,6 +227,7 @@
 				CF6DF32B2D53E80300D5F369 /* HeaderSize.swift */,
 				CF6DF3292D53E7D600D5F369 /* UIInsets.swift */,
 				CF9EB95B2D55389F00F6C843 /* ElementsSize.swift */,
+				CF2760AB2D58D516002A6DED /* TodoCellSize.swift */,
 			);
 			path = UIElementsSize;
 			sourceTree = "<group>";
@@ -226,6 +238,22 @@
 				CF9EB9622D560FD700F6C843 /* SystemImages.swift */,
 			);
 			path = SystemImages;
+			sourceTree = "<group>";
+		};
+		CFD41ECE2D5B42DF00AEBC57 /* Observers */ = {
+			isa = PBXGroup;
+			children = (
+				CFD41ECF2D5B42E900AEBC57 /* KeyboardObserver.swift */,
+			);
+			path = Observers;
+			sourceTree = "<group>";
+		};
+		CFD41ED12D5B760D00AEBC57 /* GestureDirections */ = {
+			isa = PBXGroup;
+			children = (
+				CFD41ED22D5B761700AEBC57 /* SwipeDirections.swift */,
+			);
+			path = GestureDirections;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -305,18 +333,22 @@
 				CF7512AC2D51372D009775B5 /* MainTableHeaderView.swift in Sources */,
 				CF7512BB2D5170E9009775B5 /* TaskCounterView.swift in Sources */,
 				CF7512992D50F6AF009775B5 /* AppDelegate.swift in Sources */,
+				CF2760AA2D58CE2C002A6DED /* TodoTableViewCell.swift in Sources */,
 				CF7512A72D513156009775B5 /* MainTableDataSource.swift in Sources */,
 				CF75129A2D50F6AF009775B5 /* SceneDelegate.swift in Sources */,
 				CF9EB9562D550E8A00F6C843 /* MainTableDelegate.swift in Sources */,
 				CF7512B52D51468F009775B5 /* TableItemSize.swift in Sources */,
 				CF7512AE2D513811009775B5 /* Constants.swift in Sources */,
 				CF9EB9582D55149600F6C843 /* TableStates.swift in Sources */,
-				CF7512C32D536DB3009775B5 /* Task.swift in Sources */,
+				CF7512C32D536DB3009775B5 /* Todo.swift in Sources */,
+				CFD41ECA2D5A6C4C00AEBC57 /* MainTableViewDiffableDataSource.swift in Sources */,
+				CFD41ED32D5B761700AEBC57 /* SwipeDirections.swift in Sources */,
 				CF9EB9632D560FD700F6C843 /* SystemImages.swift in Sources */,
 				CF6DF32A2D53E7D600D5F369 /* UIInsets.swift in Sources */,
-				CF7512C52D536DF1009775B5 /* TaskTableViewCell.swift in Sources */,
+				CF2760AC2D58D516002A6DED /* TodoCellSize.swift in Sources */,
 				CF75129B2D50F6AF009775B5 /* TaskFlow.xcdatamodeld in Sources */,
 				CF7512A02D50F718009775B5 /* MainView.swift in Sources */,
+				CFD41ED02D5B42E900AEBC57 /* KeyboardObserver.swift in Sources */,
 				CF7512B02D513950009775B5 /* Fonts.swift in Sources */,
 				CF6DF32C2D53E80300D5F369 /* HeaderSize.swift in Sources */,
 				CF7512B72D51476E009775B5 /* MainTableViewCell.swift in Sources */,
