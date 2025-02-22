@@ -13,11 +13,7 @@ struct Todo: Identifiable, Hashable {
     let title: String
     var section: MainTableSections = .sooner
     
-    mutating func changeToLaterSection() {
-        self.section = .later
-    }
-    
-    mutating func backToSoonerSection() {
-        self.section = .sooner
+    mutating func changeSection() {
+        section = (section == .sooner) ? .later : .sooner
     }
 }

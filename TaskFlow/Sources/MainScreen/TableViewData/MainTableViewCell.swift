@@ -9,18 +9,16 @@ import UIKit
 
 class MainTableViewCell: UITableViewCell {
     
-    private lazy var tasksTable: UITableView = {
+    private(set) lazy var tasksTable: UITableView = {
         let table = UITableView()
+
         let placeHolderLabel = UILabel()
         placeHolderLabel.text = "Nothing to do, good job!"
-        placeHolderLabel.translatesAutoresizingMaskIntoConstraints = false
+        placeHolderLabel.textAlignment = .center
         placeHolderLabel.textColor = .systemGray
         placeHolderLabel.font = .systemFont(ofSize: Fonts.default.value)
-        table.addSubview(placeHolderLabel)
-        NSLayoutConstraint.activate([
-            placeHolderLabel.centerXAnchor.constraint(equalTo: table.centerXAnchor),
-            placeHolderLabel.centerYAnchor.constraint(equalTo: table.centerYAnchor),
-        ])
+        placeHolderLabel.isHidden = false
+        
         table.backgroundView = placeHolderLabel
         table.translatesAutoresizingMaskIntoConstraints = false
         table.backgroundColor = .systemGray6
@@ -29,6 +27,7 @@ class MainTableViewCell: UITableViewCell {
         table.showsVerticalScrollIndicator = false
         table.separatorStyle = .none
         table.register(TodoTableViewCell.self, forCellReuseIdentifier: TodoTableViewCell.identifier)
+        table.rowHeight = TodoCellSize.default.value
         return table
     }()
 

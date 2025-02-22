@@ -116,19 +116,7 @@ class MainTableHeaderView: UIView {
         super.init(frame: .zero)
         setupUI()
         setupButton()
-        
-        switch section {
-        case .sooner:
-            titleLabel.text = "Sooner"
-            titleImage.image = SystemImages.soonerHeader.image
-            
-            setupGestures(direction: .up)
-        case .later:
-            titleLabel.text = "Later"
-            titleImage.image = SystemImages.laterHeader.image
-            
-            setupGestures(direction: .down)
-        }
+        setupData(section)
     }
     
     func animateImage() {
@@ -143,41 +131,19 @@ class MainTableHeaderView: UIView {
         }
     }
     
-    func changeUpperView() {
-        UIView.animate(withDuration: 0.25) {
-            self.dataStackView.alpha = 0
-        } completion: { [weak self] _ in
-            guard let self else { return }
-            dataStackView.removeFromSuperview()
+    private func setupData(_ section: MainTableSections) {
+        
+        switch section {
+        case .sooner:
+            titleLabel.text = "Sooner"
+            titleImage.image = SystemImages.soonerHeader.image
             
-            addSubview(createTodoStackView)
-            NSLayoutConstraint.activate([
-                createTodoStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-                createTodoStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
-                createTodoStackView.heightAnchor.constraint(equalTo: self.heightAnchor),
-                createTodoField.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.8)
-            ])
+            setupGestures(direction: .up)
+        case .later:
+            titleLabel.text = "Later"
+            titleImage.image = SystemImages.laterHeader.image
             
-            UIView.animate(withDuration: 0.25) { self.createTodoStackView.alpha = 1 }
-        }
-    }
-    
-    func getBackUpperView() {
-        UIView.animate(withDuration: 0.25) {
-            self.createTodoStackView.alpha = 0
-        } completion: { _ in
-            self.createTodoStackView.removeFromSuperview()
-            
-            self.addSubview(self.dataStackView)
-            NSLayoutConstraint.activate([
-                self.dataStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-                self.dataStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
-                self.dataStackView.heightAnchor.constraint(equalTo: self.heightAnchor),
-                self.dataStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.85)
-            ])
-            self.backToDefaultTableViewPosition?()
-            
-            UIView.animate(withDuration: 0.25) { self.dataStackView.alpha = 1 }
+            setupGestures(direction: .down)
         }
     }
     
@@ -251,9 +217,9 @@ class MainTableHeaderView: UIView {
     
     private func setupLayout() {
         NSLayoutConstraint.activate([
-            dataStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.85),
+            dataStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.875),
             dataStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            dataStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
+            dataStackView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
         ])
     }
 }
@@ -285,5 +251,46 @@ extension MainTableHeaderView: UITextFieldDelegate {
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
         lightbulbImage.alpha = 0.2
         return true
+    }
+}
+
+extension MainTableHeaderView {
+    
+    func changeUpperView() {
+        UIView.animate(withDuration: 0.25) {
+            self.dataStackView.alpha = 0
+        } completion: { [weak self] _ in
+            guard let self else { return }
+            dataStackView.removeFromSuperview()
+            
+            addSubview(createTodoStackView)
+            NSLayoutConstraint.activate([
+                createTodoStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+                createTodoStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
+                createTodoStackView.heightAnchor.constraint(equalTo: self.heightAnchor),
+                createTodoField.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.8)
+            ])
+            
+            UIView.animate(withDuration: 0.25) { self.createTodoStackView.alpha = 1 }
+        }
+    }
+    
+    func getBackUpperView() {
+        UIView.animate(withDuration: 0.25) {
+            self.createTodoStackView.alpha = 0
+        } completion: { _ in
+            self.createTodoStackView.removeFromSuperview()
+            
+            self.addSubview(self.dataStackView)
+            NSLayoutConstraint.activate([
+                self.dataStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+                self.dataStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
+                self.dataStackView.heightAnchor.constraint(equalTo: self.heightAnchor),
+                self.dataStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.85)
+            ])
+            self.backToDefaultTableViewPosition?()
+            
+            UIView.animate(withDuration: 0.25) { self.dataStackView.alpha = 1 }
+        }
     }
 }

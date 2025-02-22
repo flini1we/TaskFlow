@@ -33,7 +33,7 @@
 		CF9EB95A2D552B7800F6C843 /* SelectedColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9592D552B7800F6C843 /* SelectedColor.swift */; };
 		CF9EB95C2D55389F00F6C843 /* ElementsSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB95B2D55389F00F6C843 /* ElementsSize.swift */; };
 		CF9EB9632D560FD700F6C843 /* SystemImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9622D560FD700F6C843 /* SystemImages.swift */; };
-		CFD41ECA2D5A6C4C00AEBC57 /* MainTableViewDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41EC92D5A6C4C00AEBC57 /* MainTableViewDiffableDataSource.swift */; };
+		CFD41ECA2D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41EC92D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift */; };
 		CFD41ED02D5B42E900AEBC57 /* KeyboardObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41ECF2D5B42E900AEBC57 /* KeyboardObserver.swift */; };
 		CFD41ED32D5B761700AEBC57 /* SwipeDirections.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41ED22D5B761700AEBC57 /* SwipeDirections.swift */; };
 /* End PBXBuildFile section */
@@ -67,7 +67,7 @@
 		CF9EB9592D552B7800F6C843 /* SelectedColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedColor.swift; sourceTree = "<group>"; };
 		CF9EB95B2D55389F00F6C843 /* ElementsSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementsSize.swift; sourceTree = "<group>"; };
 		CF9EB9622D560FD700F6C843 /* SystemImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemImages.swift; sourceTree = "<group>"; };
-		CFD41EC92D5A6C4C00AEBC57 /* MainTableViewDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewDiffableDataSource.swift; sourceTree = "<group>"; };
+		CFD41EC92D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableDiffableDataSource.swift; sourceTree = "<group>"; };
 		CFD41ECF2D5B42E900AEBC57 /* KeyboardObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardObserver.swift; sourceTree = "<group>"; };
 		CFD41ED22D5B761700AEBC57 /* SwipeDirections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeDirections.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -154,8 +154,8 @@
 		CF7512A42D513140009775B5 /* DataSource */ = {
 			isa = PBXGroup;
 			children = (
-				CFD41EC92D5A6C4C00AEBC57 /* MainTableViewDiffableDataSource.swift */,
 				CF7512A62D513156009775B5 /* MainTableDataSource.swift */,
+				CFD41EC92D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift */,
 			);
 			path = DataSource;
 			sourceTree = "<group>";
@@ -341,7 +341,7 @@
 				CF7512AE2D513811009775B5 /* Constants.swift in Sources */,
 				CF9EB9582D55149600F6C843 /* TableStates.swift in Sources */,
 				CF7512C32D536DB3009775B5 /* Todo.swift in Sources */,
-				CFD41ECA2D5A6C4C00AEBC57 /* MainTableViewDiffableDataSource.swift in Sources */,
+				CFD41ECA2D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift in Sources */,
 				CFD41ED32D5B761700AEBC57 /* SwipeDirections.swift in Sources */,
 				CF9EB9632D560FD700F6C843 /* SystemImages.swift in Sources */,
 				CF6DF32A2D53E7D600D5F369 /* UIInsets.swift in Sources */,

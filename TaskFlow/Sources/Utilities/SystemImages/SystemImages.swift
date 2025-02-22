@@ -17,7 +17,10 @@ enum SystemImages {
          newTodo,
          addTodo,
          hideKeyboard,
-         info
+         info,
+         moveTodo(MainTableSections),
+         checkmark,
+         square
     
     var image: UIImage {
         switch self {
@@ -39,6 +42,16 @@ enum SystemImages {
             return UIImage(systemName: "keyboard.chevron.compact.down")!
         case .info:
             return UIImage(systemName: "info.circle")!
+        case .moveTodo(let section):
+            if section == .later {
+                return UIImage(systemName: "chevron.up")!
+            } else {
+                return UIImage(systemName: "chevron.down")!
+            }
+        case .checkmark:
+            return UIImage(systemName: "checkmark.square")!
+        case .square:
+            return UIImage(systemName: "square")!
         }
     }
 }

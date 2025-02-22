@@ -45,7 +45,8 @@ class MainController: UIViewController {
         }
         
         mainTableViewDelegate.sendCreatedTodoToController = { [weak self] todo in
-            print(todo.title)
+            self?.mainTableViewDataSource.todos.append(todo)
+            self?.mainTableViewDataSource.soonerTodos.append(todo)
         }
     }
     
