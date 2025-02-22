@@ -12,15 +12,15 @@ class TodoTableDiffableDataSource: NSObject {
     private var dataSource: UITableViewDiffableDataSource<MainTableSections, Todo>?
     
     var bindIdToDataSource: ((UUID) -> Void)?
+    var bindFinishingToDataSource: ((UUID) -> Void)?
     
     func setupDataSource(table: UITableView, todos: [Todo]) {
         
         dataSource = UITableViewDiffableDataSource(tableView: table, cellProvider: { tableView, indexPath, todo in
             let cell = table.dequeueReusableCell(withIdentifier: TodoTableViewCell.identifier, for: indexPath) as! TodoTableViewCell
             cell.configureWithTodo(todo)
-            cell.changeTodoSection = { [weak self] id in
-                self?.bindIdToDataSource?(id)
-            }
+            cell.changeTodoSection = { [weak self] id in self?.bindIdToDataSource?(id) }
+            cell.finishTodo = { [weak self] id in self?.bindFinishingToDataSource?(id) }
             return cell
         })
         confirmSnapshot(todos: todos)

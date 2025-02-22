@@ -10,7 +10,9 @@ import UIKit
 class TodoTableViewCell: UITableViewCell {
     
     var changeTodoSection: ((UUID) -> Void)?
+    var finishTodo: ((UUID) -> Void)?
     private let maxTreshold: CGFloat = UIScreen.main.bounds.width / 7
+    private var currentId: UUID!
     
     private lazy var bgView: UIView = {
         let view = UIView()
@@ -70,6 +72,8 @@ class TodoTableViewCell: UITableViewCell {
     }
     
     func configureWithTodo(_ todo: Todo) {
+        currentId = todo.id
+        
         todoLabel.text = todo.title
         moveToAnotherSectionButton.setImage(SystemImages.moveTodo(todo.section).image, for: .normal)
         
@@ -110,17 +114,21 @@ class TodoTableViewCell: UITableViewCell {
     
     private func setupGestures() {
         let swipeGesture = UIPanGestureRecognizer(target: self, action: #selector(rightSwipe(_:)))
-        
         self.addGestureRecognizer(swipeGesture)
     }
     
     @objc private func rightSwipe(_ gesture: UIPanGestureRecognizer) {
         let xTransition = gesture.translation(in: self).x
+        setupAnimation(xTransition, gesture)
+    }
+    
+    private func setupAnimation(_ xTransition: CGFloat, _ gesture: UIPanGestureRecognizer) {
         guard xTransition > 0 else { return }
+        
         let currentLoaded = max(0.1, xTransition / maxTreshold)
         squareImageView.alpha = currentLoaded
+        todoLabel.transform = CGAffineTransform(translationX: min(xTransition, maxTreshold), y: 0)
         
-        self.todoLabel.transform = CGAffineTransform(translationX: min(xTransition, maxTreshold), y: 0)
         UIView.animate(withDuration: 0.2) {
             if currentLoaded >= 1 {
                 self.squareImageView.transform = CGAffineTransform(scaleX: 1.35, y: 1.35).concatenating(CGAffineTransform(rotationAngle: .pi / 6))
@@ -128,12 +136,25 @@ class TodoTableViewCell: UITableViewCell {
                 self.squareImageView.transform = .identity
             }
         }
+        
         if gesture.state == .ended {
-            UIView.animate(withDuration: 0.2) {
-                self.todoLabel.transform = .identity
-                self.squareImageView.alpha = 0.1
-                self.squareImageView.transform = .identity
+            if currentLoaded < 1 {
+                backToDefaultAnimation()
+            } else {
+                self.finishTodo?(self.currentId)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+                    self?.backToDefaultAnimation()
+                }
             }
+        }
+    }
+    
+    private func backToDefaultAnimation() {
+        UIView.animate(withDuration: 0.2) {
+            self.todoLabel.transform = .identity
+            self.squareImageView.alpha = 0.1
+            self.squareImageView.transform = .identity
         }
     }
 }
