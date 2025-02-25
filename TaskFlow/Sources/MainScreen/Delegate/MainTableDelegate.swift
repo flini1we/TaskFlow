@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainTableDelegate: NSObject, UITableViewDelegate {
+final class MainTableDelegate: NSObject, UITableViewDelegate {
         
     private var mainViewModel: MainViewModel
     private(set) var firstHeader = MainTableHeaderView(in: .sooner)
@@ -45,6 +45,7 @@ class MainTableDelegate: NSObject, UITableViewDelegate {
         super.init()
         setupActions()
         setupBindings()
+        setupScrollView()
     }
     
     private func setupActions() {
@@ -68,6 +69,11 @@ class MainTableDelegate: NSObject, UITableViewDelegate {
         }
     }
     
+    private func setupScrollView() {
+        firstHeader.mainScrollView.alwaysBounceVertical = false
+        secondHeader.mainScrollView.delegate = self
+    }
+    
     func updateLowerButton() {
         if !secondHeader.isHalfScreen {
             secondHeader.isHalfScreen.toggle()
@@ -85,5 +91,32 @@ class MainTableDelegate: NSObject, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         mainViewModel.calculateCellsHeight(at: indexPath, withState: currentState)
+    }
+}
+
+extension MainTableDelegate {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scrollView.contentOffset.y = mainViewModel.controllScrollingValue(scrollView.contentOffset.y)
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        mainViewModel.changeStateAccordingToDragging(scrolledValue: scrollView.contentOffset.y, currentState: &currentState)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
+        }
+        
+        mainViewModel.lastSectionTapped = .later
+        switch self.currentState {
+        case .default:
+            secondHeader.isHalfScreen = true
+            firstHeader.isHalfScreen = true
+        case .lowerOpened:
+            secondHeader.isHalfScreen = false
+        case .upperOpened:
+            firstHeader.isHalfScreen = false
+        default: break
+        }
     }
 }

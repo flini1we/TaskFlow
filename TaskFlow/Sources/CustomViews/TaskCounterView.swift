@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TaskCounterView: UIView {
+final class TaskCounterView: UIView {
     
     private lazy var taskCount: UILabel = {
         let label = UILabel()

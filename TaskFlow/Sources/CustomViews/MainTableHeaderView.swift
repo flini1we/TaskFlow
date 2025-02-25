@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainTableHeaderView: UIView {
+final class MainTableHeaderView: UIView {
     
     var isHalfScreen = true {
         didSet {
@@ -22,8 +22,17 @@ class MainTableHeaderView: UIView {
         }
     }
     var sendCreatedTodoToDelegate: ((Todo) -> Void)?
-    var onButtonTapped: ((Bool) -> Void)?
     var backToDefaultTableViewPosition: (() -> Void)?
+    var changeTodosCount: ((Int) -> Void)?
+    
+    lazy var mainScrollView: UIScrollView = {
+        let scroll = UIScrollView()
+        scroll.translatesAutoresizingMaskIntoConstraints = false
+        scroll.alwaysBounceVertical = true
+        scroll.showsVerticalScrollIndicator = false
+        scroll.backgroundColor = .systemBackground
+        return scroll
+    }()
     
     private lazy var titleImage: UIImageView = {
         let image = UIImageView()
@@ -119,7 +128,11 @@ class MainTableHeaderView: UIView {
         setupData(section)
     }
     
-    func animateImage() {
+    func setUpdatedTodosCount(_ value: Int) {
+        tasksCount.updateTaskCount(newValue: value)
+    }
+    
+    private func animateImage() {
         UIView.animate(withDuration: 0.1) {
             self.upOrDownButton.transform = CGAffineTransform(rotationAngle: .pi)
         } completion: { _ in
@@ -137,68 +150,16 @@ class MainTableHeaderView: UIView {
         case .sooner:
             titleLabel.text = "Sooner"
             titleImage.image = SystemImages.soonerHeader.image
-            
-            setupGestures(direction: .up)
         case .later:
             titleLabel.text = "Later"
             titleImage.image = SystemImages.laterHeader.image
-            
-            setupGestures(direction: .down)
         }
     }
     
-    private func setupButton() {
-        upOrDownButton.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            onButtonTapped?(isHalfScreen)
-        }, for: .touchUpInside)
-        upOrDownButton.setImage(SystemImages.arrowsUp.image, for: .normal)
-    }
+    private func setupButton() { upOrDownButton.setImage(SystemImages.arrowsUp.image, for: .normal) }
     
-    private func setupGestures(direction: SwipeDirection) {
-        if direction == .up {
-            let downSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleUpperHeaderGesture(_:)))
-            let upSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleUpperHeaderGesture(_:)))
-            
-            downSwipeGesture.direction = .down
-            upSwipeGesture.direction = .up
-            
-            self.addGestureRecognizer(downSwipeGesture)
-            self.addGestureRecognizer(upSwipeGesture)
-        } else {
-            let downSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleLowerHeaderGesture(_:)))
-            let upSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleLowerHeaderGesture(_:)))
-            
-            downSwipeGesture.direction = .down
-            upSwipeGesture.direction = .up
-            
-            self.addGestureRecognizer(downSwipeGesture)
-            self.addGestureRecognizer(upSwipeGesture)
-        }
-    }
-    
-    @objc private func handleUpperHeaderGesture(_ gesture: UISwipeGestureRecognizer) {
-        let direction = gesture.direction
-        if isHalfScreen {
-            if direction == .down {
-                onButtonTapped?(isHalfScreen)
-            }
-        } else {
-            onButtonTapped?(isHalfScreen)
-        }
-    }
-    
-    @objc private func handleLowerHeaderGesture(_ gesture: UISwipeGestureRecognizer) {
-        let direction = gesture.direction
-        if isHalfScreen {
-            if direction == .up {
-                onButtonTapped?(isHalfScreen)
-            }
-        } else {
-            if direction == .down {
-                onButtonTapped?(isHalfScreen)
-            }
-        }
+    func addActionToUpOrDownButton(_ action: UIAction) {
+        upOrDownButton.addAction(action, for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -212,14 +173,22 @@ class MainTableHeaderView: UIView {
     }
     
     private func setupSubviews() {
-        addSubview(dataStackView)
+        addSubview(mainScrollView)
+        mainScrollView.addSubview(dataStackView)
     }
     
     private func setupLayout() {
         NSLayoutConstraint.activate([
-            dataStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.875),
-            dataStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            dataStackView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            mainScrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            mainScrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            mainScrollView.topAnchor.constraint(equalTo: self.topAnchor),
+            mainScrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+        ])
+        
+        NSLayoutConstraint.activate([
+            dataStackView.widthAnchor.constraint(equalTo: mainScrollView.widthAnchor, multiplier: 0.875),
+            dataStackView.centerYAnchor.constraint(equalTo: mainScrollView.centerYAnchor),
+            dataStackView.centerXAnchor.constraint(equalTo: mainScrollView.centerXAnchor),
         ])
     }
 }
@@ -240,7 +209,7 @@ extension MainTableHeaderView: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let todoTitle = textField.text, !todoTitle.isEmpty {
-            createdTodo = Todo(id: UUID(), title: todoTitle)
+            createdTodo = Todo(id: UUID(), title: todoTitle, section: .sooner)
         }
         getBackUpperView()
         textField.text = ""
@@ -283,10 +252,9 @@ extension MainTableHeaderView {
             
             self.addSubview(self.dataStackView)
             NSLayoutConstraint.activate([
+                self.dataStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.875),
                 self.dataStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-                self.dataStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
-                self.dataStackView.heightAnchor.constraint(equalTo: self.heightAnchor),
-                self.dataStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.85)
+                self.dataStackView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             ])
             self.backToDefaultTableViewPosition?()
             

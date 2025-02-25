@@ -7,11 +7,10 @@
 
 import Foundation
 
-class MainViewModel: KeyboardObservable {
-    
+final class MainViewModel: KeyboardObservable {
     var keyboardObserver: KeyboardObserver?
+    var lastSectionTapped: MainTableSections?
     
-    private var lastSectionTapped: MainTableSections?
     private var tableState: TableState = .default {
         didSet {
             tableStateOnChange?(tableState)
@@ -49,10 +48,10 @@ class MainViewModel: KeyboardObservable {
         
         switch state {
         case .default:
-            return TableItemSize.default.value
+            return TableItemSize.default.value - 1
         case .upperOpened:
             if indexPath.section == 0 {
-                return TableItemSize.fullScreen.value
+                return TableItemSize.fullScreen.value - 2
             } else {
                 return TableItemSize.none.value
             }
@@ -60,7 +59,7 @@ class MainViewModel: KeyboardObservable {
             if indexPath.section == 0 {
                 return TableItemSize.none.value
             } else {
-                return TableItemSize.fullScreen.value
+                return TableItemSize.fullScreen.value - 2
             }
         case .addingTask:
             return TableItemSize.default.value / 2
@@ -75,5 +74,32 @@ class MainViewModel: KeyboardObservable {
         }, onHide: {
             onHideKeyboard?()
         })
+    }
+    
+    func controllScrollingValue(_ value: CGFloat) -> CGFloat {
+        
+        if value > 10 {
+            return 10
+        } else if value < -10 {
+            return -10
+        }
+        return value
+    }
+    
+    func changeStateAccordingToDragging(scrolledValue: CGFloat, currentState: inout TableState) {
+        
+        if scrolledValue >= 10 {
+            if currentState == .default {
+                currentState = .lowerOpened
+            } else if currentState == .upperOpened {
+                currentState = .default
+            }
+        } else if scrolledValue <= -10 {
+             if currentState == .default {
+                currentState = .upperOpened
+            } else if currentState == .lowerOpened {
+                currentState = .default
+            }
+        }
     }
 }

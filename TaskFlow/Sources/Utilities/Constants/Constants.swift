@@ -9,13 +9,16 @@ import UIKit
 
 enum Constants {
     
-    case paddingSmall,
+    case paddingTiny,
+         paddingSmall,
          paddingMedium,
          paddingLarge,
          paddingMax
     
     var value: CGFloat {
         switch self {
+        case .paddingTiny:
+            return 5
         case .paddingSmall:
             return 10
         case .paddingMedium:

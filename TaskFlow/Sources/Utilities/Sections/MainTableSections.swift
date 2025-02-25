@@ -8,8 +8,8 @@
 import Foundation
 
 
-enum MainTableSections {
+enum MainTableSections: String {
     
-    case sooner,
-         later
+    case sooner = "sooner",
+         later = "later"
 }

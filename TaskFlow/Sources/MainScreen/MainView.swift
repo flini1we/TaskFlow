@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainView: UIView {
+final class MainView: UIView {
     
     
     var changeView: (() -> Void)?
@@ -102,7 +102,7 @@ class MainView: UIView {
         animateToolbarButtonChanging(toolBar)
     }
     
-    func lowerToolbar() {
+    func hideToolbar() {
         UIView.animate(withDuration: 0.25) {
             self.toolbarBottomConstraint.constant = 0
             self.layoutIfNeeded()

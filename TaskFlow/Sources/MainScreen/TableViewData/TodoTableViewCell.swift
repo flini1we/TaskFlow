@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TodoTableViewCell: UITableViewCell {
+final class TodoTableViewCell: UITableViewCell {
     
     var changeTodoSection: ((UUID) -> Void)?
     var finishTodo: ((UUID) -> Void)?
@@ -49,6 +49,7 @@ class TodoTableViewCell: UITableViewCell {
     private lazy var moveToAnotherSectionButton: UIButton = {
         let button = UIButton()
         button.tintColor = SelectedColor.backgroundColor
+        button.backgroundColor = .systemBackground
         return button
     }()
     
@@ -61,6 +62,10 @@ class TodoTableViewCell: UITableViewCell {
         stack.distribution = .equalSpacing
         return stack
     }()
+    
+    override func prepareForReuse() {
+        moveToAnotherSectionButton.removeTarget(nil, action: nil, for: .allEvents)
+    }
         
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -97,18 +102,25 @@ class TodoTableViewCell: UITableViewCell {
     
     private func setupLayout() {
         NSLayoutConstraint.activate([
-            bgView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constants.paddingSmall.value / 2),
+            bgView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constants.paddingTiny.value),
             bgView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            bgView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.paddingSmall.value / 2),
-            bgView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.paddingSmall.value / 2),
-            bgView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Constants.paddingSmall.value / 4),
+            bgView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.paddingTiny.value),
+            bgView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.paddingTiny.value),
+            bgView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Constants.paddingTiny.value / 4),
         ])
         
         NSLayoutConstraint.activate([
-            dataStackView.topAnchor.constraint(equalTo: bgView.topAnchor, constant: Constants.paddingSmall.value / 2),
+            dataStackView.topAnchor.constraint(equalTo: bgView.topAnchor, constant: Constants.paddingTiny.value),
             dataStackView.leadingAnchor.constraint(equalTo: bgView.leadingAnchor, constant: Constants.paddingSmall.value),
             dataStackView.trailingAnchor.constraint(equalTo: bgView.trailingAnchor, constant: -Constants.paddingSmall.value),
-            dataStackView.bottomAnchor.constraint(equalTo: bgView.bottomAnchor, constant: -Constants.paddingSmall.value / 2),
+            dataStackView.bottomAnchor.constraint(equalTo: bgView.bottomAnchor, constant: -Constants.paddingTiny.value),
+        ])
+        
+        moveToAnotherSectionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: self.intrinsicContentSize.width).isActive = true
+        
+        NSLayoutConstraint.activate([
+            todoLabel.leadingAnchor.constraint(equalTo: squareImageView.trailingAnchor, constant: Constants.paddingSmall.value),
+            todoLabel.trailingAnchor.constraint(lessThanOrEqualTo: moveToAnotherSectionButton.leadingAnchor, constant: -Constants.paddingTiny.value)
         ])
     }
     
@@ -141,7 +153,7 @@ class TodoTableViewCell: UITableViewCell {
             if currentLoaded < 1 {
                 backToDefaultAnimation()
             } else {
-                self.finishTodo?(self.currentId)
+                finishTodo?(self.currentId)
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
                     self?.backToDefaultAnimation()

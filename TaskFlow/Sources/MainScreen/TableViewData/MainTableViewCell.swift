@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainTableViewCell: UITableViewCell {
+final class MainTableViewCell: UITableViewCell {
     
     private(set) lazy var tasksTable: UITableView = {
         let table = UITableView()
@@ -20,6 +20,7 @@ class MainTableViewCell: UITableViewCell {
         placeHolderLabel.isHidden = false
         
         table.backgroundView = placeHolderLabel
+        table.dragInteractionEnabled = true
         table.translatesAutoresizingMaskIntoConstraints = false
         table.backgroundColor = .systemGray6
         table.layer.cornerRadius = Constants.paddingSmall.value

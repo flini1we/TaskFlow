@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TodoTableDiffableDataSource: NSObject {
+final class TodoTableDiffableDataSource: NSObject {
     
     private var dataSource: UITableViewDiffableDataSource<MainTableSections, Todo>?
     
@@ -23,16 +23,17 @@ class TodoTableDiffableDataSource: NSObject {
             cell.finishTodo = { [weak self] id in self?.bindFinishingToDataSource?(id) }
             return cell
         })
-        confirmSnapshot(todos: todos)
+        confirmSnapshot(todos: todos, animation: false)
     }
     
-    func confirmSnapshot(todos: [Todo]) {
+    func confirmSnapshot(todos: [Todo], animation: Bool) {
     
         var snapshot = NSDiffableDataSourceSnapshot<MainTableSections, Todo>()
         if !todos.isEmpty {
             snapshot.appendSections([todos[0].section])
             snapshot.appendItems(todos)
         }
-        dataSource?.apply(snapshot, animatingDifferences: true)
+        
+        dataSource?.applySnapshotUsingReloadData(snapshot)
     }
 }

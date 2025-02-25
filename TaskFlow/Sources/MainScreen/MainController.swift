@@ -7,13 +7,13 @@
 
 import UIKit
 
-class MainController: UIViewController {
+final class MainController: UIViewController {
     
     private var mainView: MainView {
         view as! MainView
     }
     private let mainViewModel = MainViewModel()
-    private lazy var mainTableViewDataSource = MainTableDataSource()
+    private lazy var mainTableViewDataSource = MainTableDataSource(viewModel: mainViewModel)
     private lazy var mainTableViewDelegate = MainTableDelegate(viewModel: mainViewModel)
     
     override func loadView() {
@@ -25,8 +25,24 @@ class MainController: UIViewController {
         mainView.mainTableView.delegate = mainTableViewDelegate
         
         setupDelegateBindings()
+        setupDataSourceBindings()
         setupViewBindings()
         setupViewModelObserver()
+        setupTableDropDelegates()
+    }
+    
+    private lazy var firstHeaderAction = UIAction { [weak self] _ in
+        guard let self else { return }
+        
+        mainViewModel.handleHeaderButtonTapped(for: .sooner, isHalfScreen: mainTableViewDelegate.firstHeader.isHalfScreen)
+        mainTableViewDelegate.firstHeader.isHalfScreen.toggle()
+    }
+    
+    private lazy var secondHeaderAction = UIAction { [weak self] _ in
+        guard let self else { return }
+        
+        mainViewModel.handleHeaderButtonTapped(for: .later, isHalfScreen: mainTableViewDelegate.secondHeader.isHalfScreen)
+        mainTableViewDelegate.secondHeader.isHalfScreen.toggle()
     }
     
     private func setupDelegateBindings() {
@@ -35,18 +51,12 @@ class MainController: UIViewController {
             self?.mainView.updateMainTableView()
         }
         
-        mainTableViewDelegate.firstHeader.onButtonTapped = { [weak self] isHalfScreen in
-            self?.mainViewModel.handleHeaderButtonTapped(for: .sooner, isHalfScreen: isHalfScreen)
-            self?.mainTableViewDelegate.firstHeader.isHalfScreen.toggle()
-        }
-        mainTableViewDelegate.secondHeader.onButtonTapped = { [weak self] isHalfScreen in
-            self?.mainViewModel.handleHeaderButtonTapped(for: .later, isHalfScreen: isHalfScreen)
-            self?.mainTableViewDelegate.secondHeader.isHalfScreen.toggle()
-        }
+        mainTableViewDelegate.firstHeader.addActionToUpOrDownButton(firstHeaderAction)
+        mainTableViewDelegate.secondHeader.addActionToUpOrDownButton(secondHeaderAction)
         
         mainTableViewDelegate.sendCreatedTodoToController = { [weak self] todo in
-            self?.mainTableViewDataSource.todos.append(todo)
             self?.mainTableViewDataSource.soonerTodos.append(todo)
+            self?.mainTableViewDataSource.updateDragTableDelegateData()
         }
     }
     
@@ -65,12 +75,33 @@ class MainController: UIViewController {
         }
     }
     
+    private func setupDataSourceBindings() {
+        
+        mainTableViewDataSource.updateUpperHeaderTodoCount = { [weak self] value in
+            self?.mainTableViewDelegate.firstHeader.setUpdatedTodosCount(value)
+        }
+        
+        mainTableViewDataSource.updateLowerHeaderTodoCount = { [weak self] value in
+            self?.mainTableViewDelegate.secondHeader.setUpdatedTodosCount(value)
+        }
+    }
+    
     private func setupViewModelObserver() {
         
         mainViewModel.setupObserver { [weak mainView] keyboardFrame in
             mainView?.raiseToolbar(keyboardFrame.height)
         } onHideKeyboard: { [weak mainView] in
-             mainView?.lowerToolbar()
+             mainView?.hideToolbar()
+        }
+    }
+    
+    private func setupTableDropDelegates() {
+        
+        mainTableViewDataSource.soonerSectionDragDropDelegate.bindUpdatedDataToDelegate = { [weak self] todos in
+            self?.mainTableViewDataSource.soonerTodos = todos
+        }
+        mainTableViewDataSource.laterSectionDragDropDelegate.bindUpdatedDataToDelegate = { [weak self] todos in
+            self?.mainTableViewDataSource.laterTodos = todos
         }
     }
 }
