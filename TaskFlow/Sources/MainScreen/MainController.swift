@@ -12,7 +12,8 @@ final class MainController: UIViewController {
     private var mainView: MainView {
         view as! MainView
     }
-    private let mainViewModel = MainViewModel()
+    private var mainViewModel: MainViewModel!
+    
     private lazy var mainTableViewDataSource = MainTableDataSource(viewModel: mainViewModel)
     private lazy var mainTableViewDelegate = MainTableDelegate(viewModel: mainViewModel)
     
@@ -20,42 +21,42 @@ final class MainController: UIViewController {
         view = MainView()
     }
     
-    override func viewDidLoad() {        
+    init(viewModel: MainViewModel) {
+        super.init(nibName: nil, bundle: nil)
+        self.mainViewModel = viewModel
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
         mainView.mainTableView.dataSource = mainTableViewDataSource
         mainView.mainTableView.delegate = mainTableViewDelegate
         
         setupDelegateBindings()
-        setupDataSourceBindings()
         setupViewBindings()
+        setupViewModelBindings()
+        setupTableDragDropDelegates()
         setupViewModelObserver()
-        setupTableDropDelegates()
     }
     
-    private lazy var firstHeaderAction = UIAction { [weak self] _ in
-        guard let self else { return }
-        
-        mainViewModel.handleHeaderButtonTapped(for: .sooner, isHalfScreen: mainTableViewDelegate.firstHeader.isHalfScreen)
-        mainTableViewDelegate.firstHeader.isHalfScreen.toggle()
-    }
-    
-    private lazy var secondHeaderAction = UIAction { [weak self] _ in
-        guard let self else { return }
-        
-        mainViewModel.handleHeaderButtonTapped(for: .later, isHalfScreen: mainTableViewDelegate.secondHeader.isHalfScreen)
-        mainTableViewDelegate.secondHeader.isHalfScreen.toggle()
+    override func viewDidAppear(_ animated: Bool) {
+        mainViewModel.updateBothViewData()
     }
     
     private func setupDelegateBindings() {
         
         mainTableViewDelegate.reloadTable = { [weak self] in
-            self?.mainView.updateMainTableView()
+            self?.mainView.updateTable()
         }
         
-        mainTableViewDelegate.firstHeader.addActionToUpOrDownButton(firstHeaderAction)
-        mainTableViewDelegate.secondHeader.addActionToUpOrDownButton(secondHeaderAction)
+        mainTableViewDelegate.reloadHeaders = { [weak self] in
+            self?.mainView.reloadHeaders()
+        }
         
         mainTableViewDelegate.sendCreatedTodoToController = { [weak self] todo in
-            self?.mainTableViewDataSource.soonerTodos.append(todo)
+            self?.mainViewModel.soonerTodos.append(todo)
             self?.mainTableViewDataSource.updateDragTableDelegateData()
         }
     }
@@ -63,26 +64,39 @@ final class MainController: UIViewController {
     private func setupViewBindings() {
         
         mainView.changeView = { [weak self] in
-            self?.mainTableViewDelegate.firstHeader.changeUpperView()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                self?.mainTableViewDelegate.firstHeader.createTodoField.becomeFirstResponder()
-                self?.mainTableViewDelegate.currentState = .addingTask
-            }
+            self?.updateState(state: .addingTask)
         }
         
         mainView.getViewBack = { [weak self] in
-            self?.mainTableViewDelegate.firstHeader.getBackUpperView()
+            self?.updateState(state: .default)
         }
     }
     
-    private func setupDataSourceBindings() {
+    private func setupViewModelBindings() {
         
-        mainTableViewDataSource.updateUpperHeaderTodoCount = { [weak self] value in
-            self?.mainTableViewDelegate.firstHeader.setUpdatedTodosCount(value)
+        mainViewModel.updateBackground = { [weak self] section in guard let self else { return }
+            mainTableViewDataSource.checkTableBackground(section, mainViewModel.getTodos(in: section))
         }
         
-        mainTableViewDataSource.updateLowerHeaderTodoCount = { [weak self] value in
-            self?.mainTableViewDelegate.secondHeader.setUpdatedTodosCount(value)
+        mainViewModel.updateTodos = { [weak self] section, todos in guard let self else { return }
+            let currentDataSource = (section == .sooner) ? mainTableViewDataSource.soonerSectionDataSource
+                                                         : mainTableViewDataSource.laterSectionDataSource
+            currentDataSource.confirmSnapshot(todos: todos, animation: true)
+        }
+        
+        mainViewModel.updateCounter = { [weak self] section in guard let self else { return }
+            let headerToUpdate = (section == .sooner) ? mainTableViewDelegate.soonerSectionHeader : mainTableViewDelegate.laterSectionHeader
+            headerToUpdate.setUpdatedTodosCount(mainViewModel.getTodos(in: section).count)
+        }
+    }
+    
+    private func setupTableDragDropDelegates() {
+        
+        mainTableViewDataSource.soonerSectionDragDropDelegate.bindUpdatedDataToDelegate = { [weak self] todos in
+            self?.mainViewModel.soonerTodos = todos
+        }
+        mainTableViewDataSource.laterSectionDragDropDelegate.bindUpdatedDataToDelegate = { [weak self] todos in
+            self?.mainViewModel.laterTodos = todos
         }
     }
     
@@ -95,13 +109,9 @@ final class MainController: UIViewController {
         }
     }
     
-    private func setupTableDropDelegates() {
+    fileprivate func updateState(state: TableState) {
         
-        mainTableViewDataSource.soonerSectionDragDropDelegate.bindUpdatedDataToDelegate = { [weak self] todos in
-            self?.mainTableViewDataSource.soonerTodos = todos
-        }
-        mainTableViewDataSource.laterSectionDragDropDelegate.bindUpdatedDataToDelegate = { [weak self] todos in
-            self?.mainTableViewDataSource.laterTodos = todos
-        }
+        mainTableViewDelegate.currentState = state
+        mainView.reloadHeaders()
     }
 }

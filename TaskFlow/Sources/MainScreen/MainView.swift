@@ -88,7 +88,11 @@ final class MainView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateMainTableView() {
+    func reloadHeaders() {
+        mainTableView.reloadSections(IndexSet(integersIn: 0..<1), with: .fade)
+    }
+    
+    func updateTable() {
         mainTableView.beginUpdates()
         mainTableView.endUpdates()
     }

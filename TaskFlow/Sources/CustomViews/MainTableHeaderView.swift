@@ -14,15 +14,6 @@ final class MainTableHeaderView: UIView {
             animateImage()
         }
     }
-    var createdTodo: Todo? {
-        didSet {
-            if let createdTodo {
-                sendCreatedTodoToDelegate?(createdTodo)
-            }
-        }
-    }
-    var sendCreatedTodoToDelegate: ((Todo) -> Void)?
-    var backToDefaultTableViewPosition: (() -> Void)?
     var changeTodosCount: ((Int) -> Void)?
     
     lazy var mainScrollView: UIScrollView = {
@@ -86,38 +77,6 @@ final class MainTableHeaderView: UIView {
         ])
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.distribution = .equalSpacing
-        return stack
-    }()
-    
-    lazy var createTodoField: UITextField = {
-        let field = UITextField()
-        field.backgroundColor = .systemBackground
-        field.borderStyle = .none
-        field.placeholder = "Add a todo"
-        field.textAlignment = .left
-        field.returnKeyType = .continue
-        field.clearButtonMode = .whileEditing
-        field.delegate = self
-        field.font = .boldSystemFont(ofSize: Fonts.default.value)
-        return field
-    }()
-    
-    private lazy var lightbulbImage: UIImageView = {
-        let lightbulbImage = UIImageView(image: SystemImages.newTodo.image)
-        lightbulbImage.tintColor = .systemYellow
-        lightbulbImage.alpha = 0.2
-        return lightbulbImage
-    }()
-    
-    private lazy var createTodoStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [
-            lightbulbImage,
-            createTodoField
-        ])
-        stack.spacing = Constants.paddingSmall.value
-        stack.alignment = .center
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.alpha = 0
         return stack
     }()
     
@@ -190,75 +149,5 @@ final class MainTableHeaderView: UIView {
             dataStackView.centerYAnchor.constraint(equalTo: mainScrollView.centerYAnchor),
             dataStackView.centerXAnchor.constraint(equalTo: mainScrollView.centerXAnchor),
         ])
-    }
-}
-
-extension MainTableHeaderView: UITextFieldDelegate {
-    
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let currentText = textField.text ?? ""
-        let newText = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-        
-        if newText.count >= currentText.count {
-            lightbulbImage.alpha += 0.05
-        } else {
-            lightbulbImage.alpha -= 0.05
-        }
-        return true
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let todoTitle = textField.text, !todoTitle.isEmpty {
-            createdTodo = Todo(id: UUID(), title: todoTitle, section: .sooner)
-        }
-        getBackUpperView()
-        textField.text = ""
-        lightbulbImage.alpha = 0.2
-        return true
-    }
-    
-    func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        lightbulbImage.alpha = 0.2
-        return true
-    }
-}
-
-extension MainTableHeaderView {
-    
-    func changeUpperView() {
-        UIView.animate(withDuration: 0.25) {
-            self.dataStackView.alpha = 0
-        } completion: { [weak self] _ in
-            guard let self else { return }
-            dataStackView.removeFromSuperview()
-            
-            addSubview(createTodoStackView)
-            NSLayoutConstraint.activate([
-                createTodoStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-                createTodoStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingMedium.value),
-                createTodoStackView.heightAnchor.constraint(equalTo: self.heightAnchor),
-                createTodoField.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.8)
-            ])
-            
-            UIView.animate(withDuration: 0.25) { self.createTodoStackView.alpha = 1 }
-        }
-    }
-    
-    func getBackUpperView() {
-        UIView.animate(withDuration: 0.25) {
-            self.createTodoStackView.alpha = 0
-        } completion: { _ in
-            self.createTodoStackView.removeFromSuperview()
-            
-            self.addSubview(self.dataStackView)
-            NSLayoutConstraint.activate([
-                self.dataStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.875),
-                self.dataStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-                self.dataStackView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            ])
-            self.backToDefaultTableViewPosition?()
-            
-            UIView.animate(withDuration: 0.25) { self.dataStackView.alpha = 1 }
-        }
     }
 }

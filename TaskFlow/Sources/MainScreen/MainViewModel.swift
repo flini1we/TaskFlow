@@ -8,6 +8,8 @@
 import Foundation
 
 final class MainViewModel: KeyboardObservable {
+    
+    // MARK: MainTableDelegateData
     var keyboardObserver: KeyboardObserver?
     var lastSectionTapped: MainTableSections?
     
@@ -17,14 +19,13 @@ final class MainViewModel: KeyboardObservable {
         }
     }
     var tableStateOnChange: ((TableState) -> Void)?
-    var changeLowerButton: (() -> Void)?
-    var changeUpperButton: (() -> Void)?
-    
+    var reloadButtonImage: ((MainTableSections) -> Void)?
+
     func handleHeaderButtonTapped(for section: MainTableSections, isHalfScreen: Bool) {
         
         if section == .sooner {
             if lastSectionTapped == .later {
-                changeLowerButton?()
+                reloadButtonImage?(.later)
             }
             if isHalfScreen {
                 tableState = .upperOpened
@@ -33,7 +34,7 @@ final class MainViewModel: KeyboardObservable {
             }
         } else {
             if lastSectionTapped == .sooner {
-                changeUpperButton?()
+                reloadButtonImage?(.sooner)
             }
             if isHalfScreen {
                 tableState = .lowerOpened
@@ -68,7 +69,6 @@ final class MainViewModel: KeyboardObservable {
     
     func setupObserver(onShowKeyboard: ((CGRect) -> Void)?,
                        onHideKeyboard: (() -> Void)?) {
-        
         keyboardObserver = KeyboardObserver(onShow: { keyboardFrame in
             onShowKeyboard?(keyboardFrame)
         }, onHide: {
@@ -86,20 +86,107 @@ final class MainViewModel: KeyboardObservable {
         return value
     }
     
-    func changeStateAccordingToDragging(scrolledValue: CGFloat, currentState: inout TableState) {
+    func changeStateAccordingToDragging(scrolledValue: CGFloat, currentState: inout TableState) -> Bool {
         
+        let didSectionChanged = false
         if scrolledValue >= 10 {
             if currentState == .default {
                 currentState = .lowerOpened
+                self.lastSectionTapped = .later
             } else if currentState == .upperOpened {
                 currentState = .default
+                self.lastSectionTapped = .later
             }
+            return !didSectionChanged
         } else if scrolledValue <= -10 {
-             if currentState == .default {
+        
+            if currentState == .default {
                 currentState = .upperOpened
+                self.lastSectionTapped = .later
             } else if currentState == .lowerOpened {
                 currentState = .default
+                self.lastSectionTapped = .later
             }
+            return !didSectionChanged
         }
+        return didSectionChanged
+    }
+    
+    // MARK: MainTableDataSourceData
+    var updateTodos: ((MainTableSections, [Todo]) -> Void)?
+    var updateBackground: ((MainTableSections) -> Void)?
+    var updateCounter: ((MainTableSections) -> Void)?
+    
+    lazy var soonerTodos = Todo.getTodos().filter { $0.section == .sooner } {
+        didSet {
+            updateTodos?(.sooner, soonerTodos)
+            updateViewData(.sooner)
+        }
+    }
+    
+    lazy var laterTodos = Todo.getTodos().filter { $0.section == .later } {
+        didSet {
+            updateTodos?(.later, laterTodos)
+            updateViewData(.later)
+        }
+    }
+    
+    func updateBothViewData() {
+        
+        updateViewData(.sooner)
+        updateViewData(.later)
+    }
+    
+    func getTodos(in section: MainTableSections) -> [Todo] {
+        section == .sooner ? soonerTodos : laterTodos
+    }
+    
+    func changeSection(from section: MainTableSections, with id: UUID) {
+        
+        if section == .sooner {
+        
+            guard let index = soonerTodos.firstIndex(where: { $0.id == id }) else { return }
+            
+            var movedTodo = soonerTodos[index]
+            movedTodo.changeSection()
+            
+            soonerTodos.remove(at: index)
+            laterTodos.append(movedTodo)
+        } else {
+            
+            guard let index = laterTodos.firstIndex(where: { $0.id == id }) else { return }
+            
+            var movedTodo = laterTodos[index]
+            movedTodo.changeSection()
+            
+            laterTodos.remove(at: index)
+            soonerTodos.append(movedTodo)
+        }
+    }
+    
+    func removeAndFinishTodo(from section: MainTableSections, with id: UUID) {
+        
+        if section == .sooner {
+        
+            guard let index = soonerTodos.firstIndex(where: { $0.id == id }) else { return }
+            
+            soonerTodos[index].finishTask()
+            soonerTodos.remove(at: index)
+        } else {
+            
+            guard let index = laterTodos.firstIndex(where: { $0.id == id }) else { return }
+            
+            laterTodos[index].finishTask()
+            laterTodos.remove(at: index)
+        }
+    }
+}
+
+private extension MainViewModel {
+    
+    func updateViewData(_ section: MainTableSections) {
+        
+        updateBackground?(section)
+        updateCounter?(section)
     }
 }

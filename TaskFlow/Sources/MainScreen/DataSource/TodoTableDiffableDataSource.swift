@@ -23,7 +23,7 @@ final class TodoTableDiffableDataSource: NSObject {
             cell.finishTodo = { [weak self] id in self?.bindFinishingToDataSource?(id) }
             return cell
         })
-        confirmSnapshot(todos: todos, animation: false)
+        confirmSnapshot(todos: todos, animation: true)
     }
     
     func confirmSnapshot(todos: [Todo], animation: Bool) {
@@ -34,6 +34,6 @@ final class TodoTableDiffableDataSource: NSObject {
             snapshot.appendItems(todos)
         }
         
-        dataSource?.applySnapshotUsingReloadData(snapshot)
+        dataSource?.apply(snapshot, animatingDifferences: animation)
     }
 }

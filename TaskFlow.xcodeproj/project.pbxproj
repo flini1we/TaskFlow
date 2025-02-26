@@ -30,6 +30,7 @@
 		CF7512BB2D5170E9009775B5 /* TaskCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512BA2D5170E9009775B5 /* TaskCounterView.swift */; };
 		CF7512C32D536DB3009775B5 /* Todo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7512C12D536DB3009775B5 /* Todo.swift */; };
 		CF9197512D6E0FA60089220C /* DragAndDropDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9197502D6E0FA60089220C /* DragAndDropDelegate.swift */; };
+		CF9197532D6E3D570089220C /* AddingTodoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9197522D6E3D570089220C /* AddingTodoView.swift */; };
 		CF9EB9562D550E8A00F6C843 /* MainTableDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9552D550E8A00F6C843 /* MainTableDelegate.swift */; };
 		CF9EB9582D55149600F6C843 /* TableStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9572D55149600F6C843 /* TableStates.swift */; };
 		CF9EB95A2D552B7800F6C843 /* SelectedColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9592D552B7800F6C843 /* SelectedColor.swift */; };
@@ -67,6 +68,7 @@
 		CF7512BA2D5170E9009775B5 /* TaskCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCounterView.swift; sourceTree = "<group>"; };
 		CF7512C12D536DB3009775B5 /* Todo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Todo.swift; sourceTree = "<group>"; };
 		CF9197502D6E0FA60089220C /* DragAndDropDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDropDelegate.swift; sourceTree = "<group>"; };
+		CF9197522D6E3D570089220C /* AddingTodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddingTodoView.swift; sourceTree = "<group>"; };
 		CF9EB9552D550E8A00F6C843 /* MainTableDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableDelegate.swift; sourceTree = "<group>"; };
 		CF9EB9572D55149600F6C843 /* TableStates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableStates.swift; sourceTree = "<group>"; };
 		CF9EB9592D552B7800F6C843 /* SelectedColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedColor.swift; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 			children = (
 				CF7512AB2D51372D009775B5 /* MainTableHeaderView.swift */,
 				CF7512BA2D5170E9009775B5 /* TaskCounterView.swift */,
+				CF9197522D6E3D570089220C /* AddingTodoView.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -371,6 +374,7 @@
 				CF6DF32C2D53E80300D5F369 /* HeaderSize.swift in Sources */,
 				CFBCA01F2D6B3B0D0099B4DF /* TodoEntity+CoreDataProperties.swift in Sources */,
 				CF7512B72D51476E009775B5 /* MainTableViewCell.swift in Sources */,
+				CF9197532D6E3D570089220C /* AddingTodoView.swift in Sources */,
 				CF75129C2D50F6AF009775B5 /* MainController.swift in Sources */,
 				CF65827A2D6B09EC00576B4E /* CoreDataManager.swift in Sources */,
 				CF9EB95C2D55389F00F6C843 /* ElementsSize.swift in Sources */,
