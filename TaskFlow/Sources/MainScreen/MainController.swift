@@ -6,12 +6,11 @@
 //
 
 import UIKit
+import SPLarkController
 
 final class MainController: UIViewController {
     
-    private var mainView: MainView {
-        view as! MainView
-    }
+    private var mainView: MainView { view as! MainView }
     private var mainViewModel: MainViewModel!
     
     private lazy var mainTableViewDataSource = MainTableDataSource(viewModel: mainViewModel)
@@ -24,6 +23,7 @@ final class MainController: UIViewController {
     init(viewModel: MainViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.mainViewModel = viewModel
+        
     }
     
     required init?(coder: NSCoder) {
@@ -31,76 +31,90 @@ final class MainController: UIViewController {
     }
     
     override func viewDidLoad() {
-        mainView.mainTableView.dataSource = mainTableViewDataSource
-        mainView.mainTableView.delegate = mainTableViewDelegate
+        setupViewData()
         
         setupDelegateBindings()
-        setupViewBindings()
         setupViewModelBindings()
         setupTableDragDropDelegates()
         setupViewModelObserver()
+        setupViewActions()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        mainViewModel.updateBothViewData()
-    }
+    override func viewDidAppear(_ animated: Bool) { mainViewModel.updateBothViewData() }
     
-    private func setupDelegateBindings() {
+    override func viewDidDisappear(_ animated: Bool) { mainViewModel.saveDataOnScreenDisappearing() }
+}
+
+// MARK: ColorUpdatable protocol extension
+extension MainController: ColorUpdatable {
+    
+    func updateBackgroundColor() {
         
-        mainTableViewDelegate.reloadTable = { [weak self] in
-            self?.mainView.updateTable()
-        }
+        mainView.updateBackgroundColor()
+        mainTableViewDelegate.updateHeadersBackgroundColor()
+        mainTableViewDataSource.updateCellsColor()
+    }
+}
+
+// MARK: Private methods
+private extension MainController {
+    
+    func setupViewData() {
+        mainView.mainTableView.dataSource = mainTableViewDataSource
+        mainView.mainTableView.delegate = mainTableViewDelegate
+    }
+    
+    func setupDelegateBindings() {
         
         mainTableViewDelegate.reloadHeaders = { [weak self] in
             self?.mainView.reloadHeaders()
         }
         
-        mainTableViewDelegate.sendCreatedTodoToController = { [weak self] todo in
+        mainTableViewDelegate.onTodoCreate = { [weak self] todo in
             self?.mainViewModel.soonerTodos.append(todo)
             self?.mainTableViewDataSource.updateDragTableDelegateData()
         }
     }
     
-    private func setupViewBindings() {
+    func setupViewActions() {
         
-        mainView.changeView = { [weak self] in
-            self?.updateState(state: .addingTask)
-        }
-        
-        mainView.getViewBack = { [weak self] in
-            self?.updateState(state: .default)
-        }
+        mainView.addActionToAddTodoButton(configureActionToAddTodoOrHideKeyboardButton(state: .addingTask))
+        mainView.addActionToHideKeyboardButton(configureActionToAddTodoOrHideKeyboardButton(state: .default))
+        mainView.addActionToSettingsButton(goToSettingsScreenAction())
     }
     
-    private func setupViewModelBindings() {
+    func setupViewModelBindings() {
         
         mainViewModel.updateBackground = { [weak self] section in guard let self else { return }
             mainTableViewDataSource.checkTableBackground(section, mainViewModel.getTodos(in: section))
         }
         
         mainViewModel.updateTodos = { [weak self] section, todos in guard let self else { return }
-            let currentDataSource = (section == .sooner) ? mainTableViewDataSource.soonerSectionDataSource
-                                                         : mainTableViewDataSource.laterSectionDataSource
-            currentDataSource.confirmSnapshot(todos: todos, animation: true)
+            mainTableViewDataSource.confirmSnapshot(in: section, with: todos)
+            mainTableViewDataSource.checkTableBackground(section, mainViewModel.getTodos(in: section))
         }
         
-        mainViewModel.updateCounter = { [weak self] section in guard let self else { return }
-            let headerToUpdate = (section == .sooner) ? mainTableViewDelegate.soonerSectionHeader : mainTableViewDelegate.laterSectionHeader
-            headerToUpdate.setUpdatedTodosCount(mainViewModel.getTodos(in: section).count)
+        mainViewModel.updateCounter = { [weak self] section in
+            self?.mainTableViewDelegate.updateHeaderCount(in: section)
+        }
+        
+        mainViewModel.tableStateOnChange = { [weak self] in
+            FeedBackService.occurreVibration(type: .light)
+            self?.mainView.updateTable()
         }
     }
     
-    private func setupTableDragDropDelegates() {
+    func setupTableDragDropDelegates() {
         
-        mainTableViewDataSource.soonerSectionDragDropDelegate.bindUpdatedDataToDelegate = { [weak self] todos in
+        mainTableViewDataSource.soonerSectionDragDropDelegate.bindUpdatedDataToController = { [weak self] todos in
             self?.mainViewModel.soonerTodos = todos
         }
-        mainTableViewDataSource.laterSectionDragDropDelegate.bindUpdatedDataToDelegate = { [weak self] todos in
+        mainTableViewDataSource.laterSectionDragDropDelegate.bindUpdatedDataToController = { [weak self] todos in
             self?.mainViewModel.laterTodos = todos
         }
     }
     
-    private func setupViewModelObserver() {
+    func setupViewModelObserver() {
         
         mainViewModel.setupObserver { [weak mainView] keyboardFrame in
             mainView?.raiseToolbar(keyboardFrame.height)
@@ -109,9 +123,35 @@ final class MainController: UIViewController {
         }
     }
     
-    fileprivate func updateState(state: TableState) {
+    func configureActionToAddTodoOrHideKeyboardButton(state: TableState) -> UIAction {
+        UIAction { [weak self] _ in
+            self?.updateState(state: state)
+        }
+    }
+    
+    func updateState(state: TableState) {
+        if state == .default {
+            mainView.endEditing(true)
+        }
+        mainViewModel.tableState = state
         
-        mainTableViewDelegate.currentState = state
+        mainViewModel.reloadButtonImage?(.later)
+        mainViewModel.reloadButtonImage?(.sooner)
+        
         mainView.reloadHeaders()
+        mainViewModel.updateBackground?(.sooner)
+    }
+    
+    func goToSettingsScreenAction() -> UIAction {
+        UIAction { [weak self] _ in
+            let settingsController = SettingsController(settingsViewModel: SettingsViewModel())
+            let transitionDelegate = SPLarkTransitioningDelegate()
+            
+            transitionDelegate.customHeight = UIScreen.main.bounds.height / 10
+            settingsController.transitioningDelegate = transitionDelegate
+            settingsController.modalPresentationStyle = .custom
+            settingsController.modalPresentationCapturesStatusBarAppearance = true
+            self?.present(settingsController, animated: true)
+        }
     }
 }

@@ -15,24 +15,18 @@ final class MainTableDelegate: NSObject, UITableViewDelegate {
     private(set) var soonerSectionHeader = MainTableHeaderView(in: .sooner)
     private(set) var laterSectionHeader = MainTableHeaderView(in: .later)
     
-    var currentState: TableState = .default {
-        didSet {
-            reloadTable?()
-        }
-    }
-    var reloadTable: (() -> Void)?
     var reloadHeaders: (() -> Void)?
     var createdTodo: Todo? {
         didSet {
-            if let createdTodo { sendCreatedTodoToController?(createdTodo) }
+            if let createdTodo { onTodoCreate?(createdTodo) }
         }
     }
-    var sendCreatedTodoToController: ((Todo) -> Void)?
+    var onTodoCreate: ((Todo) -> Void)?
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         switch section {
         case 0:
-            if currentState == .addingTask {
+            if mainViewModel.tableState == .addingTask {
                 return addingTodoHeader
             } else {
                 return soonerSectionHeader
@@ -55,7 +49,16 @@ final class MainTableDelegate: NSObject, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        mainViewModel.calculateCellsHeight(at: indexPath, withState: currentState)
+        mainViewModel.calculateCellsHeight(at: indexPath)
+    }
+    
+    func updateHeadersBackgroundColor() {
+        soonerSectionHeader.updateColor()
+        laterSectionHeader.updateColor()
+    }
+    
+    func updateHeaderCount(in section: MainTableSections) {
+        getHeaderIn(section: section).setUpdatedTodosCount(mainViewModel.getTodos(in: section).count)
     }
 }
 
@@ -81,23 +84,15 @@ private extension MainTableDelegate {
         if !currentHeader.isHalfScreen { currentHeader.isHalfScreen.toggle() }
     }
     
-    func endEditing() {
-        currentState = .default
-        reloadHeaders?()
-    }
-    
     func setupBindings() {
-        mainViewModel.tableStateOnChange = { [weak self] updatedState in
-            self?.currentState = updatedState
-        }
         
-        addingTodoHeader.sendCreatedTodoToDelegate = { [weak self] todo in
-            self?.sendCreatedTodoToController?(todo)
-            self?.endEditing()
+        addingTodoHeader.onTodoCreate = { [weak self] todo in
+            self?.onTodoCreate?(todo)
+            self?.reloadHeaders?()
         }
         
         addingTodoHeader.hideView = { [weak self] in
-            self?.endEditing()
+            self?.reloadHeaders?()
         }
     }
     
@@ -109,17 +104,20 @@ private extension MainTableDelegate {
     
     func setupHeaderActions() {
         
-        soonerSectionHeader.addActionToUpOrDownButton(UIAction { [weak self] _ in
-            guard let self else { return }
-            mainViewModel.handleHeaderButtonTapped(for: .sooner, isHalfScreen: soonerSectionHeader.isHalfScreen)
-            soonerSectionHeader.isHalfScreen.toggle()
-        })
-        
-        laterSectionHeader.addActionToUpOrDownButton(UIAction { [weak self] _ in
-            guard let self else { return }
-            mainViewModel.handleHeaderButtonTapped(for: .later, isHalfScreen: laterSectionHeader.isHalfScreen)
-            laterSectionHeader.isHalfScreen.toggle()
-        })
+        soonerSectionHeader.addActionToUpOrDownButton(setHeaderAction(section: .sooner))
+        laterSectionHeader.addActionToUpOrDownButton(setHeaderAction(section: .later))
+    }
+    
+    func setHeaderAction(section: MainTableSections) -> UIAction {
+        return UIAction { [weak self] _ in guard let self else { return }
+            let currentHeader = (section == .sooner) ? soonerSectionHeader : laterSectionHeader
+            mainViewModel.handleHeaderButtonTapped(for: section, isHalfScreen: currentHeader.isHalfScreen)
+            currentHeader.isHalfScreen.toggle()
+        }
+    }
+    
+    func getHeaderIn(section: MainTableSections) -> MainTableHeaderView {
+        (section == .sooner) ? soonerSectionHeader : laterSectionHeader
     }
 }
 
@@ -132,9 +130,9 @@ extension MainTableDelegate {
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         
-        let didSecitonChanged = mainViewModel.changeStateAccordingToDragging(scrolledValue: scrollView.contentOffset.y,                                                                    currentState: &currentState)
+        let didSecitonChanged = mainViewModel.changeStateAccordingToDragging(scrolledValue: scrollView.contentOffset.y)
         if didSecitonChanged {
-            switch currentState {
+            switch mainViewModel.tableState {
             case .default:
                 laterSectionHeader.isHalfScreen = true
                 soonerSectionHeader.isHalfScreen = true

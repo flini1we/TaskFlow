@@ -9,8 +9,12 @@ import UIKit
 
 final class TodoTableViewCell: UITableViewCell {
     
+    static var identifier: String { "\(self)" }
+    private var textFieldDelegate: TodoTextFieldDelegate?
+    
     var changeTodoSection: ((UUID) -> Void)?
     var finishTodo: ((UUID) -> Void)?
+    
     private let maxTreshold: CGFloat = UIScreen.main.bounds.width / 7
     private var currentId: UUID!
     
@@ -22,23 +26,30 @@ final class TodoTableViewCell: UITableViewCell {
         return view
     }()
     
-    private lazy var todoLabel: UILabel = {
-        let label = UILabel()
+    lazy var todoTextField: UITextField = {
+        let label = UITextField()
         label.textAlignment = .left
         return label
     }()
     
     private lazy var squareImageView: UIImageView = {
-        let image = UIImageView(image: SystemImages.checkmark.image)
+        let image = UIImageView(image: SystemImages.square.image)
         image.tintColor = SelectedColor.backgroundColor
         image.alpha = 0.1
+        return image
+    }()
+    
+    private lazy var squareWithCheckMarkImage: UIImageView = {
+        let image = UIImageView(image: SystemImages.checkmark.image)
+        image.tintColor = SelectedColor.backgroundColor
+        image.alpha = 0
         return image
     }()
     
     private lazy var squareImageAndTitleStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [
             squareImageView,
-            todoLabel
+            todoTextField
         ])
         stack.spacing = Constants.paddingSmall.value
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -76,31 +87,58 @@ final class TodoTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureWithTodo(_ todo: Todo) {
+    func configureWithTodo(_ todo: Todo, delegate todoTextFieldDelegate: TodoTextFieldDelegate) {
         currentId = todo.id
         
-        todoLabel.text = todo.title
+        todoTextField.text = todo.title
         moveToAnotherSectionButton.setImage(SystemImages.moveTodo(todo.section).image, for: .normal)
         
         moveToAnotherSectionButton.addAction(UIAction { [weak self] _ in
             self?.changeTodoSection?(todo.id)
         }, for: .touchUpInside)
+        
+        textFieldDelegate = todoTextFieldDelegate
+        self.todoTextField.delegate = textFieldDelegate
     }
     
-    private func setupData() {
+    func updateColor() {
+        UIView.animate(withDuration: 0.5) {
+            self.squareImageView.alpha = 0
+            self.squareWithCheckMarkImage.alpha = 0
+            self.moveToAnotherSectionButton.alpha = 0
+        } completion: { _ in
+            self.squareImageView.tintColor = SelectedColor.backgroundColor
+            self.squareWithCheckMarkImage.tintColor = SelectedColor.backgroundColor
+            self.moveToAnotherSectionButton.tintColor = SelectedColor.backgroundColor
+            
+            UIView.animate(withDuration: 0.5) {
+                self.squareImageView.alpha = 0.1
+                self.squareWithCheckMarkImage.alpha = 0
+                self.moveToAnotherSectionButton.alpha = 1
+            }
+        }
+    }
+}
+
+// MARK: Private methods
+private extension TodoTableViewCell {
+    
+    func setupData() {
         setupSubviews()
         setupLayout()
         setupGestures()
     }
     
-    private func setupSubviews() {
+    func setupSubviews() {
         self.selectionStyle = .none
         backgroundColor = .systemGray6
+        
         contentView.addSubview(bgView)
         bgView.addSubview(dataStackView)
+        squareImageView.addSubview(squareWithCheckMarkImage)
     }
     
-    private func setupLayout() {
+    func setupLayout() {
         NSLayoutConstraint.activate([
             bgView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constants.paddingTiny.value),
             bgView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -119,27 +157,33 @@ final class TodoTableViewCell: UITableViewCell {
         moveToAnotherSectionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: self.intrinsicContentSize.width).isActive = true
         
         NSLayoutConstraint.activate([
-            todoLabel.leadingAnchor.constraint(equalTo: squareImageView.trailingAnchor, constant: Constants.paddingSmall.value),
-            todoLabel.trailingAnchor.constraint(lessThanOrEqualTo: moveToAnotherSectionButton.leadingAnchor, constant: -Constants.paddingTiny.value)
+            todoTextField.leadingAnchor.constraint(equalTo: squareImageView.trailingAnchor, constant: Constants.paddingSmall.value),
+            todoTextField.trailingAnchor.constraint(lessThanOrEqualTo: moveToAnotherSectionButton.leadingAnchor, constant: -Constants.paddingTiny.value)
+        ])
+        
+        NSLayoutConstraint.activate([
+            squareWithCheckMarkImage.centerXAnchor.constraint(equalTo: squareImageView.centerXAnchor),
+            squareWithCheckMarkImage.centerYAnchor.constraint(equalTo: squareImageView.centerYAnchor),
         ])
     }
     
-    private func setupGestures() {
+    func setupGestures() {
         let swipeGesture = UIPanGestureRecognizer(target: self, action: #selector(rightSwipe(_:)))
         self.addGestureRecognizer(swipeGesture)
     }
     
-    @objc private func rightSwipe(_ gesture: UIPanGestureRecognizer) {
+    @objc func rightSwipe(_ gesture: UIPanGestureRecognizer) {
         let xTransition = gesture.translation(in: self).x
         setupAnimation(xTransition, gesture)
     }
     
-    private func setupAnimation(_ xTransition: CGFloat, _ gesture: UIPanGestureRecognizer) {
+    func setupAnimation(_ xTransition: CGFloat, _ gesture: UIPanGestureRecognizer) {
         guard xTransition > 0 else { return }
         
         let currentLoaded = max(0.1, xTransition / maxTreshold)
         squareImageView.alpha = currentLoaded
-        todoLabel.transform = CGAffineTransform(translationX: min(xTransition, maxTreshold), y: 0)
+        squareWithCheckMarkImage.alpha = currentLoaded
+        todoTextField.transform = CGAffineTransform(translationX: min(xTransition, maxTreshold), y: 0)
         
         UIView.animate(withDuration: 0.2) {
             if currentLoaded >= 1 {
@@ -154,6 +198,7 @@ final class TodoTableViewCell: UITableViewCell {
                 backToDefaultAnimation()
             } else {
                 finishTodo?(self.currentId)
+                FeedBackService.occurreVibration(type: .medium)
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
                     self?.backToDefaultAnimation()
@@ -162,18 +207,12 @@ final class TodoTableViewCell: UITableViewCell {
         }
     }
     
-    private func backToDefaultAnimation() {
+    func backToDefaultAnimation() {
         UIView.animate(withDuration: 0.2) {
-            self.todoLabel.transform = .identity
+            self.todoTextField.transform = .identity
             self.squareImageView.alpha = 0.1
+            self.squareWithCheckMarkImage.alpha = 0
             self.squareImageView.transform = .identity
         }
-    }
-}
-
-extension TodoTableViewCell {
-    
-    static var identifier: String {
-        "\(self)"
     }
 }

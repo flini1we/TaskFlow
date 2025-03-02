@@ -20,7 +20,12 @@ enum SystemImages {
          info,
          moveTodo(MainTableSections),
          checkmark,
-         square
+         square,
+         circle,
+         lightSun,
+         darkMoon,
+         sparkles,
+         sparkle
     
     var image: UIImage {
         switch self {
@@ -52,6 +57,16 @@ enum SystemImages {
             return UIImage(systemName: "checkmark.square")!
         case .square:
             return UIImage(systemName: "square")!
+        case .circle:
+            return UIImage(systemName: "circle.fill")!
+        case .lightSun:
+            return UIImage(systemName: "sun.max.fill")!
+        case .darkMoon:
+            return UIImage(systemName: "moon.fill")!
+        case .sparkles:
+            return UIImage(systemName: "sparkles")!
+        case .sparkle:
+            return UIImage(systemName: "sparkle")!
         }
     }
 }

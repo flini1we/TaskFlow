@@ -20,6 +20,7 @@ final class MainTableViewCell: UITableViewCell {
         placeHolderLabel.isHidden = false
         
         table.backgroundView = placeHolderLabel
+        table.backgroundView?.isHidden = true
         table.dragInteractionEnabled = true
         table.translatesAutoresizingMaskIntoConstraints = false
         table.backgroundColor = .systemGray6

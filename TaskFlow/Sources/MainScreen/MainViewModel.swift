@@ -13,13 +13,17 @@ final class MainViewModel: KeyboardObservable {
     var keyboardObserver: KeyboardObserver?
     var lastSectionTapped: MainTableSections?
     
-    private var tableState: TableState = .default {
+    var tableState: TableState = .default {
         didSet {
-            tableStateOnChange?(tableState)
+            tableStateOnChange?()
         }
     }
-    var tableStateOnChange: ((TableState) -> Void)?
+    var tableStateOnChange: (() -> Void)?
     var reloadButtonImage: ((MainTableSections) -> Void)?
+    
+    init(todoService: TodoService) {
+        self.todoService = todoService
+    }
 
     func handleHeaderButtonTapped(for section: MainTableSections, isHalfScreen: Bool) {
         
@@ -45,14 +49,15 @@ final class MainViewModel: KeyboardObservable {
         lastSectionTapped = section
     }
     
-    func calculateCellsHeight(at indexPath: IndexPath, withState state: TableState) -> CGFloat {
+    func calculateCellsHeight(at indexPath: IndexPath) -> CGFloat {
+        let devider: CGFloat = (keyboardObserver!.isKeyboardEnabled) ? 2 : 1
         
-        switch state {
+        switch tableState {
         case .default:
-            return TableItemSize.default.value - 1
+            return (TableItemSize.default.value - 1) / devider
         case .upperOpened:
             if indexPath.section == 0 {
-                return TableItemSize.fullScreen.value - 2
+                return (TableItemSize.fullScreen.value - 2) / devider
             } else {
                 return TableItemSize.none.value
             }
@@ -60,19 +65,20 @@ final class MainViewModel: KeyboardObservable {
             if indexPath.section == 0 {
                 return TableItemSize.none.value
             } else {
-                return TableItemSize.fullScreen.value - 2
+                return (TableItemSize.fullScreen.value - 2) / devider
             }
         case .addingTask:
             return TableItemSize.default.value / 2
         }
     }
     
-    func setupObserver(onShowKeyboard: ((CGRect) -> Void)?,
-                       onHideKeyboard: (() -> Void)?) {
-        keyboardObserver = KeyboardObserver(onShow: { keyboardFrame in
+    func setupObserver(onShowKeyboard: ((CGRect) -> Void)?, onHideKeyboard: (() -> Void)?) {
+        keyboardObserver = KeyboardObserver(onShow: { [weak self] keyboardFrame in
             onShowKeyboard?(keyboardFrame)
-        }, onHide: {
+            self?.tableState = .addingTask
+        }, onHide: { [weak self] in
             onHideKeyboard?()
+            self?.tableState = .default
         })
     }
     
@@ -86,49 +92,73 @@ final class MainViewModel: KeyboardObservable {
         return value
     }
     
-    func changeStateAccordingToDragging(scrolledValue: CGFloat, currentState: inout TableState) -> Bool {
+    func changeStateAccordingToDragging(scrolledValue: CGFloat) -> Bool {
         
         let didSectionChanged = false
         if scrolledValue >= 10 {
-            if currentState == .default {
-                currentState = .lowerOpened
+            switch tableState {
+            case .default:
+                tableState = .lowerOpened
                 self.lastSectionTapped = .later
-            } else if currentState == .upperOpened {
-                currentState = .default
+            case .upperOpened:
+                tableState = .default
                 self.lastSectionTapped = .later
-            }
+            case .addingTask:
+                tableState = .lowerOpened
+                self.lastSectionTapped = .later
+            case .lowerOpened: break }
+            
             return !didSectionChanged
         } else if scrolledValue <= -10 {
-        
-            if currentState == .default {
-                currentState = .upperOpened
+            
+            switch tableState {
+            case .addingTask: fallthrough
+            case .default:
+                tableState = .upperOpened
                 self.lastSectionTapped = .later
-            } else if currentState == .lowerOpened {
-                currentState = .default
+            case .upperOpened:
+                tableState = .default
+                self.lastSectionTapped = .later
+            case .lowerOpened:
+                tableState = .default
                 self.lastSectionTapped = .later
             }
+            
             return !didSectionChanged
         }
         return didSectionChanged
     }
     
     // MARK: MainTableDataSourceData
+    private var todoService: TodoService
+    
     var updateTodos: ((MainTableSections, [Todo]) -> Void)?
     var updateBackground: ((MainTableSections) -> Void)?
     var updateCounter: ((MainTableSections) -> Void)?
     
-    lazy var soonerTodos = Todo.getTodos().filter { $0.section == .sooner } {
+    lazy var soonerTodos = todoService.getTodos(type: .sooner) {
         didSet {
+            
             updateTodos?(.sooner, soonerTodos)
             updateViewData(.sooner)
         }
     }
     
-    lazy var laterTodos = Todo.getTodos().filter { $0.section == .later } {
+    lazy var laterTodos = todoService.getTodos(type: .later) {
         didSet {
             updateTodos?(.later, laterTodos)
             updateViewData(.later)
         }
+    }
+    
+    lazy var finishedTodos = todoService.getTodos(type: .finished) {
+        didSet {
+            print("finished")
+        }
+    }
+    
+    func saveDataOnScreenDisappearing() {
+        todoService.saveUpdatedData(sooner: soonerTodos, later: laterTodos, finished: finishedTodos)
     }
     
     func updateBothViewData() {
@@ -142,7 +172,7 @@ final class MainViewModel: KeyboardObservable {
     }
     
     func changeSection(from section: MainTableSections, with id: UUID) {
-        
+        FeedBackService.occurreVibration(type: .light)
         if section == .sooner {
         
             guard let index = soonerTodos.firstIndex(where: { $0.id == id }) else { return }
@@ -170,23 +200,47 @@ final class MainViewModel: KeyboardObservable {
         
             guard let index = soonerTodos.firstIndex(where: { $0.id == id }) else { return }
             
-            soonerTodos[index].finishTask()
+            finishTodo(in: .sooner, at: index)
             soonerTodos.remove(at: index)
         } else {
             
             guard let index = laterTodos.firstIndex(where: { $0.id == id }) else { return }
             
-            laterTodos[index].finishTask()
+            finishTodo(in: .later, at: index)
             laterTodos.remove(at: index)
+        }
+    }
+    
+    func editTodo(withId id: UUID, updatedTitle title: String) {
+        
+        if let index = soonerTodos.firstIndex(where: { $0.id == id }) {
+            soonerTodos[index].editTitle(updatedTitle: title)
+        } else {
+            guard let index = laterTodos.firstIndex(where: { $0.id == id }) else { return }
+            laterTodos[index].editTitle(updatedTitle: title)
         }
     }
 }
 
+// MARK: Private Methods
 private extension MainViewModel {
     
     func updateViewData(_ section: MainTableSections) {
         
         updateBackground?(section)
         updateCounter?(section)
+    }
+    
+    func finishTodo(in section: MainTableSections, at index: Int) {
+        
+        var removeTodo = (section == .sooner) ? soonerTodos[index] : laterTodos[index]
+        removeTodo.finishTask()
+        finishedTodos.append(removeTodo)
+    }
+    
+    func updateBothButtonImages() {
+        
+        reloadButtonImage?(.sooner)
+        reloadButtonImage?(.later)
     }
 }

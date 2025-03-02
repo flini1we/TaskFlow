@@ -87,6 +87,21 @@ final class MainTableHeaderView: UIView {
         setupData(section)
     }
     
+    func updateColor() {
+        UIView.animate(withDuration: 0.5) {
+            self.titleImage.alpha = 0
+            self.upOrDownButton.alpha = 0
+        } completion: { _ in
+            self.titleImage.tintColor = SelectedColor.backgroundColor
+            self.upOrDownButton.tintColor = SelectedColor.backgroundColor
+            
+            UIView.animate(withDuration: 0.5) {
+                self.titleImage.alpha = 1
+                self.upOrDownButton.alpha = 1
+            }
+        }
+    }
+    
     func setUpdatedTodosCount(_ value: Int) {
         tasksCount.updateTaskCount(newValue: value)
     }

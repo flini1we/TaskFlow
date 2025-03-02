@@ -10,7 +10,7 @@ import UIKit
 final class DragAndDropDelegate: NSObject, UITableViewDragDelegate, UITableViewDropDelegate {
     
     private var data: [Todo]!
-    var bindUpdatedDataToDelegate: (([Todo]) -> Void)?
+    var bindUpdatedDataToController: (([Todo]) -> Void)?
     
     init(data: [Todo]) {
         self.data = data
@@ -36,6 +36,7 @@ final class DragAndDropDelegate: NSObject, UITableViewDragDelegate, UITableViewD
     func tableView(_ tableView: UITableView, performDropWith coordinator: any UITableViewDropCoordinator) {
         guard let destinationIndexPath = coordinator.destinationIndexPath else { return }
         let items = coordinator.items
+        guard !items.isEmpty else { return }
         items.forEach { item in
             
             if let dragItem = item.dragItem.localObject as? Todo {
@@ -45,7 +46,7 @@ final class DragAndDropDelegate: NSObject, UITableViewDragDelegate, UITableViewD
                     data.remove(at: sourceIndexPath.row)
                     data.insert(dragItem, at: destinationIndexPath.row)
                     
-                    bindUpdatedDataToDelegate?(data)
+                    bindUpdatedDataToController?(data)
                 }
             }
         }

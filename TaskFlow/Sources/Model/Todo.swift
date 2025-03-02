@@ -10,9 +10,9 @@ import Foundation
 struct Todo: Identifiable, Hashable {
     
     let id: UUID
-    let title: String
+    var title: String
     var section: MainTableSections = .sooner
-    let createdAt: Date?
+    let createdAt: Date
     var finishedAt: Date?
     
     init(id: UUID, title: String, section: MainTableSections, createdAt: Date = .now, finishedAt: Date? = nil) {
@@ -25,11 +25,10 @@ struct Todo: Identifiable, Hashable {
     
     mutating func changeSection() { section = (section == .sooner) ? .later : .sooner }
     mutating func finishTask() { finishedAt = .now }
+    mutating func editTitle(updatedTitle title: String) { self.title = title }
     
     static func getTodos() -> [Todo] {
         [Todo(id: UUID(), title: "Later", section: .later),
-//         Todo(id: UUID(), title: "Sooner", section: .sooner),
-         Todo(id: UUID(), title: "q3", section: .later),
-         Todo(id: UUID(), title: "JKLDSJFKLSJDFLKSJDLKFJSDLKFJDSLKFJSKLDJFLSDJF", section: .later),]
+         Todo(id: UUID(), title: "Sooner", section: .sooner)]
     }
 }

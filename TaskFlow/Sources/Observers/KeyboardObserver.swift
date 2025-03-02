@@ -11,12 +11,13 @@ class KeyboardObserver {
     
     private var onShowHandler: ((_ keyboardFrame: CGRect) -> Void)?
     private var onHideHandler: (() -> Void)?
+    var isKeyboardEnabled: Bool
     
     init(onShow: @escaping (_ keyboardFrame: CGRect) -> Void,
          onHide: @escaping () -> Void) {
-        
         self.onShowHandler = onShow
         self.onHideHandler = onHide
+        self.isKeyboardEnabled = false
         startObserver()
     }
     
@@ -33,10 +34,12 @@ class KeyboardObserver {
     
     @objc private func handleKeyboardWillShow(notification: Notification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        self.isKeyboardEnabled = true
         self.onShowHandler?(keyboardFrame)
     }
     
     @objc private func handleKeyboardWillHide(notification: Notification) {
+        self.isKeyboardEnabled = false
         self.onHideHandler?()
     }
     

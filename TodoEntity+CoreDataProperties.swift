@@ -20,11 +20,11 @@ extension TodoEntity {
         return NSFetchRequest<TodoEntity>(entityName: "TodoEntity")
     }
 
-    @NSManaged public var createdAt: Date?
+    @NSManaged public var createdAt: Date
     @NSManaged public var finishedAt: Date?
-    @NSManaged public var id: UUID?
-    @NSManaged public var title: String?
-    @NSManaged public var section: String?
+    @NSManaged public var id: UUID
+    @NSManaged public var title: String
+    @NSManaged public var section: String
 
 }
 

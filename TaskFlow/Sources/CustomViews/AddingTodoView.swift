@@ -12,11 +12,11 @@ final class AddingTodoView: UIView {
     private var createdTodo: Todo? {
         didSet {
             if let createdTodo {
-                sendCreatedTodoToDelegate?(createdTodo)
+                onTodoCreate?(createdTodo)
             }
         }
     }
-    var sendCreatedTodoToDelegate: ((Todo) -> Void)?
+    var onTodoCreate: ((Todo) -> Void)?
     var hideView: (() -> Void)?
     
     lazy var createTodoField: UITextField = {
@@ -101,6 +101,7 @@ extension AddingTodoView: UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        endEditing(true)
         if let todoTitle = textField.text, !todoTitle.isEmpty {
             createdTodo = Todo(id: UUID(), title: todoTitle, section: .sooner)
         }

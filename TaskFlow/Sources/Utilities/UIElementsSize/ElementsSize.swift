@@ -9,12 +9,15 @@ import UIKit
 
 enum ElementsSize {
     
-    case searchBarInToolBar
+    case searchBarInToolBar,
+         accentColorImageSize
     
     var value: CGFloat {
         switch self {
         case .searchBarInToolBar:
             return 35
+        case .accentColorImageSize:
+            return 45
         }
     }
 }
