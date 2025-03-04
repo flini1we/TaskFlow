@@ -10,10 +10,11 @@ import UIKit
 final class DragAndDropDelegate: NSObject, UITableViewDragDelegate, UITableViewDropDelegate {
     
     private var data: [Todo]!
-    var bindUpdatedDataToController: (([Todo]) -> Void)?
+    private var onDraggingDataChanged: (([Todo]) -> Void)
     
-    init(data: [Todo]) {
+    init(data: [Todo], onDraggingDataChanged: @escaping (([Todo]) -> Void)) {
         self.data = data
+        self.onDraggingDataChanged = onDraggingDataChanged
     }
     
     func updateData(_ data: [Todo]) { self.data = data }
@@ -46,7 +47,7 @@ final class DragAndDropDelegate: NSObject, UITableViewDragDelegate, UITableViewD
                     data.remove(at: sourceIndexPath.row)
                     data.insert(dragItem, at: destinationIndexPath.row)
                     
-                    bindUpdatedDataToController?(data)
+                    onDraggingDataChanged(data)
                 }
             }
         }

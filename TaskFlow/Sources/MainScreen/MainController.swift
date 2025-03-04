@@ -35,7 +35,6 @@ final class MainController: UIViewController {
         
         setupDelegateBindings()
         setupViewModelBindings()
-        setupTableDragDropDelegates()
         setupViewModelObserver()
         setupViewActions()
     }
@@ -72,6 +71,7 @@ private extension MainController {
         
         mainTableViewDelegate.onTodoCreate = { [weak self] todo in
             self?.mainViewModel.soonerTodos.append(todo)
+            self?.mainTableViewDataSource.soonerSectionDataSource.appendElementToSection(todo: todo, to: .sooner)
             self?.mainTableViewDataSource.updateDragTableDelegateData()
         }
     }
@@ -89,28 +89,13 @@ private extension MainController {
             mainTableViewDataSource.checkTableBackground(section, mainViewModel.getTodos(in: section))
         }
         
-        mainViewModel.updateTodos = { [weak self] section, todos in guard let self else { return }
-            mainTableViewDataSource.confirmSnapshot(in: section, with: todos)
-            mainTableViewDataSource.checkTableBackground(section, mainViewModel.getTodos(in: section))
-        }
-        
         mainViewModel.updateCounter = { [weak self] section in
             self?.mainTableViewDelegate.updateHeaderCount(in: section)
         }
         
         mainViewModel.tableStateOnChange = { [weak self] in
-            FeedBackService.occurreVibration(type: .light)
+            FeedBackService.occurreVibration(style: .light)
             self?.mainView.updateTable()
-        }
-    }
-    
-    func setupTableDragDropDelegates() {
-        
-        mainTableViewDataSource.soonerSectionDragDropDelegate.bindUpdatedDataToController = { [weak self] todos in
-            self?.mainViewModel.soonerTodos = todos
-        }
-        mainTableViewDataSource.laterSectionDragDropDelegate.bindUpdatedDataToController = { [weak self] todos in
-            self?.mainViewModel.laterTodos = todos
         }
     }
     

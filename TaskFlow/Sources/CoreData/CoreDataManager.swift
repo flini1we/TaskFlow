@@ -30,105 +30,152 @@ class CoreDataManager {
     
     private init() { }
     
-//    func obtainActiveTodos() -> [Todo] {
-//        let todoFetchRequest = TodoEntity.fetchRequest()
-//        todoFetchRequest.predicate = NSPredicate(format: "finishedAt != nil")
-//        
-//        do {
-//            let todoEntity = try viewContext.fetch(todoFetchRequest)
-//            let todos = todoEntity.map {
-//                Todo(id: $0.id,
-//                     title: $0.title,
-//                     section: MainTableSections(rawValue: $0.section) ?? .sooner,
-//                     createdAt: $0.createdAt,
-//                     finishedAt: nil)
-//            }
-//        } catch {
-//            print("Eror of obtaining todos")
-//        }
-//    }
+    func obtainActiveTodosInSelectedSection(in section: MainTableSections) -> Result<[Todo], CoreDataErrors> {
+        let todosInSectionFetchRequest = TodoEntity.fetchRequest()
+        todosInSectionFetchRequest.predicate = NSPredicate(format: "section == %@ AND finishedAt == nil", section.rawValue)
+        
+        do {
+            let todoEntities = try viewContext.fetch(todosInSectionFetchRequest)
+            let todos = todoEntities.compactMap { castTodoEntityIntoTodo(entity: $0) }
+            print("\(section.rawValue)")
+            todos.forEach { print($0.title) }
+            print("---")
+            return .success(todos)
+        } catch {
+            print(CoreDataErrors.failedToObtainActiveTodosFromSection(section).errorDescription)
+        }
+        return .failure(CoreDataErrors.failedToObtainActiveTodosFromSection(section))
+    }
     
-//    func obtainTodos(isTodosActive: Bool) -> [Todo] {
-//        let todoFetchRequest = TodoEntity.fetchRequest()
-//        
-//        if isTodosActive {
-//            todoFetchRequest.predicate = NSPredicate(format: "finishedAt != nil")
-//        } else {
-//            todoFetchRequest.predicate = NSPredicate(format: "finishedAt == nil")
-//        }
-//        
-//        do {
-//            let todoEntities = try viewContext.fetch(todoFetchRequest)
-//            let todos = todoEntities.map {
-//                Todo(id: $0.id,
-//                     title: $0.title,
-//                     section: MainTableSections(rawValue: $0.section) ?? .sooner,
-//                     createdAt: $0.createdAt,
-//                     finishedAt: nil)
-//            }
-//            return todos
-//        } catch {
-//            print("Error of obtaining todos in view context: \(error.localizedDescription)")
-//        }
-//        
-//        return []
-//    }
-//    
-//    func changeSectionToExistingTodo(todoId id: UUID) {
-//        let todoFetchReques = TodoEntity.fetchRequest()
-//        todoFetchReques.predicate = NSPredicate(format: "id == %@", id.uuidString)
-//    }
-//    
-//    func saveTodo(_ todo: Todo) {
-//        
-//    }
-//    
-//    func updateAndSaveTodos(_ todos: [Todo]) async {
-//        let bgContext = backgroundContext
-//        await bgContext.perform { [weak viewContext] in
-//            
-//            let todoEntities: [TodoEntity] = todos.compactMap { [weak self] todo in
-//                self?.createAndFillEntity(todo: todo, in: bgContext)
-//            }
-//            
-//            do {
-//                try bgContext.save()
-//                
-//                viewContext?.performAndWait {
-//                    do {
-//                        try viewContext?.save()
-//                    } catch {
-//                        print("Error of saving data in view context: \(error.localizedDescription)")
-//                    }
-//                }
-//            } catch {
-//                print("Error of saving data in background context: \(error.localizedDescription)")
-//            }
-//        }
-//    }
-//    
-////    func saveTodo(_ todo: Todo) {
-////        
-////    }
-//    
-//    private func castToTodo(_ todoEntities: [TodoEntity]) -> [Todo] {
-//        todoEntities.compactMap { todoEntity in
-//            Todo(id: todoEntity.id ?? UUID(),
-//                 title: todoEntity.title ?? "No title",
-//                 section: MainTableSections(rawValue: todoEntity.section ?? "sooner") ?? .sooner,
-//                 createdAt: todoEntity.createdAt ?? .now,
-//                 finishedAt: todoEntity.finishedAt)
-//        }
-//    }
-//    
-//    private func createAndFillEntity(todo: Todo, in context: NSManagedObjectContext) -> TodoEntity {
-//        let todoEntity = TodoEntity(context: context)
-//        
-//        todoEntity.title = todo.title
-//        todoEntity.id = todo.id
-//        todoEntity.createdAt = todo.createdAt
-//        todoEntity.finishedAt = todo.finishedAt
-//        
-//        return todoEntity
-//    }
+    func obtainFinishedTodos() -> Result<[Todo], CoreDataErrors> {
+        let finishedTodosFetchRequest = TodoEntity.fetchRequest()
+        finishedTodosFetchRequest.predicate = NSPredicate(format: "finishedAt != nil")
+        
+        do {
+            let todoEntities = try viewContext.fetch(finishedTodosFetchRequest)
+            let todos = todoEntities.compactMap { castTodoEntityIntoTodo(entity: $0) }
+            print("Finished")
+            todos.forEach { print($0.title) }
+            print("---")
+            return .success(todos)
+        } catch {
+            print(CoreDataErrors.failedToObtainFinishedTodos.errorDescription)
+        }
+        return .failure(CoreDataErrors.failedToObtainFinishedTodos)
+    }
+    
+    func replaceTodosInSection(todos: [Todo], at section: TodoTypes) {
+        let bgContext = backgroundContext
+        
+        let dispatchGroup = DispatchGroup()
+        dispatchGroup.enter()
+        bgContext.perform { [weak viewContext] in
+            
+            let deleteTodosFetchRequest = TodoEntity.fetchRequest()
+            deleteTodosFetchRequest.predicate = NSPredicate(format: "section == %@ AND finishedAt == nil", section.rawValue)
+            
+            do {
+                let soonerTodoEntities = try bgContext.fetch(deleteTodosFetchRequest)
+                soonerTodoEntities.forEach { bgContext.delete($0) }
+                
+                do {
+                    try bgContext.save()
+                    
+                    viewContext?.performAndWait {
+                        do {
+                            try viewContext?.save()
+                            dispatchGroup.leave()
+                        } catch {
+                            print("Error of deleting soonerTodos from viewContext: \(error.localizedDescription)")
+                            dispatchGroup.leave()
+                        }
+                    }
+                } catch {
+                    print("Error of deleting soonerTodos from bgContext: \(error.localizedDescription)")
+                    dispatchGroup.leave()
+                }
+            } catch {
+                print("Error during fetch soonerTodos from data: \(error.localizedDescription)")
+                dispatchGroup.leave()
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                self.saveTodos(todos: todos)
+            }
+        }
+    }
+    
+    private func saveTodos(todos: [Todo]) {
+        
+        let bgContext = backgroundContext
+        bgContext.perform { [weak viewContext] in
+            
+            for todo in todos {
+                let todoEntity = TodoEntity(context: bgContext)
+                todoEntity.id = todo.id
+                todoEntity.title = todo.title
+                todoEntity.createdAt = todo.createdAt
+                todoEntity.section = todo.section.rawValue
+                todoEntity.finishedAt = nil
+            }
+            
+            do {
+                try bgContext.save()
+                
+                viewContext?.performAndWait {
+                    do {
+                        try viewContext?.save()
+                    } catch {
+                        print("Error during saving in viewContext: \(error.localizedDescription)")
+                    }
+                }
+            } catch {
+                print("Error during saving in backgroundContext: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func saveFinishedTodo(todo: Todo) -> Result<Bool, CoreDataErrors> {
+        guard todo.finishedAt != nil else { return .failure(.failedToObtainFinishedTodosDueToTodoFinishedAtFieldIsNil(todo))
+        }
+        let bgContext = backgroundContext
+        
+        bgContext.perform { [weak viewContext] in
+            let finishedTodoEntity = TodoEntity(context: bgContext)
+            finishedTodoEntity.id = todo.id
+            finishedTodoEntity.title = todo.title
+            finishedTodoEntity.createdAt = todo.createdAt
+            finishedTodoEntity.finishedAt = todo.finishedAt
+            finishedTodoEntity.section = todo.section.rawValue
+            
+            do {
+                try bgContext.save()
+                viewContext?.performAndWait {
+                    do {
+                        try viewContext?.save()
+                    } catch {
+                        print(CoreDataErrors.failedToSaveDataInContext(.viewContext).errorDescription)
+                    }
+                }
+            } catch {
+                print(CoreDataErrors.failedToSaveDataInContext(.someBackgroundContext).errorDescription)
+            }
+        }
+        return .failure(CoreDataErrors.failedToObtainFinishedTodos)
+    }
+    
+    func removeFinishedTodo() {
+        // TODO: remove finished todo from storage and append it into previous section
+    }
+}
+
+private extension CoreDataManager {
+    
+    func castTodoEntityIntoTodo(entity todoEntity: TodoEntity) -> Todo {
+        Todo(id: todoEntity.id,
+             title: todoEntity.title,
+             section: MainTableSections(rawValue: todoEntity.section) ?? .sooner,
+             createdAt: todoEntity.createdAt,
+             finishedAt: todoEntity.finishedAt)
+    }
 }

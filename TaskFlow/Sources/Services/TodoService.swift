@@ -9,19 +9,58 @@ import Foundation
 
 class TodoService {
     
-    private var soonerTodos: [Todo] = Todo.getTodos().filter { $0.section == .sooner && $0.finishedAt == nil } {
-        didSet {
-            print(soonerTodos)
+    private var coreDataManager: CoreDataManager
+    
+    init(coreDataManager: CoreDataManager = CoreDataManager.shared) {
+        self.coreDataManager = coreDataManager
+        
+        let soonerTodosFetchRequestResult = coreDataManager.obtainActiveTodosInSelectedSection(in: .sooner)
+        switch soonerTodosFetchRequestResult {
+        case .success(let todos):
+            self.soonerTodos = todos
+        case .failure(let failure):
+            print(failure.errorDescription)
+            self.soonerTodos = []
+        }
+        
+        let laterTodosFetchRequestResult = coreDataManager.obtainActiveTodosInSelectedSection(in: .later)
+        switch laterTodosFetchRequestResult {
+        case .success(let todos):
+            self.laterTodos = todos
+        case .failure(let failure):
+            print(failure.errorDescription)
+            self.laterTodos = []
+        }
+        
+        let finishedFetchRequestResult = coreDataManager.obtainFinishedTodos()
+        switch finishedFetchRequestResult {
+        case .success(let todos):
+            self.finishedTodos = todos
+        case .failure(let failure):
+            print(failure.errorDescription)
+            self.finishedTodos = []
         }
     }
-    private var laterTodos: [Todo] = Todo.getTodos().filter { $0.section == .later && $0.finishedAt == nil } {
+    
+    private var soonerTodos: [Todo] {
         didSet {
-            print(laterTodos)
+            print("Saved to coreData: Sooner")
+            soonerTodos.forEach { print($0.title) }
         }
     }
-    private var finishedTodos: [Todo] = Todo.getTodos().filter { $0.finishedAt != nil } {
+    private var laterTodos: [Todo] {
         didSet {
-            print(finishedTodos)
+            print("Saved to coreData: Later")
+            laterTodos.forEach { print($0.title) }
+        }
+    }
+    private var finishedTodos: [Todo] {
+        didSet {
+            // save to core data instantly
+            print("Saved to coreData: Finished")
+            finishedTodos.forEach {
+                print($0.title)
+            }
         }
     }
 }
@@ -45,5 +84,10 @@ extension TodoService {
         self.soonerTodos = sooner
         self.laterTodos = later
         self.finishedTodos = finished
+    }
+    
+    func saveFinishedTodo(finishedTodo: Todo) {
+        guard finishedTodo.finishedAt != nil else { return }
+        // TODO: save to core data
     }
 }

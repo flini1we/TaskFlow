@@ -10,16 +10,16 @@ import UIKit
 class TodoTextFieldDelegate: NSObject, UITextFieldDelegate {
     
     private var viewModel: MainViewModel
-    private var currentId: UUID
+    private var currentTodo: Todo
     
-    init(viewModel: MainViewModel, currentId: UUID!) {
+    init(viewModel: MainViewModel, currentTodo: Todo) {
         self.viewModel = viewModel
-        self.currentId = currentId
+        self.currentTodo = currentTodo
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let text = textField.text, !text.isEmpty {
-            viewModel.editTodo(withId: currentId, updatedTitle: text)
+            viewModel.editTodo(todo: currentTodo, updatedTitle: text)
             return true
         }
         return false

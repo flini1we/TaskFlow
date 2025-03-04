@@ -9,12 +9,11 @@ import UIKit
 
 final class TodoTableDiffableDataSource: NSObject {
     
+    var onTodoSectionChange: ((Todo) -> Void)?
+    var onTodoFinishing: ((Todo) -> Void)?
+    
     private var dataSource: UITableViewDiffableDataSource<MainTableSections, Todo>?
     private var mainViewModel: MainViewModel
-    
-    var onTodoSectionChange: ((UUID) -> Void)?
-    var onTodoFinishing: ((UUID) -> Void)?
-    
     private var cells: [TodoTableViewCell] = []
     
     init(viewModel: MainViewModel) {
@@ -28,12 +27,13 @@ final class TodoTableDiffableDataSource: NSObject {
             guard let self else { return nil }
             let cell = table.dequeueReusableCell(withIdentifier: TodoTableViewCell.identifier, for: indexPath) as! TodoTableViewCell
             cell.configureWithTodo(todo,
-                                   delegate: TodoTextFieldDelegate(viewModel: mainViewModel, currentId: todo.id))
-            cell.changeTodoSection = { [weak self] id in self?.onTodoSectionChange?(id) }
-            cell.finishTodo = { [weak self] id in self?.onTodoFinishing?(id) }
+                                   delegate: TodoTextFieldDelegate(viewModel: mainViewModel, currentTodo: todo))
+            cell.changeTodoSection = { [weak self] todo in self?.onTodoSectionChange?(todo) }
+            cell.finishTodo = { [weak self] todo in self?.onTodoFinishing?(todo) }
             cells.append(cell)
             return cell
         })
+        dataSource?.defaultRowAnimation = .fade
         confirmSnapshot(todos: todos, animation: true)
     }
     
@@ -44,13 +44,31 @@ final class TodoTableDiffableDataSource: NSObject {
             snapshot.appendSections([todos[0].section])
             snapshot.appendItems(todos)
         }
-        
         dataSource?.apply(snapshot, animatingDifferences: animation)
     }
     
-    func updateColor() {
-        for cell in cells {
-            cell.updateColor()
-        }
+    func appendElementToSection(todo: Todo, to section: MainTableSections) {
+        guard var snapshot = dataSource?.snapshot() else { return }
+        if snapshot.numberOfSections == 0 { snapshot.appendSections([section]) }
+        snapshot.appendItems([todo], toSection: section)
+        
+        dataSource?.apply(snapshot, animatingDifferences: true)
     }
+    
+    func removeExistingElement(todo: Todo) {
+        guard var snapshot = dataSource?.snapshot() else { return }
+        
+        snapshot.deleteItems([todo])
+        dataSource?.apply(snapshot, animatingDifferences: true)
+    }
+    
+    func replaceExistingElementWithUpdated(oldElement: Todo, newElementTodo: Todo) {
+        guard var snapshot = dataSource?.snapshot() else { return }
+        
+        snapshot.insertItems([newElementTodo], beforeItem: oldElement)
+        snapshot.deleteItems([oldElement])
+        dataSource?.apply(snapshot)
+    }
+    
+    func updateColor() { cells.forEach { $0.updateColor() } }
 }

@@ -12,11 +12,12 @@ final class TodoTableViewCell: UITableViewCell {
     static var identifier: String { "\(self)" }
     private var textFieldDelegate: TodoTextFieldDelegate?
     
-    var changeTodoSection: ((UUID) -> Void)?
-    var finishTodo: ((UUID) -> Void)?
+    var changeTodoSection: ((Todo) -> Void)?
+    var finishTodo: ((Todo) -> Void)?
     
     private let maxTreshold: CGFloat = UIScreen.main.bounds.width / 7
     private var currentId: UUID!
+    private var currentTodo: Todo!
     
     private lazy var bgView: UIView = {
         let view = UIView()
@@ -35,7 +36,6 @@ final class TodoTableViewCell: UITableViewCell {
     private lazy var squareImageView: UIImageView = {
         let image = UIImageView(image: SystemImages.square.image)
         image.tintColor = SelectedColor.backgroundColor
-        image.alpha = 0.1
         return image
     }()
     
@@ -77,7 +77,7 @@ final class TodoTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         moveToAnotherSectionButton.removeTarget(nil, action: nil, for: .allEvents)
     }
-        
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupData()
@@ -89,12 +89,13 @@ final class TodoTableViewCell: UITableViewCell {
     
     func configureWithTodo(_ todo: Todo, delegate todoTextFieldDelegate: TodoTextFieldDelegate) {
         currentId = todo.id
+        currentTodo = todo
         
         todoTextField.text = todo.title
         moveToAnotherSectionButton.setImage(SystemImages.moveTodo(todo.section).image, for: .normal)
         
         moveToAnotherSectionButton.addAction(UIAction { [weak self] _ in
-            self?.changeTodoSection?(todo.id)
+            self?.changeTodoSection?(todo)
         }, for: .touchUpInside)
         
         textFieldDelegate = todoTextFieldDelegate
@@ -112,7 +113,7 @@ final class TodoTableViewCell: UITableViewCell {
             self.moveToAnotherSectionButton.tintColor = SelectedColor.backgroundColor
             
             UIView.animate(withDuration: 0.5) {
-                self.squareImageView.alpha = 0.1
+                self.squareImageView.alpha = 1
                 self.squareWithCheckMarkImage.alpha = 0
                 self.moveToAnotherSectionButton.alpha = 1
             }
@@ -140,7 +141,7 @@ private extension TodoTableViewCell {
     
     func setupLayout() {
         NSLayoutConstraint.activate([
-            bgView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constants.paddingTiny.value),
+            bgView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constants.paddingTiny.value / 4),
             bgView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             bgView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.paddingTiny.value),
             bgView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.paddingTiny.value),
@@ -168,21 +169,20 @@ private extension TodoTableViewCell {
     }
     
     func setupGestures() {
-        let swipeGesture = UIPanGestureRecognizer(target: self, action: #selector(rightSwipe(_:)))
-        self.addGestureRecognizer(swipeGesture)
+        let swipeCellGesture = UIPanGestureRecognizer(target: self, action: #selector(rightSwipe(_:)))
+        self.addGestureRecognizer(swipeCellGesture)
     }
     
     @objc func rightSwipe(_ gesture: UIPanGestureRecognizer) {
         let xTransition = gesture.translation(in: self).x
-        setupAnimation(xTransition, gesture)
+        onTodoComplete(xTransition, gesture)
     }
     
-    func setupAnimation(_ xTransition: CGFloat, _ gesture: UIPanGestureRecognizer) {
+    func onTodoComplete(_ xTransition: CGFloat, _ gesture: UIPanGestureRecognizer) {
         guard xTransition > 0 else { return }
         
         let currentLoaded = max(0.1, xTransition / maxTreshold)
-        squareImageView.alpha = currentLoaded
-        squareWithCheckMarkImage.alpha = currentLoaded
+        squareWithCheckMarkImage.alpha = (currentLoaded <= 0.1) ? 0 : currentLoaded
         todoTextField.transform = CGAffineTransform(translationX: min(xTransition, maxTreshold), y: 0)
         
         UIView.animate(withDuration: 0.2) {
@@ -197,8 +197,8 @@ private extension TodoTableViewCell {
             if currentLoaded < 1 {
                 backToDefaultAnimation()
             } else {
-                finishTodo?(self.currentId)
-                FeedBackService.occurreVibration(type: .medium)
+                finishTodo?(currentTodo)
+                FeedBackService.occurreVibration(style: .medium)
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
                     self?.backToDefaultAnimation()
@@ -210,7 +210,7 @@ private extension TodoTableViewCell {
     func backToDefaultAnimation() {
         UIView.animate(withDuration: 0.2) {
             self.todoTextField.transform = .identity
-            self.squareImageView.alpha = 0.1
+            self.squareImageView.alpha = 1
             self.squareWithCheckMarkImage.alpha = 0
             self.squareImageView.transform = .identity
         }

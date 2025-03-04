@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum TodoTypes {
+enum TodoTypes: String {
     
     case sooner,
          later,

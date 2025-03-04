@@ -132,21 +132,18 @@ final class MainViewModel: KeyboardObservable {
     // MARK: MainTableDataSourceData
     private var todoService: TodoService
     
-    var updateTodos: ((MainTableSections, [Todo]) -> Void)?
     var updateBackground: ((MainTableSections) -> Void)?
     var updateCounter: ((MainTableSections) -> Void)?
+    var updateDatoSourceWithEditedData: ((Todo, Todo) -> Void)?
     
     lazy var soonerTodos = todoService.getTodos(type: .sooner) {
         didSet {
-            
-            updateTodos?(.sooner, soonerTodos)
             updateViewData(.sooner)
         }
     }
     
     lazy var laterTodos = todoService.getTodos(type: .later) {
         didSet {
-            updateTodos?(.later, laterTodos)
             updateViewData(.later)
         }
     }
@@ -172,7 +169,7 @@ final class MainViewModel: KeyboardObservable {
     }
     
     func changeSection(from section: MainTableSections, with id: UUID) {
-        FeedBackService.occurreVibration(type: .light)
+        FeedBackService.occurreVibration(style: .light)
         if section == .sooner {
         
             guard let index = soonerTodos.firstIndex(where: { $0.id == id }) else { return }
@@ -197,13 +194,11 @@ final class MainViewModel: KeyboardObservable {
     func removeAndFinishTodo(from section: MainTableSections, with id: UUID) {
         
         if section == .sooner {
-        
             guard let index = soonerTodos.firstIndex(where: { $0.id == id }) else { return }
             
             finishTodo(in: .sooner, at: index)
             soonerTodos.remove(at: index)
         } else {
-            
             guard let index = laterTodos.firstIndex(where: { $0.id == id }) else { return }
             
             finishTodo(in: .later, at: index)
@@ -211,13 +206,15 @@ final class MainViewModel: KeyboardObservable {
         }
     }
     
-    func editTodo(withId id: UUID, updatedTitle title: String) {
+    func editTodo(todo: Todo, updatedTitle title: String) {
         
-        if let index = soonerTodos.firstIndex(where: { $0.id == id }) {
+        if let index = soonerTodos.firstIndex(where: { $0 == todo }) {
             soonerTodos[index].editTitle(updatedTitle: title)
+            updateDatoSourceWithEditedData?(todo, soonerTodos[index])
         } else {
-            guard let index = laterTodos.firstIndex(where: { $0.id == id }) else { return }
+            guard let index = laterTodos.firstIndex(where: { $0 == todo }) else { return }
             laterTodos[index].editTitle(updatedTitle: title)
+            updateDatoSourceWithEditedData?(todo, laterTodos[index])
         }
     }
 }

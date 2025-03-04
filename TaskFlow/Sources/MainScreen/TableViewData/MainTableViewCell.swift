@@ -28,6 +28,7 @@ final class MainTableViewCell: UITableViewCell {
         table.delegate = self
         table.showsVerticalScrollIndicator = false
         table.separatorStyle = .none
+        table.contentInset = UIEdgeInsets(top: Constants.paddingTiny.value, left: 0, bottom: Constants.paddingTiny.value, right: 0)
         table.register(TodoTableViewCell.self, forCellReuseIdentifier: TodoTableViewCell.identifier)
         table.rowHeight = TodoCellSize.default.value
         return table

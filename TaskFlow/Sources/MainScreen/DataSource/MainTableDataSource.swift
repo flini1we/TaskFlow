@@ -18,16 +18,31 @@ final class MainTableDataSource: NSObject, UITableViewDataSource {
     private(set) var laterSectionDataSource: TodoTableDiffableDataSource
     
     private(set) lazy var soonerSectionDragDropDelegate: DragAndDropDelegate = {
-        DragAndDropDelegate(data: mainViewModel.getTodos(in: .sooner))
+        DragAndDropDelegate(data: mainViewModel.getTodos(in: .sooner), onDraggingDataChanged: { [weak self] todos in
+            self?.updateViewModelAndDataSourceData(with: todos)
+        })
     }()
     private(set) lazy var laterSectionDragDropDelegate: DragAndDropDelegate = {
-        DragAndDropDelegate(data: mainViewModel.getTodos(in: .later))
+        DragAndDropDelegate(data: mainViewModel.getTodos(in: .later), onDraggingDataChanged: { [weak self] todos in
+            self?.updateViewModelAndDataSourceData(with: todos)
+        })
     }()
     
     init(viewModel mainViewModel: MainViewModel) {
         self.mainViewModel = mainViewModel
         soonerSectionDataSource = TodoTableDiffableDataSource(viewModel: mainViewModel)
         laterSectionDataSource = TodoTableDiffableDataSource(viewModel: mainViewModel)
+        
+        super.init()
+        mainViewModel.updateDatoSourceWithEditedData = { [weak self] oldTodo, newTodo in
+            let section = oldTodo.section
+            switch section {
+            case .sooner:
+                self?.soonerSectionDataSource.replaceExistingElementWithUpdated(oldElement: oldTodo, newElementTodo: newTodo)
+            case .later:
+                self?.laterSectionDataSource.replaceExistingElementWithUpdated(oldElement: oldTodo, newElementTodo: newTodo)
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { 1 }
@@ -57,6 +72,7 @@ final class MainTableDataSource: NSObject, UITableViewDataSource {
     }
     
     func updateDragTableDelegateData() {
+        
         soonerSectionDragDropDelegate.updateData(mainViewModel.getTodos(in: .sooner))
         laterSectionDragDropDelegate.updateData(mainViewModel.getTodos(in: .later))
     }
@@ -75,19 +91,26 @@ final class MainTableDataSource: NSObject, UITableViewDataSource {
 
 private extension MainTableDataSource {
     
+    func updateViewModelAndDataSourceData(with todos: [Todo]) {
+        guard let section = todos.first?.section else { return }
+        switch section {
+        case .sooner:
+            mainViewModel.soonerTodos = todos
+            soonerSectionDataSource.confirmSnapshot(todos: todos, animation: false)
+        case .later:
+            mainViewModel.laterTodos = todos
+            laterSectionDataSource.confirmSnapshot(todos: todos, animation: false)
+        }
+    }
+    
     func configureCell(section: MainTableSections) {
         let cell = getCurrentCell(in: section)
         let todos = mainViewModel.getTodos(in: section)
         let dataSource = getCurrentDataSource(in: section)
         
         dataSource.setupDataSource(table: cell.tasksTable, todos: todos)
-        
-        dataSource.onTodoSectionChange = { [weak self] id in
-            self?.moveTodo(from: section, with: id)
-        }
-        dataSource.onTodoFinishing = { [weak self] id in
-            self?.finishTodo(from: section, with: id)
-        }
+        dataSource.onTodoSectionChange = { [weak self] todo in self?.moveTodo(with: todo) }
+        dataSource.onTodoFinishing = { [weak self] todo in self?.finishTodo(with: todo) }
     }
     
     func getCurrentCell(in section: MainTableSections) -> MainTableViewCell {
@@ -98,15 +121,31 @@ private extension MainTableDataSource {
         (section == .sooner) ? soonerSectionDataSource : laterSectionDataSource
     }
     
-    func finishTodo(from section: MainTableSections, with id: UUID) {
+    func finishTodo(with todo: Todo) {
         
-        mainViewModel.removeAndFinishTodo(from: section, with: id)
+        mainViewModel.removeAndFinishTodo(from: todo.section, with: todo.id)
+        if todo.section == .sooner {
+            soonerSectionDataSource.removeExistingElement(todo: todo)
+        } else {
+            laterSectionDataSource.removeExistingElement(todo: todo)
+        }
         updateDragTableDelegateData()
     }
     
-    func moveTodo(from section: MainTableSections, with id: UUID) {
+    func moveTodo(with todo: Todo) {
+        let section = todo.section
+        var todo = todo
+        mainViewModel.changeSection(from: todo.section, with: todo.id)
         
-        mainViewModel.changeSection(from: section, with: id)
+        if section == .later {
+            laterSectionDataSource.removeExistingElement(todo: todo)
+            todo.changeSection()
+            soonerSectionDataSource.appendElementToSection(todo: todo, to: .sooner)
+        } else {
+            soonerSectionDataSource.removeExistingElement(todo: todo)
+            todo.changeSection()
+            laterSectionDataSource.appendElementToSection(todo: todo, to: .later)
+        }
         updateDragTableDelegateData()
     }
 }

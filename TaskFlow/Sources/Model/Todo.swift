@@ -26,9 +26,4 @@ struct Todo: Identifiable, Hashable {
     mutating func changeSection() { section = (section == .sooner) ? .later : .sooner }
     mutating func finishTask() { finishedAt = .now }
     mutating func editTitle(updatedTitle title: String) { self.title = title }
-    
-    static func getTodos() -> [Todo] {
-        [Todo(id: UUID(), title: "Later", section: .later),
-         Todo(id: UUID(), title: "Sooner", section: .sooner)]
-    }
 }

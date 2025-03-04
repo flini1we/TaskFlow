@@ -7,21 +7,9 @@
 
 import UIKit
 
-enum VibrationTypes {
-    case light, medium, heavy
-}
-
 class FeedBackService {
     
-    static func occurreVibration(type: VibrationTypes) {
-        
-        switch type {
-        case .light:
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        case .medium:
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        case .heavy:
-            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-        }
+    static func occurreVibration(style: UIImpactFeedbackGenerator.FeedbackStyle) {
+        UIImpactFeedbackGenerator(style: style).impactOccurred()
     }
 }

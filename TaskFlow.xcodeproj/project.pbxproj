@@ -10,6 +10,7 @@
 		CF04D2302D73C33400ACB45E /* FeedBackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF04D22F2D73C33400ACB45E /* FeedBackService.swift */; };
 		CF2760AA2D58CE2C002A6DED /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2760A92D58CE2C002A6DED /* TodoTableViewCell.swift */; };
 		CF2760AC2D58D516002A6DED /* TodoCellSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2760AB2D58D516002A6DED /* TodoCellSize.swift */; };
+		CF3ADE382D77247700B3DACC /* CoreDataContextTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ADE372D77247700B3DACC /* CoreDataContextTypes.swift */; };
 		CF621BBB2D70E4C800B8969D /* AppearanceModes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF621BBA2D70E4C800B8969D /* AppearanceModes.swift */; };
 		CF65827A2D6B09EC00576B4E /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6582792D6B09EC00576B4E /* CoreDataManager.swift */; };
 		CF6DF32A2D53E7D600D5F369 /* UIInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6DF3292D53E7D600D5F369 /* UIInsets.swift */; };
@@ -50,12 +51,14 @@
 		CFD41ECA2D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41EC92D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift */; };
 		CFD41ED02D5B42E900AEBC57 /* KeyboardObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41ECF2D5B42E900AEBC57 /* KeyboardObserver.swift */; };
 		CFD41ED32D5B761700AEBC57 /* SwipeDirections.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41ED22D5B761700AEBC57 /* SwipeDirections.swift */; };
+		CFF426D92D771C9A001DDD0C /* CoreDataErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF426D82D771C9A001DDD0C /* CoreDataErrors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		CF04D22F2D73C33400ACB45E /* FeedBackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedBackService.swift; sourceTree = "<group>"; };
 		CF2760A92D58CE2C002A6DED /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
 		CF2760AB2D58D516002A6DED /* TodoCellSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoCellSize.swift; sourceTree = "<group>"; };
+		CF3ADE372D77247700B3DACC /* CoreDataContextTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataContextTypes.swift; sourceTree = "<group>"; };
 		CF621BBA2D70E4C800B8969D /* AppearanceModes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceModes.swift; sourceTree = "<group>"; };
 		CF6582792D6B09EC00576B4E /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		CF6DF3292D53E7D600D5F369 /* UIInsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIInsets.swift; sourceTree = "<group>"; };
@@ -97,6 +100,7 @@
 		CFD41EC92D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableDiffableDataSource.swift; sourceTree = "<group>"; };
 		CFD41ECF2D5B42E900AEBC57 /* KeyboardObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardObserver.swift; sourceTree = "<group>"; };
 		CFD41ED22D5B761700AEBC57 /* SwipeDirections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeDirections.swift; sourceTree = "<group>"; };
+		CFF426D82D771C9A001DDD0C /* CoreDataErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataErrors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +157,7 @@
 		CF75129D2D50F6E5009775B5 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				CFF426D72D771C8D001DDD0C /* Errors */,
 				CF76B97A2D73626F00659104 /* Services */,
 				CFD41ECE2D5B42DF00AEBC57 /* Observers */,
 				CF6582742D6B078F00576B4E /* CoreData */,
@@ -270,6 +275,7 @@
 				CF7512B12D513EB7009775B5 /* MainTableSections.swift */,
 				CF621BBA2D70E4C800B8969D /* AppearanceModes.swift */,
 				CF76B97E2D73654300659104 /* TodoTypes.swift */,
+				CF3ADE372D77247700B3DACC /* CoreDataContextTypes.swift */,
 			);
 			path = Sections;
 			sourceTree = "<group>";
@@ -327,6 +333,14 @@
 				CFD41ED22D5B761700AEBC57 /* SwipeDirections.swift */,
 			);
 			path = GestureDirections;
+			sourceTree = "<group>";
+		};
+		CFF426D72D771C8D001DDD0C /* Errors */ = {
+			isa = PBXGroup;
+			children = (
+				CFF426D82D771C9A001DDD0C /* CoreDataErrors.swift */,
+			);
+			path = Errors;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -432,9 +446,11 @@
 				CF7512A02D50F718009775B5 /* MainView.swift in Sources */,
 				CF621BBB2D70E4C800B8969D /* AppearanceModes.swift in Sources */,
 				CFA68D1E2D707D8F000DDE70 /* SettingsView.swift in Sources */,
+				CF3ADE382D77247700B3DACC /* CoreDataContextTypes.swift in Sources */,
 				CF76B9942D739BAB00659104 /* TodoTextFieldDelegate.swift in Sources */,
 				CFD41ED02D5B42E900AEBC57 /* KeyboardObserver.swift in Sources */,
 				CF7512B02D513950009775B5 /* Fonts.swift in Sources */,
+				CFF426D92D771C9A001DDD0C /* CoreDataErrors.swift in Sources */,
 				CF6DF32C2D53E80300D5F369 /* HeaderSize.swift in Sources */,
 				CFBCA01F2D6B3B0D0099B4DF /* TodoEntity+CoreDataProperties.swift in Sources */,
 				CF7512B72D51476E009775B5 /* MainTableViewCell.swift in Sources */,
