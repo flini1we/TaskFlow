@@ -36,9 +36,8 @@ final class MainView: UIView {
         return item
     }()
     
-    private lazy var infoBarButtonItem: UIBarButtonItem = {
-        let item = UIBarButtonItem(image: SystemImages.info.image)
-        item.tintColor = SelectedColor.backgroundColor
+    private lazy var chartsBarButtonItem: UIBarButtonItem = {
+        let item = UIBarButtonItem()
         return item
     }()
     
@@ -49,7 +48,7 @@ final class MainView: UIView {
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
         let spacer = UIBarButtonItem(systemItem: .flexibleSpace)
         
-        toolbar.items = [settingsBarButtonItem, spacer, addTodoBarButtonItem, spacer, infoBarButtonItem]
+        toolbar.items = [settingsBarButtonItem, spacer, addTodoBarButtonItem, spacer, chartsBarButtonItem]
         toolbar.barTintColor = .systemBackground
         toolbar.sizeToFit()
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
@@ -95,7 +94,7 @@ final class MainView: UIView {
         settingsBarButtonItem.tintColor = SelectedColor.backgroundColor
         addTodoBarButtonItem.tintColor = SelectedColor.backgroundColor
         hideKeyboardBarButtonItem.tintColor = SelectedColor.backgroundColor
-        infoBarButtonItem.tintColor = SelectedColor.backgroundColor
+        chartsBarButtonItem.tintColor = SelectedColor.backgroundColor
     }
     
     func addActionToHideKeyboardButton(_ action: UIAction) {
@@ -114,6 +113,22 @@ final class MainView: UIView {
         settingsBarButtonItem.primaryAction = action
         settingsBarButtonItem.tintColor = SelectedColor.backgroundColor
         settingsBarButtonItem.image = SystemImages.settings.image
+    }
+    
+    func addActionToChartsButton(_ action: UIAction) {
+        chartsBarButtonItem.primaryAction = action
+        chartsBarButtonItem.tintColor = SelectedColor.backgroundColor
+        chartsBarButtonItem.image = SystemImages.charts.image
+    }
+    
+    func enableOrDisableAllToolbardButtons(shouldEnable: Bool) {
+        if !shouldEnable {
+            settingsBarButtonItem.isEnabled = false
+            chartsBarButtonItem.isEnabled = false
+        } else {
+            settingsBarButtonItem.isEnabled = true
+            chartsBarButtonItem.isEnabled = true
+        }
     }
 }
 

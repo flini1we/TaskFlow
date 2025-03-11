@@ -17,7 +17,8 @@ enum SystemImages {
          newTodo,
          addTodo,
          hideKeyboard,
-         info,
+//         info,
+         charts,
          moveTodo(MainTableSections),
          checkmark,
          square,
@@ -25,7 +26,9 @@ enum SystemImages {
          lightSun,
          darkMoon,
          sparkles,
-         sparkle
+         sparkle,
+         todoInfo,
+         cross
     
     var image: UIImage {
         switch self {
@@ -45,8 +48,8 @@ enum SystemImages {
             return UIImage(systemName: "plus")!
         case .hideKeyboard:
             return UIImage(systemName: "keyboard.chevron.compact.down")!
-        case .info:
-            return UIImage(systemName: "info.circle")!
+        case .charts:
+            return UIImage(systemName: "chart.bar")!
         case .moveTodo(let section):
             if section == .later {
                 return UIImage(systemName: "chevron.up")!
@@ -67,6 +70,10 @@ enum SystemImages {
             return UIImage(systemName: "sparkles")!
         case .sparkle:
             return UIImage(systemName: "sparkle")!
+        case .todoInfo:
+            return UIImage(systemName: "ellipsis")!
+        case .cross:
+            return UIImage(systemName: "xmark")!
         }
     }
 }

@@ -24,7 +24,7 @@ final class MainTableViewCell: UITableViewCell {
         table.dragInteractionEnabled = true
         table.translatesAutoresizingMaskIntoConstraints = false
         table.backgroundColor = .systemGray6
-        table.layer.cornerRadius = Constants.paddingSmall.value
+        table.layer.cornerRadius = Constants.paddingSmall.value + 4
         table.delegate = self
         table.showsVerticalScrollIndicator = false
         table.separatorStyle = .none
@@ -57,8 +57,8 @@ final class MainTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
             tasksTable.heightAnchor.constraint(equalTo: self.heightAnchor),
             tasksTable.topAnchor.constraint(equalTo: contentView.topAnchor),
-            tasksTable.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.paddingSmall.value),
-            tasksTable.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.paddingSmall.value),
+            tasksTable.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.paddingTiny.value),
+            tasksTable.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.paddingTiny.value),
         ])
     }
 }

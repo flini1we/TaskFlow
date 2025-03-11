@@ -6,10 +6,24 @@
 //
 
 import Foundation
+import CoreData
 
 class TodoService {
     
     private var coreDataManager: CoreDataManager
+    
+    private var soonerTodos: [Todo] {
+        didSet {
+            coreDataManager.replaceTodosInSection(todos: soonerTodos, at: .sooner)
+        }
+    }
+    private var laterTodos: [Todo] {
+        didSet {
+            coreDataManager.replaceTodosInSection(todos: laterTodos, at: .later)
+        }
+    }
+    
+    private var finishedTodos: [Todo]
     
     init(coreDataManager: CoreDataManager = CoreDataManager.shared) {
         self.coreDataManager = coreDataManager
@@ -42,26 +56,12 @@ class TodoService {
         }
     }
     
-    private var soonerTodos: [Todo] {
-        didSet {
-            print("Saved to coreData: Sooner")
-            soonerTodos.forEach { print($0.title) }
-        }
+    func getFinishedTodosFetchedResultsController() -> NSFetchedResultsController<TodoEntity> {
+        coreDataManager.obtaingFinishedTodosFetchedResultsController()
     }
-    private var laterTodos: [Todo] {
-        didSet {
-            print("Saved to coreData: Later")
-            laterTodos.forEach { print($0.title) }
-        }
-    }
-    private var finishedTodos: [Todo] {
-        didSet {
-            // save to core data instantly
-            print("Saved to coreData: Finished")
-            finishedTodos.forEach {
-                print($0.title)
-            }
-        }
+    
+    func restoreFinishedTodoFromStorage(todo: Todo) {
+        coreDataManager.removeFinishedTodo(withId: todo.id)
     }
 }
 
@@ -79,15 +79,14 @@ extension TodoService {
         }
     }
     
-    func saveUpdatedData(sooner: [Todo], later: [Todo], finished: [Todo]) {
+    func saveUpdatedData(sooner: [Todo], later: [Todo]) {
         
         self.soonerTodos = sooner
         self.laterTodos = later
-        self.finishedTodos = finished
     }
     
     func saveFinishedTodo(finishedTodo: Todo) {
         guard finishedTodo.finishedAt != nil else { return }
-        // TODO: save to core data
+        coreDataManager.saveFinishedTodo(todo: finishedTodo)
     }
 }

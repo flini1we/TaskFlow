@@ -9,7 +9,7 @@ import Foundation
 
 enum CoreDataErrors: Error {
     
-    case failedToObtainActiveTodosFromSection(MainTableSections)
+    case failedToObtainActiveTodosFromSection(TodoTypes)
     case failedToObtainFinishedTodos
     case failedToSaveDataInContext(CoreDataContextTypes)
     case failedToObtainFinishedTodosDueToTodoFinishedAtFieldIsNil(Todo)

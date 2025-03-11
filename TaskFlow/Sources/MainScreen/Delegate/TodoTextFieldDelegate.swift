@@ -18,10 +18,11 @@ class TodoTextFieldDelegate: NSObject, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let text = textField.text, !text.isEmpty {
+        if let text = textField.text, !text.isEmpty, text != currentTodo.title {
             viewModel.editTodo(todo: currentTodo, updatedTitle: text)
-            return true
+        } else {
+            textField.resignFirstResponder()
         }
-        return false
+        return true
     }
 }

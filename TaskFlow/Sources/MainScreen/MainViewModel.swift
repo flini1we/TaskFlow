@@ -130,7 +130,7 @@ final class MainViewModel: KeyboardObservable {
     }
     
     // MARK: MainTableDataSourceData
-    private var todoService: TodoService
+    private(set) var todoService: TodoService
     
     var updateBackground: ((MainTableSections) -> Void)?
     var updateCounter: ((MainTableSections) -> Void)?
@@ -148,14 +148,10 @@ final class MainViewModel: KeyboardObservable {
         }
     }
     
-    lazy var finishedTodos = todoService.getTodos(type: .finished) {
-        didSet {
-            print("finished")
-        }
-    }
+    lazy var finishedTodos = todoService.getTodos(type: .finished)
     
     func saveDataOnScreenDisappearing() {
-        todoService.saveUpdatedData(sooner: soonerTodos, later: laterTodos, finished: finishedTodos)
+        todoService.saveUpdatedData(sooner: soonerTodos, later: laterTodos)
     }
     
     func updateBothViewData() {
@@ -217,6 +213,15 @@ final class MainViewModel: KeyboardObservable {
             updateDatoSourceWithEditedData?(todo, laterTodos[index])
         }
     }
+    
+    func restoreTodo(todo: Todo, shouldRestore: Bool) {
+        todoService.restoreFinishedTodoFromStorage(todo: todo)
+        var todo = todo
+        todo.restoreTodo()
+        if shouldRestore {
+            if todo.section == .sooner { soonerTodos.append(todo) } else { laterTodos.append(todo) }
+        }
+    }
 }
 
 // MARK: Private Methods
@@ -230,9 +235,11 @@ private extension MainViewModel {
     
     func finishTodo(in section: MainTableSections, at index: Int) {
         
-        var removeTodo = (section == .sooner) ? soonerTodos[index] : laterTodos[index]
-        removeTodo.finishTask()
-        finishedTodos.append(removeTodo)
+        var finishedTodo = (section == .sooner) ? soonerTodos[index] : laterTodos[index]
+        finishedTodo.finishTask()
+        finishedTodos.append(finishedTodo)
+        
+        todoService.saveFinishedTodo(finishedTodo: finishedTodo)
     }
     
     func updateBothButtonImages() {

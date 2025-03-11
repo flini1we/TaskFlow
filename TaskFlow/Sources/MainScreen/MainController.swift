@@ -41,7 +41,9 @@ final class MainController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) { mainViewModel.updateBothViewData() }
     
-    override func viewDidDisappear(_ animated: Bool) { mainViewModel.saveDataOnScreenDisappearing() }
+    deinit {
+        mainViewModel.saveDataOnScreenDisappearing()
+    }
 }
 
 // MARK: ColorUpdatable protocol extension
@@ -81,6 +83,7 @@ private extension MainController {
         mainView.addActionToAddTodoButton(configureActionToAddTodoOrHideKeyboardButton(state: .addingTask))
         mainView.addActionToHideKeyboardButton(configureActionToAddTodoOrHideKeyboardButton(state: .default))
         mainView.addActionToSettingsButton(goToSettingsScreenAction())
+        mainView.addActionToChartsButton(goToChartsScreenAction())
     }
     
     func setupViewModelBindings() {
@@ -94,7 +97,7 @@ private extension MainController {
         }
         
         mainViewModel.tableStateOnChange = { [weak self] in
-            FeedBackService.occurreVibration(style: .light)
+            if self?.mainViewModel.tableState != .addingTask { FeedBackService.occurreVibration(style: .light) }
             self?.mainView.updateTable()
         }
     }
@@ -102,9 +105,12 @@ private extension MainController {
     func setupViewModelObserver() {
         
         mainViewModel.setupObserver { [weak mainView] keyboardFrame in
+            FeedBackService.occurreVibration(style: .light)
             mainView?.raiseToolbar(keyboardFrame.height)
+            mainView?.enableOrDisableAllToolbardButtons(shouldEnable: false)
         } onHideKeyboard: { [weak mainView] in
-             mainView?.hideToolbar()
+            mainView?.hideToolbar()
+            mainView?.enableOrDisableAllToolbardButtons(shouldEnable: true)
         }
     }
     
@@ -137,6 +143,32 @@ private extension MainController {
             settingsController.modalPresentationStyle = .custom
             settingsController.modalPresentationCapturesStatusBarAppearance = true
             self?.present(settingsController, animated: true)
+        }
+    }
+    
+    func goToChartsScreenAction() -> UIAction {
+        UIAction { [weak self] _ in
+            guard let self else { return }
+            let statisticController = StatisticController(
+                statsticViewModel: StatisticViewModel(
+                    todoService: mainViewModel.todoService,
+                    onTodoRestoringCompletion: { [weak self] in guard let self else { return }
+                        mainViewModel.restoreTodo(todo: $0, shouldRestore: $1)
+                        if $1 { appendTodoDueToSection(todo: $0) }
+                    },
+                    finishedData: mainViewModel.finishedTodos
+                ))
+            let statisticNavigationController = UINavigationController(rootViewController: statisticController)
+            statisticNavigationController.modalPresentationStyle = .formSheet
+            present(statisticNavigationController, animated: true)
+        }
+    }
+    
+    func appendTodoDueToSection(todo: Todo) {
+        if todo.section == .sooner {
+            mainTableViewDataSource.soonerSectionDataSource.appendElementToSection(todo: todo, to: .sooner)
+        } else {
+            mainTableViewDataSource.laterSectionDataSource.appendElementToSection(todo: todo, to: .later)
         }
     }
 }

@@ -108,9 +108,10 @@ private extension MainTableDataSource {
         let todos = mainViewModel.getTodos(in: section)
         let dataSource = getCurrentDataSource(in: section)
         
-        dataSource.setupDataSource(table: cell.tasksTable, todos: todos)
         dataSource.onTodoSectionChange = { [weak self] todo in self?.moveTodo(with: todo) }
         dataSource.onTodoFinishing = { [weak self] todo in self?.finishTodo(with: todo) }
+        dataSource.onTodoRestoring = { [weak self] todo in self?.restoreTodo(with: todo) }
+        dataSource.setupDataSource(table: cell.tasksTable, todos: todos)
     }
     
     func getCurrentCell(in section: MainTableSections) -> MainTableViewCell {
@@ -147,6 +148,10 @@ private extension MainTableDataSource {
             laterSectionDataSource.appendElementToSection(todo: todo, to: .later)
         }
         updateDragTableDelegateData()
+    }
+    
+    func restoreTodo(with todo: Todo) {
+        mainViewModel.restoreTodo(todo: todo, shouldRestore: true)
     }
 }
 

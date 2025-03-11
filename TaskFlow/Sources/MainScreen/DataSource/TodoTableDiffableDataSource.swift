@@ -11,6 +11,7 @@ final class TodoTableDiffableDataSource: NSObject {
     
     var onTodoSectionChange: ((Todo) -> Void)?
     var onTodoFinishing: ((Todo) -> Void)?
+    var onTodoRestoring: ((Todo) -> Void)?
     
     private var dataSource: UITableViewDiffableDataSource<MainTableSections, Todo>?
     private var mainViewModel: MainViewModel
@@ -26,10 +27,16 @@ final class TodoTableDiffableDataSource: NSObject {
         cellProvider: { [weak self] tableView, indexPath, todo in
             guard let self else { return nil }
             let cell = table.dequeueReusableCell(withIdentifier: TodoTableViewCell.identifier, for: indexPath) as! TodoTableViewCell
-            cell.configureWithTodo(todo,
-                                   delegate: TodoTextFieldDelegate(viewModel: mainViewModel, currentTodo: todo))
+            cell.configureWithTodo(todo, isActive: true)
+            
+            cell.setDelegateToTextField(textFieldDelegate: TodoTextFieldDelegate(viewModel: mainViewModel, currentTodo: todo))
+            cell.setDelegateToScrollView(scrollViewDelegate: TodoScrollViewDelegate(
+                with: todo,
+                onTodoComplete: { self.onTodoFinishing?($0) },
+                onUIupdate: { cell.onUIUpdate(value: $0, isActive: true) },
+                isActive: true))
+            
             cell.changeTodoSection = { [weak self] todo in self?.onTodoSectionChange?(todo) }
-            cell.finishTodo = { [weak self] todo in self?.onTodoFinishing?(todo) }
             cells.append(cell)
             return cell
         })

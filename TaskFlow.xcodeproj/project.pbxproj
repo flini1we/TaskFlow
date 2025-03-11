@@ -10,7 +10,11 @@
 		CF04D2302D73C33400ACB45E /* FeedBackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF04D22F2D73C33400ACB45E /* FeedBackService.swift */; };
 		CF2760AA2D58CE2C002A6DED /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2760A92D58CE2C002A6DED /* TodoTableViewCell.swift */; };
 		CF2760AC2D58D516002A6DED /* TodoCellSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2760AB2D58D516002A6DED /* TodoCellSize.swift */; };
+		CF30AD7B2D7ECA2400F9E20A /* TodoScrollViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF30AD7A2D7ECA2400F9E20A /* TodoScrollViewDelegate.swift */; };
 		CF3ADE382D77247700B3DACC /* CoreDataContextTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ADE372D77247700B3DACC /* CoreDataContextTypes.swift */; };
+		CF41E43F2D8092BF00F9526A /* TodoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF41E43E2D8092BF00F9526A /* TodoDetailView.swift */; };
+		CF41E4422D80983800F9526A /* TodoDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF41E4412D80983800F9526A /* TodoDetailController.swift */; };
+		CF41E4452D80A35200F9526A /* CustomHeightPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF41E4442D80A35200F9526A /* CustomHeightPresentationController.swift */; };
 		CF621BBB2D70E4C800B8969D /* AppearanceModes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF621BBA2D70E4C800B8969D /* AppearanceModes.swift */; };
 		CF65827A2D6B09EC00576B4E /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6582792D6B09EC00576B4E /* CoreDataManager.swift */; };
 		CF6DF32A2D53E7D600D5F369 /* UIInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6DF3292D53E7D600D5F369 /* UIInsets.swift */; };
@@ -47,6 +51,9 @@
 		CFA68D1E2D707D8F000DDE70 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68D1D2D707D8F000DDE70 /* SettingsView.swift */; };
 		CFA68D212D707EC3000DDE70 /* AccentColorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68D202D707EC3000DDE70 /* AccentColorCollectionViewCell.swift */; };
 		CFA68D232D708D62000DDE70 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68D222D708D62000DDE70 /* SettingsViewModel.swift */; };
+		CFAA64752D7B6938009D126A /* StatisticView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAA64742D7B6938009D126A /* StatisticView.swift */; };
+		CFAA64772D7B6A96009D126A /* StatisticController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAA64762D7B6A96009D126A /* StatisticController.swift */; };
+		CFAA64792D7B6A9F009D126A /* StatisticViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAA64782D7B6A9F009D126A /* StatisticViewModel.swift */; };
 		CFBCA01F2D6B3B0D0099B4DF /* TodoEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBCA01D2D6B3B0D0099B4DF /* TodoEntity+CoreDataProperties.swift */; };
 		CFD41ECA2D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41EC92D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift */; };
 		CFD41ED02D5B42E900AEBC57 /* KeyboardObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41ECF2D5B42E900AEBC57 /* KeyboardObserver.swift */; };
@@ -58,7 +65,11 @@
 		CF04D22F2D73C33400ACB45E /* FeedBackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedBackService.swift; sourceTree = "<group>"; };
 		CF2760A92D58CE2C002A6DED /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
 		CF2760AB2D58D516002A6DED /* TodoCellSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoCellSize.swift; sourceTree = "<group>"; };
+		CF30AD7A2D7ECA2400F9E20A /* TodoScrollViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoScrollViewDelegate.swift; sourceTree = "<group>"; };
 		CF3ADE372D77247700B3DACC /* CoreDataContextTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataContextTypes.swift; sourceTree = "<group>"; };
+		CF41E43E2D8092BF00F9526A /* TodoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailView.swift; sourceTree = "<group>"; };
+		CF41E4412D80983800F9526A /* TodoDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailController.swift; sourceTree = "<group>"; };
+		CF41E4442D80A35200F9526A /* CustomHeightPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeightPresentationController.swift; sourceTree = "<group>"; };
 		CF621BBA2D70E4C800B8969D /* AppearanceModes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceModes.swift; sourceTree = "<group>"; };
 		CF6582792D6B09EC00576B4E /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		CF6DF3292D53E7D600D5F369 /* UIInsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIInsets.swift; sourceTree = "<group>"; };
@@ -96,6 +107,9 @@
 		CFA68D1D2D707D8F000DDE70 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		CFA68D202D707EC3000DDE70 /* AccentColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorCollectionViewCell.swift; sourceTree = "<group>"; };
 		CFA68D222D708D62000DDE70 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		CFAA64742D7B6938009D126A /* StatisticView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticView.swift; sourceTree = "<group>"; };
+		CFAA64762D7B6A96009D126A /* StatisticController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticController.swift; sourceTree = "<group>"; };
+		CFAA64782D7B6A9F009D126A /* StatisticViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewModel.swift; sourceTree = "<group>"; };
 		CFBCA01D2D6B3B0D0099B4DF /* TodoEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoEntity+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		CFD41EC92D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableDiffableDataSource.swift; sourceTree = "<group>"; };
 		CFD41ECF2D5B42E900AEBC57 /* KeyboardObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardObserver.swift; sourceTree = "<group>"; };
@@ -115,6 +129,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CF00C46C2D785B70002102D1 /* StatisticScreen */ = {
+			isa = PBXGroup;
+			children = (
+				CFAA64742D7B6938009D126A /* StatisticView.swift */,
+				CFAA64762D7B6A96009D126A /* StatisticController.swift */,
+				CFAA64782D7B6A9F009D126A /* StatisticViewModel.swift */,
+			);
+			path = StatisticScreen;
+			sourceTree = "<group>";
+		};
+		CF41E4402D80982E00F9526A /* TodoDetail */ = {
+			isa = PBXGroup;
+			children = (
+				CF41E4412D80983800F9526A /* TodoDetailController.swift */,
+				CF41E43E2D8092BF00F9526A /* TodoDetailView.swift */,
+			);
+			path = TodoDetail;
+			sourceTree = "<group>";
+		};
+		CF41E4432D80A31E00F9526A /* CustomPresentationControllers */ = {
+			isa = PBXGroup;
+			children = (
+				CF41E4442D80A35200F9526A /* CustomHeightPresentationController.swift */,
+			);
+			path = CustomPresentationControllers;
+			sourceTree = "<group>";
+		};
 		CF6582742D6B078F00576B4E /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
@@ -164,8 +205,10 @@
 				CF7512A32D50F722009775B5 /* Utilities */,
 				CF7512C22D536DB3009775B5 /* Model */,
 				CF7512AA2D51371A009775B5 /* CustomViews */,
+				CF41E4432D80A31E00F9526A /* CustomPresentationControllers */,
 				CF75129E2D50F6EC009775B5 /* MainScreen */,
 				CFA68D172D70727A000DDE70 /* SettingsScreen */,
+				CF00C46C2D785B70002102D1 /* StatisticScreen */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -211,6 +254,7 @@
 				CF9EB9552D550E8A00F6C843 /* MainTableDelegate.swift */,
 				CF9197502D6E0FA60089220C /* DragAndDropDelegate.swift */,
 				CF76B9932D739BAB00659104 /* TodoTextFieldDelegate.swift */,
+				CF30AD7A2D7ECA2400F9E20A /* TodoScrollViewDelegate.swift */,
 			);
 			path = Delegate;
 			sourceTree = "<group>";
@@ -221,6 +265,7 @@
 				CF7512AB2D51372D009775B5 /* MainTableHeaderView.swift */,
 				CF7512BA2D5170E9009775B5 /* TaskCounterView.swift */,
 				CF9197522D6E3D570089220C /* AddingTodoView.swift */,
+				CF41E4402D80982E00F9526A /* TodoDetail */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -422,6 +467,7 @@
 			files = (
 				CF9EB95A2D552B7800F6C843 /* SelectedColor.swift in Sources */,
 				CF7512AC2D51372D009775B5 /* MainTableHeaderView.swift in Sources */,
+				CF41E4422D80983800F9526A /* TodoDetailController.swift in Sources */,
 				CF7512BB2D5170E9009775B5 /* TaskCounterView.swift in Sources */,
 				CF7512992D50F6AF009775B5 /* AppDelegate.swift in Sources */,
 				CF2760AA2D58CE2C002A6DED /* TodoTableViewCell.swift in Sources */,
@@ -434,6 +480,7 @@
 				CF7512AE2D513811009775B5 /* Constants.swift in Sources */,
 				CF9EB9582D55149600F6C843 /* TableStates.swift in Sources */,
 				CF7512C32D536DB3009775B5 /* Todo.swift in Sources */,
+				CF30AD7B2D7ECA2400F9E20A /* TodoScrollViewDelegate.swift in Sources */,
 				CFA68D212D707EC3000DDE70 /* AccentColorCollectionViewCell.swift in Sources */,
 				CFD41ECA2D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift in Sources */,
 				CFD41ED32D5B761700AEBC57 /* SwipeDirections.swift in Sources */,
@@ -444,6 +491,7 @@
 				CFA68D232D708D62000DDE70 /* SettingsViewModel.swift in Sources */,
 				CF75129B2D50F6AF009775B5 /* TaskFlow.xcdatamodeld in Sources */,
 				CF7512A02D50F718009775B5 /* MainView.swift in Sources */,
+				CFAA64792D7B6A9F009D126A /* StatisticViewModel.swift in Sources */,
 				CF621BBB2D70E4C800B8969D /* AppearanceModes.swift in Sources */,
 				CFA68D1E2D707D8F000DDE70 /* SettingsView.swift in Sources */,
 				CF3ADE382D77247700B3DACC /* CoreDataContextTypes.swift in Sources */,
@@ -455,11 +503,15 @@
 				CFBCA01F2D6B3B0D0099B4DF /* TodoEntity+CoreDataProperties.swift in Sources */,
 				CF7512B72D51476E009775B5 /* MainTableViewCell.swift in Sources */,
 				CF9197532D6E3D570089220C /* AddingTodoView.swift in Sources */,
+				CF41E43F2D8092BF00F9526A /* TodoDetailView.swift in Sources */,
 				CF75129C2D50F6AF009775B5 /* MainController.swift in Sources */,
+				CFAA64772D7B6A96009D126A /* StatisticController.swift in Sources */,
 				CF76B97F2D73654300659104 /* TodoTypes.swift in Sources */,
 				CF65827A2D6B09EC00576B4E /* CoreDataManager.swift in Sources */,
 				CF9EB95C2D55389F00F6C843 /* ElementsSize.swift in Sources */,
+				CFAA64752D7B6938009D126A /* StatisticView.swift in Sources */,
 				CF7512A22D50F71E009775B5 /* MainViewModel.swift in Sources */,
+				CF41E4452D80A35200F9526A /* CustomHeightPresentationController.swift in Sources */,
 				CF04D2302D73C33400ACB45E /* FeedBackService.swift in Sources */,
 				CF7512B22D513EB7009775B5 /* MainTableSections.swift in Sources */,
 			);
