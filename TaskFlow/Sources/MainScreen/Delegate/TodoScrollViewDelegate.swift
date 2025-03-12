@@ -18,8 +18,6 @@ final class TodoScrollViewDelegate: NSObject, UIScrollViewDelegate {
     private var currentTodo: Todo
     private var isTodoActive: Bool
     
-    var hasCompletionActioned: Bool = false
-    
     init(with todo: Todo,
          onTodoComplete onTodoCompleteCompletion: @escaping OnTodoCompleteType,
          onUIupdate onUIUpdateCompletion: @escaping OnUIUpdateType,
@@ -41,11 +39,8 @@ final class TodoScrollViewDelegate: NSObject, UIScrollViewDelegate {
         } else {
             let currentLoaded = isTodoActive ? xOffset / maxTreshold : 1 - xOffset / maxTreshold
             onUIUpdateCompletion(currentLoaded)
-            if !hasCompletionActioned && (currentLoaded >= 0.95 && isTodoActive || currentLoaded < 0.05 && !isTodoActive) {
+            if !scrollView.isDragging && (currentLoaded >= 0.95 && isTodoActive || currentLoaded < 0.05 && !isTodoActive) {
                 onTodoComplete(currentTodo)
-                hasCompletionActioned = true
-                
-                // вот тут кароче много раз попадает
             }
         }
     }

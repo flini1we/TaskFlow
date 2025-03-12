@@ -100,6 +100,10 @@ private extension MainController {
             if self?.mainViewModel.tableState != .addingTask { FeedBackService.occurreVibration(style: .light) }
             self?.mainView.updateTable()
         }
+        
+        mainViewModel.onDragDelegateUpdate = { [weak self] section in
+            self?.mainTableViewDataSource.updateDragDropDelegateIn(section: section)
+        }
     }
     
     func setupViewModelObserver() {
@@ -149,18 +153,26 @@ private extension MainController {
     func goToChartsScreenAction() -> UIAction {
         UIAction { [weak self] _ in
             guard let self else { return }
-            let statisticController = StatisticController(
-                statsticViewModel: StatisticViewModel(
-                    todoService: mainViewModel.todoService,
-                    onTodoRestoringCompletion: { [weak self] in guard let self else { return }
-                        mainViewModel.restoreTodo(todo: $0, shouldRestore: $1)
-                        if $1 { appendTodoDueToSection(todo: $0) }
-                    },
-                    finishedData: mainViewModel.finishedTodos
-                ))
+            
+            let staticticViewModel = StatisticViewModel(todoService: mainViewModel.todoService,
+                                                        onTodoRestoringCompletion: { [weak self] todo, shouldRestore in
+                                                            self?.restoreTodo(todo, shouldRestore: shouldRestore)
+                                                        },
+                                                        finishedData: mainViewModel.finishedTodos)
+            staticticViewModel.onUpdateViewModelData = { [weak self] todo in
+                self?.mainViewModel.finishedTodos.removeAll(where: { $0.id == todo.id })
+            }
+            let statisticController = StatisticController(statsticViewModel: staticticViewModel)
             let statisticNavigationController = UINavigationController(rootViewController: statisticController)
             statisticNavigationController.modalPresentationStyle = .formSheet
             present(statisticNavigationController, animated: true)
+        }
+    }
+    
+    func restoreTodo(_ todo: Todo, shouldRestore: Bool) {
+        mainViewModel.restoreTodo(todo: todo, shouldRestore: shouldRestore)
+        if shouldRestore {
+            self.appendTodoDueToSection(todo: todo)
         }
     }
     

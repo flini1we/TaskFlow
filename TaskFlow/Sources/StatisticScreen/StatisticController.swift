@@ -31,14 +31,21 @@ final class StatisticController: UIViewController {
         statisticViewModel.onContentWillChange = { [weak self] in
             self?.statisticView.finishedTodosTableView.beginUpdates()
         }
+        
         statisticViewModel.onContentDidChange = { [weak self] in
             self?.statisticView.finishedTodosTableView.endUpdates()
         }
+        
         statisticViewModel.onDeletingRowAt = { [weak self] indexPath in
             self?.statisticView.deleteRowAt(indexPath: indexPath)
         }
+        
         statisticViewModel.onInsertingRowAt = { [weak self] indexPath in
             self?.statisticView.insertRowAt(indexPath: indexPath)
+        }
+        
+        statsticViewModel.onUpdateTableHeight = { [weak self] updatedHeight in
+            self?.statisticView.updateHeight(value: updatedHeight)
         }
     }
     
@@ -47,7 +54,10 @@ final class StatisticController: UIViewController {
     }
     
     override func loadView() {
-        view = StatisticView(viewModel: statisticViewModel)
+        view = StatisticView(
+            viewModel: statisticViewModel,
+            initialTableHeight: (TodoCellSize.default.value + 2.5) * CGFloat(statisticViewModel.finishedData.count)
+        )
     }
     
     override func viewDidLoad() {

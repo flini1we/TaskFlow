@@ -10,15 +10,25 @@ import CoreData
 
 final class StatisticViewModel: NSObject {
     
+    private lazy var calendar: Calendar = {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        calendar.firstWeekday = 2
+        return calendar
+    }()
+    private let currentDate = Date()
+    
     var onContentWillChange: (() -> Void)?
     var onContentDidChange: (() -> Void)?
     var onDeletingRowAt: ((IndexPath) -> Void)?
     var onInsertingRowAt: ((IndexPath) -> Void)?
+    var onUpdateTableHeight: ((CGFloat) -> Void)?
+    var onUpdateViewModelData: ((Todo) -> Void)?
     
     private var todoService: TodoService
     private var finishedTodosFethedResultsController: NSFetchedResultsController<TodoEntity>
     private var onTodoRestoring: ((Todo, Bool) -> Void)
-    private var finishedData: [Todo]
+    private(set) var finishedData: [Todo]
     
     init(todoService: TodoService,
          onTodoRestoringCompletion: @escaping ((Todo, Bool) -> Void),
@@ -42,14 +52,21 @@ final class StatisticViewModel: NSObject {
     }
     
     func getNumberOfSections() -> Int { finishedTodosFethedResultsController.sections?.count ?? 0 }
+    
     func getNumberOfRowsInSection(section: Int) -> Int {
         finishedTodosFethedResultsController.sections?[section].numberOfObjects ?? 0
     }
+    
     func getTodo(at indexPath: IndexPath) -> Todo {
         castTodoEntityIntoTodo(entity: finishedTodosFethedResultsController.object(at: indexPath))
     }
+    
     func onTodoRestore(todo: Todo, shouldRestore: Bool) {
         onTodoRestoring(todo, shouldRestore)
+        finishedData.removeAll { $0.id == todo.id }
+        onUpdateViewModelData?(todo)
+        let validatedHeight = !finishedData.isEmpty ? (TodoCellSize.default.value + 5) * CGFloat(finishedData.count) : 0
+        onUpdateTableHeight?(validatedHeight)
     }
 }
 
@@ -81,6 +98,36 @@ extension StatisticViewModel: NSFetchedResultsControllerDelegate {
         }
     }
 }
+
+// MARK: Calendar methods
+extension StatisticViewModel {
+    
+    func getTodaysTodos() -> [Todo] {
+        finishedData.compactMap { calendar.isDate($0.finishedAt!, inSameDayAs: currentDate) ? $0 : nil }
+    }
+    
+    func getWeeksTodos() -> [Todo] {
+        guard let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: currentDate)?.start else { return [] }
+        guard let endOfWeek = calendar.date(byAdding: .day, value: 7, to: startOfWeek) else { return [] }
+        
+        return finishedData.compactMap { todo in
+            return (todo.finishedAt! >= startOfWeek && todo.finishedAt! < endOfWeek) ? todo : nil
+        }
+    }
+    
+    func getThisMonthsTodos() -> [Todo] {
+        let currentYear = calendar.component(.year, from: currentDate)
+        let currentMonth = calendar.component(.month, from: currentDate)
+        
+        return finishedData.compactMap { todo in
+            
+            let taskYear = calendar.component(.year, from: todo.finishedAt!)
+            let taskMonth = calendar.component(.month, from: todo.finishedAt!)
+            return (taskYear == currentYear && taskMonth == currentMonth) ? todo : nil
+        }
+    }
+}
+
 
 private extension StatisticViewModel {
     

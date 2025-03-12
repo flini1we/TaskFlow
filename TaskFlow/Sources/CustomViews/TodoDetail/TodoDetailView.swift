@@ -9,24 +9,33 @@ import UIKit
 
 final class TodoDetailView: UIView {
     
-    private lazy var dayAndMonthDateFormater: DateFormatter = {
-        let formater = DateFormatter()
-        formater.dateFormat = "dd MMM"
-        formater.locale = .current
-        return formater
+    private lazy var dayAndMonthDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMM"
+        formatter.locale = .current
+        return formatter
     }()
     
-    private lazy var timeFormater: DateFormatter = {
-        let formater = DateFormatter()
-        formater.dateFormat = "HH:mm"
-        formater.locale = .current
-        return formater
+    private lazy var timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        formatter.locale = .current
+        return formatter
+    }()
+    
+    private lazy var distanceCompanentsFormatter: DateComponentsFormatter = {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.day, .hour, .minute]
+        formatter.unitsStyle = .abbreviated
+        return formatter
     }()
     
     private lazy var bgView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = UIColor { traits in
+            traits.userInterfaceStyle == .dark ? UIColor.systemGray5 : UIColor.systemGray6
+        }
         view.layer.cornerRadius = Constants.paddingMedium.value
         return view
     }()
@@ -35,6 +44,7 @@ final class TodoDetailView: UIView {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .systemRed
+        button.titleLabel?.font = .boldSystemFont(ofSize: Fonts.default.value)
         button.layer.cornerRadius = Constants.paddingSmall.value
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         button.setTitle("Delete Todo", for: .normal)
@@ -147,6 +157,41 @@ final class TodoDetailView: UIView {
         return stack
     }()
     
+    private lazy var arrowLeftPart: UIImageView = {
+        let image = UIImageView(image: UIImage(systemName: "minus"))
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.tintColor = .secondaryLabel
+        return image
+    }()
+    
+    private lazy var arrowRightPart: UIImageView = {
+        let image = UIImageView(image: UIImage(systemName: "arrow.right"))
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.tintColor = .secondaryLabel
+        return image
+    }()
+    
+    private lazy var timeOfDoingTodo: UILabel = {
+        let title = UILabel()
+        title.font = .systemFont(ofSize: Fonts.default.value)
+        title.textColor = .secondaryLabel
+        title.translatesAutoresizingMaskIntoConstraints = false
+        return title
+    }()
+    
+    private lazy var timeDifferenceStack: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [
+            arrowLeftPart,
+            timeOfDoingTodo,
+            arrowRightPart
+        ])
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .horizontal
+        stack.spacing = 5
+        stack.alignment = .center
+        return stack
+    }()
+    
     private lazy var todoDateStackView: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [
             createdAtDataStackView,
@@ -154,7 +199,7 @@ final class TodoDetailView: UIView {
         ])
         stack.axis = .horizontal
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.distribution = .fill
+        stack.distribution = .equalSpacing
         return stack
     }()
     
@@ -184,11 +229,13 @@ final class TodoDetailView: UIView {
     func setupWithTodo(_ todo: Todo) {
         self.todoTitle.text = todo.title
         
-        dayOfCreatingLabel.text = dayAndMonthDateFormater.string(from: todo.createdAt)
-        timeOfCreatingLabel.text = timeFormater.string(from: todo.createdAt)
+        dayOfCreatingLabel.text = dayAndMonthDateFormatter.string(from: todo.createdAt)
+        timeOfCreatingLabel.text = timeFormatter.string(from: todo.createdAt)
         
-        dayOfFinishingLabel.text = dayAndMonthDateFormater.string(from: todo.finishedAt!)
-        timeOfFinishingLabel.text = timeFormater.string(from: todo.finishedAt!)
+        dayOfFinishingLabel.text = dayAndMonthDateFormatter.string(from: todo.finishedAt!)
+        timeOfFinishingLabel.text = timeFormatter.string(from: todo.finishedAt!)
+        
+        timeOfDoingTodo.text = distanceCompanentsFormatter.string(from: todo.createdAt.distance(to: todo.finishedAt!))
     }
 }
 
@@ -203,6 +250,7 @@ private extension TodoDetailView {
     func setupSubviews() {
         addSubview(bgView)
         bgView.addSubview(dateStackView)
+        bgView.addSubview(timeDifferenceStack)
     }
     
     func setupConstraints() {
@@ -217,6 +265,11 @@ private extension TodoDetailView {
             dateStackView.topAnchor.constraint(equalTo: bgView.topAnchor, constant: Constants.paddingMedium.value),
             dateStackView.leadingAnchor.constraint(equalTo: bgView.leadingAnchor, constant: Constants.paddingMedium.value),
             dateStackView.trailingAnchor.constraint(equalTo: bgView.trailingAnchor, constant: -Constants.paddingMedium.value)
+        ])
+        
+        NSLayoutConstraint.activate([
+            timeDifferenceStack.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            timeDifferenceStack.centerYAnchor.constraint(equalTo: todoDateStackView.centerYAnchor),
         ])
     }
 }

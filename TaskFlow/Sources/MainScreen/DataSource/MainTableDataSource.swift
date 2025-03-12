@@ -71,6 +71,11 @@ final class MainTableDataSource: NSObject, UITableViewDataSource {
         getCurrentCell(in: section).tasksTable.backgroundView?.isHidden = !todos.isEmpty
     }
     
+    func updateDragDropDelegateIn(section: MainTableSections) {
+        if section == .sooner { soonerSectionDragDropDelegate.updateData(mainViewModel.getTodos(in: .sooner)) }
+        else { laterSectionDragDropDelegate.updateData(mainViewModel.getTodos(in: .later)) }
+    }
+    
     func updateDragTableDelegateData() {
         
         soonerSectionDragDropDelegate.updateData(mainViewModel.getTodos(in: .sooner))

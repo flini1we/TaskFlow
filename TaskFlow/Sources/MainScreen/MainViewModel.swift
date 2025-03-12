@@ -135,17 +135,14 @@ final class MainViewModel: KeyboardObservable {
     var updateBackground: ((MainTableSections) -> Void)?
     var updateCounter: ((MainTableSections) -> Void)?
     var updateDatoSourceWithEditedData: ((Todo, Todo) -> Void)?
+    var onDragDelegateUpdate: ((MainTableSections) -> Void)?
     
     lazy var soonerTodos = todoService.getTodos(type: .sooner) {
-        didSet {
-            updateViewData(.sooner)
-        }
+        didSet { updateViewData(.sooner) }
     }
     
     lazy var laterTodos = todoService.getTodos(type: .later) {
-        didSet {
-            updateViewData(.later)
-        }
+        didSet { updateViewData(.later) }
     }
     
     lazy var finishedTodos = todoService.getTodos(type: .finished)
@@ -218,9 +215,11 @@ final class MainViewModel: KeyboardObservable {
         todoService.restoreFinishedTodoFromStorage(todo: todo)
         var todo = todo
         todo.restoreTodo()
+        
         if shouldRestore {
             if todo.section == .sooner { soonerTodos.append(todo) } else { laterTodos.append(todo) }
         }
+        onDragDelegateUpdate?(todo.section)
     }
 }
 

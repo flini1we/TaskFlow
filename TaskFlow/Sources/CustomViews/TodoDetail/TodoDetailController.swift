@@ -49,6 +49,8 @@ final class TodoDetailController: UIViewController {
 extension TodoDetailController: UIViewControllerTransitioningDelegate {
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        return CustomHeightPresentationController(presentedViewController: presented, presenting: presenting)
+        let customPresentationController = CustomHeightPresentationController(presentedViewController: presented, presenting: presenting)
+        customPresentationController.dismissView = { [weak self] in self?.dismiss(animated: true) }
+        return customPresentationController
     }
 }

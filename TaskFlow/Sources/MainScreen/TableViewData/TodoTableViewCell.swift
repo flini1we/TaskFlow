@@ -85,7 +85,6 @@ final class TodoTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         functionalButton.removeTarget(nil, action: nil, for: .allEvents)
-        todoScrollViewDelegate?.hasCompletionActioned = false
     }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -107,6 +106,8 @@ final class TodoTableViewCell: UITableViewCell {
                 self?.changeTodoSection?(todo)
             }, for: .touchUpInside)
             squareWithCheckMarkImage.alpha = 0
+            
+            self.backgroundColor = .systemGray6
         } else {
             functionalButton.setImage(SystemImages.todoInfo.image, for: .normal)
             functionalButton.transform = CGAffineTransform(rotationAngle: .pi / 2)
@@ -114,6 +115,11 @@ final class TodoTableViewCell: UITableViewCell {
                 self?.showTodoInfo?(todo)
             }, for: .touchUpInside)
             squareWithCheckMarkImage.alpha = 1
+            
+            todoTextField.isUserInteractionEnabled = false
+            self.backgroundColor = UIColor { traits in
+                traits.userInterfaceStyle == .dark ? UIColor.systemGray5 : UIColor.systemGray6
+            }
         }
     }
     
@@ -168,7 +174,7 @@ private extension TodoTableViewCell {
     
     func setupSubviews() {
         self.selectionStyle = .none
-        backgroundColor = .systemGray6
+//        backgroundColor = .systemGray6
         
         contentView.addSubview(bgView)
         bgView.addSubview(dataStackView)

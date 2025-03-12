@@ -9,10 +9,13 @@ import UIKit
 
 final class CustomHeightPresentationController: UIPresentationController {
     
+    var dismissView: (() -> Void)?
+    
     private lazy var bgView: UIView = {
         let view = UIView()
         view.backgroundColor = .black.withAlphaComponent(0.35)
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismiss)))
         return view
     }()
     
@@ -62,4 +65,6 @@ private extension CustomHeightPresentationController {
             bgView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
     }
+    
+    @objc func dismiss() { dismissView?() }
 }
