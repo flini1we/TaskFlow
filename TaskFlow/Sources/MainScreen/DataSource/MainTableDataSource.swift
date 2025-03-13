@@ -82,10 +82,10 @@ final class MainTableDataSource: NSObject, UITableViewDataSource {
         laterSectionDragDropDelegate.updateData(mainViewModel.getTodos(in: .later))
     }
     
-    func updateCellsColor() {
+    func updateCellsColor(updatedColor color: UIColor) {
         
-        soonerSectionDataSource.updateColor()
-        laterSectionDataSource.updateColor()
+        soonerSectionDataSource.updateColor(updatedColor: color)
+        laterSectionDataSource.updateColor(updatedColor: color)
     }
     
     func confirmSnapshot(in section: MainTableSections, with todo: [Todo]) {

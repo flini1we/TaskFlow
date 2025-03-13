@@ -133,15 +133,15 @@ final class TodoTableViewCell: UITableViewCell {
         todoTextField.delegate = self.todoTextFieldDelegate
     }
     
-    func updateColor() {
+    func updateColor(updatedColor color: UIColor) {
         UIView.animate(withDuration: 0.5) {
             self.squareImageView.alpha = 0
             self.squareWithCheckMarkImage.alpha = 0
             self.functionalButton.alpha = 0
         } completion: { _ in
-            self.squareImageView.tintColor = SelectedColor.backgroundColor
-            self.squareWithCheckMarkImage.tintColor = SelectedColor.backgroundColor
-            self.functionalButton.tintColor = SelectedColor.backgroundColor
+            self.squareImageView.tintColor = color
+            self.squareWithCheckMarkImage.tintColor = color
+            self.functionalButton.tintColor = color
             
             UIView.animate(withDuration: 0.5) {
                 self.squareImageView.alpha = 1

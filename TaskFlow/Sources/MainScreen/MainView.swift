@@ -89,12 +89,12 @@ final class MainView: UIView {
         toolBar.items?[2] = addTodoBarButtonItem
     }
     
-    func updateBackgroundColor() {
+    func updateBackgroundColor(updatedColor color: UIColor) {
         
-        settingsBarButtonItem.tintColor = SelectedColor.backgroundColor
-        addTodoBarButtonItem.tintColor = SelectedColor.backgroundColor
-        hideKeyboardBarButtonItem.tintColor = SelectedColor.backgroundColor
-        chartsBarButtonItem.tintColor = SelectedColor.backgroundColor
+        settingsBarButtonItem.tintColor = color
+        addTodoBarButtonItem.tintColor = color
+        hideKeyboardBarButtonItem.tintColor = color
+        chartsBarButtonItem.tintColor = color
     }
     
     func addActionToHideKeyboardButton(_ action: UIAction) {

@@ -9,7 +9,7 @@ import UIKit
 
 final class MainTableHeaderView: UIView {
     
-    var isHalfScreen = true {
+    var isHalfScreen: Bool {
         didSet {
             animateImage()
         }
@@ -48,7 +48,7 @@ final class MainTableHeaderView: UIView {
         return stack
     }()
     
-    private lazy var tasksCount: TaskCounterView = {
+    private lazy var tasksCountView: TaskCounterView = {
         TaskCounterView()
     }()
     
@@ -61,7 +61,7 @@ final class MainTableHeaderView: UIView {
     
     private lazy var secondDataStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [
-            tasksCount,
+            tasksCountView,
             upOrDownButton,
         ])
         stack.distribution = .fillEqually
@@ -80,21 +80,28 @@ final class MainTableHeaderView: UIView {
         return stack
     }()
     
-    init(in section: MainTableSections) {
+    init(in section: MainTableSections, withCurrentState: TableState) {
+        switch (section, withCurrentState) {
+        case (.sooner, .default), (.later, .default), (.sooner, .addingTask), (.later, .addingTask): isHalfScreen = true
+        default: isHalfScreen = false }
         super.init(frame: .zero)
+        
+        setupButton(in: section, with: withCurrentState)
         setupUI()
-        setupButton()
         setupData(section)
     }
     
-    func updateColor() {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func updateColor(updatedColor color: UIColor) {
         UIView.animate(withDuration: 0.5) {
             self.titleImage.alpha = 0
-            self.upOrDownButton.alpha = 0
+            self.upOrDownButton.alpha = 0 
         } completion: { _ in
-            self.titleImage.tintColor = SelectedColor.backgroundColor
-            self.upOrDownButton.tintColor = SelectedColor.backgroundColor
-            
+            self.titleImage.tintColor = color
+            self.upOrDownButton.tintColor = color
             UIView.animate(withDuration: 0.5) {
                 self.titleImage.alpha = 1
                 self.upOrDownButton.alpha = 1
@@ -103,10 +110,24 @@ final class MainTableHeaderView: UIView {
     }
     
     func setUpdatedTodosCount(_ value: Int) {
-        tasksCount.updateTaskCount(newValue: value)
+        tasksCountView.updateTaskCount(newValue: value)
     }
     
-    private func animateImage() {
+    func addActionToUpOrDownButton(_ action: UIAction) {
+        upOrDownButton.addAction(action, for: .touchUpInside)
+    }
+}
+
+private extension MainTableHeaderView {
+    
+    func setupButton(in section: MainTableSections, with state: TableState) {
+        switch (section, state) {
+        case (.sooner, .default), (.later, .default), (.later, .upperOpened), (.sooner, .lowerOpened):
+            upOrDownButton.setImage(SystemImages.arrowsUp.image, for: .normal)
+        default: upOrDownButton.setImage(SystemImages.arrowsDown.image, for: .normal) }
+    }
+    
+    func animateImage() {
         UIView.animate(withDuration: 0.1) {
             self.upOrDownButton.transform = CGAffineTransform(rotationAngle: .pi)
         } completion: { _ in
@@ -118,7 +139,7 @@ final class MainTableHeaderView: UIView {
         }
     }
     
-    private func setupData(_ section: MainTableSections) {
+    func setupData(_ section: MainTableSections) {
         
         switch section {
         case .sooner:
@@ -130,28 +151,18 @@ final class MainTableHeaderView: UIView {
         }
     }
     
-    private func setupButton() { upOrDownButton.setImage(SystemImages.arrowsUp.image, for: .normal) }
-    
-    func addActionToUpOrDownButton(_ action: UIAction) {
-        upOrDownButton.addAction(action, for: .touchUpInside)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupUI() {
+    func setupUI() {
         backgroundColor = .systemBackground
         setupSubviews()
         setupLayout()
     }
     
-    private func setupSubviews() {
+    func setupSubviews() {
         addSubview(mainScrollView)
         mainScrollView.addSubview(dataStackView)
     }
     
-    private func setupLayout() {
+    func setupLayout() {
         NSLayoutConstraint.activate([
             mainScrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             mainScrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor),

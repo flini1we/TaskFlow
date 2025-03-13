@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum TableState {
+enum TableState: String {
     
     case `default`,
          upperOpened,

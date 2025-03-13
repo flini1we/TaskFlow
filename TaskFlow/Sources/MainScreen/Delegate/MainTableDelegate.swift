@@ -12,8 +12,8 @@ final class MainTableDelegate: NSObject, UITableViewDelegate {
     private var mainViewModel: MainViewModel
     
     private var addingTodoHeader = AddingTodoView()
-    private(set) var soonerSectionHeader = MainTableHeaderView(in: .sooner)
-    private(set) var laterSectionHeader = MainTableHeaderView(in: .later)
+    private(set) lazy var soonerSectionHeader = MainTableHeaderView(in: .sooner, withCurrentState: mainViewModel.tableState)
+    private(set) lazy var laterSectionHeader = MainTableHeaderView(in: .later, withCurrentState: mainViewModel.tableState)
     
     var reloadHeaders: (() -> Void)?
     var createdTodo: Todo? {
@@ -52,9 +52,9 @@ final class MainTableDelegate: NSObject, UITableViewDelegate {
         mainViewModel.calculateCellsHeight(at: indexPath)
     }
     
-    func updateHeadersBackgroundColor() {
-        soonerSectionHeader.updateColor()
-        laterSectionHeader.updateColor()
+    func updateHeadersBackgroundColor(updatedColor color: UIColor) {
+        soonerSectionHeader.updateColor(updatedColor: color)
+        laterSectionHeader.updateColor(updatedColor: color)
     }
     
     func updateHeaderCount(in section: MainTableSections) {
@@ -108,7 +108,7 @@ private extension MainTableDelegate {
         laterSectionHeader.addActionToUpOrDownButton(setHeaderAction(section: .later))
     }
     
-    func setHeaderAction(section: MainTableSections) -> UIAction {
+    private func setHeaderAction(section: MainTableSections) -> UIAction {
         return UIAction { [weak self] _ in guard let self else { return }
             let currentHeader = (section == .sooner) ? soonerSectionHeader : laterSectionHeader
             mainViewModel.handleHeaderButtonTapped(for: section, isHalfScreen: currentHeader.isHalfScreen)

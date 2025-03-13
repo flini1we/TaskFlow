@@ -16,6 +16,7 @@
 		CF41E4422D80983800F9526A /* TodoDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF41E4412D80983800F9526A /* TodoDetailController.swift */; };
 		CF41E4452D80A35200F9526A /* CustomHeightPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF41E4442D80A35200F9526A /* CustomHeightPresentationController.swift */; };
 		CF621BBB2D70E4C800B8969D /* AppearanceModes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF621BBA2D70E4C800B8969D /* AppearanceModes.swift */; };
+		CF63BE432D82E726006811B5 /* NotificationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF63BE422D82E726006811B5 /* NotificationName.swift */; };
 		CF65827A2D6B09EC00576B4E /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6582792D6B09EC00576B4E /* CoreDataManager.swift */; };
 		CF6DF32A2D53E7D600D5F369 /* UIInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6DF3292D53E7D600D5F369 /* UIInsets.swift */; };
 		CF6DF32C2D53E80300D5F369 /* HeaderSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6DF32B2D53E80300D5F369 /* HeaderSize.swift */; };
@@ -41,6 +42,7 @@
 		CF76B9942D739BAB00659104 /* TodoTextFieldDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF76B9932D739BAB00659104 /* TodoTextFieldDelegate.swift */; };
 		CF9197512D6E0FA60089220C /* DragAndDropDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9197502D6E0FA60089220C /* DragAndDropDelegate.swift */; };
 		CF9197532D6E3D570089220C /* AddingTodoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9197522D6E3D570089220C /* AddingTodoView.swift */; };
+		CF9D10882D830A1700ABE0EE /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9D10872D830A1700ABE0EE /* UserDefaultsKeys.swift */; };
 		CF9EB9562D550E8A00F6C843 /* MainTableDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9552D550E8A00F6C843 /* MainTableDelegate.swift */; };
 		CF9EB9582D55149600F6C843 /* TableStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9572D55149600F6C843 /* TableStates.swift */; };
 		CF9EB95A2D552B7800F6C843 /* SelectedColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EB9592D552B7800F6C843 /* SelectedColor.swift */; };
@@ -71,6 +73,7 @@
 		CF41E4412D80983800F9526A /* TodoDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailController.swift; sourceTree = "<group>"; };
 		CF41E4442D80A35200F9526A /* CustomHeightPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeightPresentationController.swift; sourceTree = "<group>"; };
 		CF621BBA2D70E4C800B8969D /* AppearanceModes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceModes.swift; sourceTree = "<group>"; };
+		CF63BE422D82E726006811B5 /* NotificationName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationName.swift; sourceTree = "<group>"; };
 		CF6582792D6B09EC00576B4E /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		CF6DF3292D53E7D600D5F369 /* UIInsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIInsets.swift; sourceTree = "<group>"; };
 		CF6DF32B2D53E80300D5F369 /* HeaderSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderSize.swift; sourceTree = "<group>"; };
@@ -98,6 +101,7 @@
 		CF76B9932D739BAB00659104 /* TodoTextFieldDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTextFieldDelegate.swift; sourceTree = "<group>"; };
 		CF9197502D6E0FA60089220C /* DragAndDropDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDropDelegate.swift; sourceTree = "<group>"; };
 		CF9197522D6E3D570089220C /* AddingTodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddingTodoView.swift; sourceTree = "<group>"; };
+		CF9D10872D830A1700ABE0EE /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		CF9EB9552D550E8A00F6C843 /* MainTableDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableDelegate.swift; sourceTree = "<group>"; };
 		CF9EB9572D55149600F6C843 /* TableStates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableStates.swift; sourceTree = "<group>"; };
 		CF9EB9592D552B7800F6C843 /* SelectedColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedColor.swift; sourceTree = "<group>"; };
@@ -154,6 +158,15 @@
 				CF41E4442D80A35200F9526A /* CustomHeightPresentationController.swift */,
 			);
 			path = CustomPresentationControllers;
+			sourceTree = "<group>";
+		};
+		CF63BE412D82E71A006811B5 /* NameSpace */ = {
+			isa = PBXGroup;
+			children = (
+				CF63BE422D82E726006811B5 /* NotificationName.swift */,
+				CF9D10872D830A1700ABE0EE /* UserDefaultsKeys.swift */,
+			);
+			path = NameSpace;
 			sourceTree = "<group>";
 		};
 		CF6582742D6B078F00576B4E /* CoreData */ = {
@@ -229,6 +242,7 @@
 		CF7512A32D50F722009775B5 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				CF63BE412D82E71A006811B5 /* NameSpace */,
 				CFD41ED12D5B760D00AEBC57 /* GestureDirections */,
 				CF9EB9612D560FCC00F6C843 /* SystemImages */,
 				CF9EB9602D560E1E00F6C843 /* UIElementsSize */,
@@ -469,6 +483,7 @@
 				CF7512AC2D51372D009775B5 /* MainTableHeaderView.swift in Sources */,
 				CF41E4422D80983800F9526A /* TodoDetailController.swift in Sources */,
 				CF7512BB2D5170E9009775B5 /* TaskCounterView.swift in Sources */,
+				CF9D10882D830A1700ABE0EE /* UserDefaultsKeys.swift in Sources */,
 				CF7512992D50F6AF009775B5 /* AppDelegate.swift in Sources */,
 				CF2760AA2D58CE2C002A6DED /* TodoTableViewCell.swift in Sources */,
 				CF7512A72D513156009775B5 /* MainTableDataSource.swift in Sources */,
@@ -486,6 +501,7 @@
 				CFD41ED32D5B761700AEBC57 /* SwipeDirections.swift in Sources */,
 				CF9EB9632D560FD700F6C843 /* SystemImages.swift in Sources */,
 				CF6DF32A2D53E7D600D5F369 /* UIInsets.swift in Sources */,
+				CF63BE432D82E726006811B5 /* NotificationName.swift in Sources */,
 				CF76B97C2D73627E00659104 /* TodoService.swift in Sources */,
 				CF2760AC2D58D516002A6DED /* TodoCellSize.swift in Sources */,
 				CFA68D232D708D62000DDE70 /* SettingsViewModel.swift in Sources */,

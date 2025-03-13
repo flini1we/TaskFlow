@@ -39,7 +39,7 @@ final class TodoScrollViewDelegate: NSObject, UIScrollViewDelegate {
         } else {
             let currentLoaded = isTodoActive ? xOffset / maxTreshold : 1 - xOffset / maxTreshold
             onUIUpdateCompletion(currentLoaded)
-            if !scrollView.isDragging && (currentLoaded >= 0.95 && isTodoActive || currentLoaded < 0.05 && !isTodoActive) {
+            if !scrollView.isDragging && (currentLoaded >= 0.8 && isTodoActive || currentLoaded < 0.2 && !isTodoActive) {
                 onTodoComplete(currentTodo)
             }
         }

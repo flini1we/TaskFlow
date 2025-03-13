@@ -13,7 +13,11 @@ final class MainViewModel: KeyboardObservable {
     var keyboardObserver: KeyboardObserver?
     var lastSectionTapped: MainTableSections?
     
-    var tableState: TableState = .default {
+    var tableState: TableState = {
+        if let tableStateValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.tableState.getKey) {
+            return TableState(rawValue: tableStateValue) ?? .default
+        } else { return .default }
+    }() {
         didSet {
             tableStateOnChange?()
         }
@@ -127,6 +131,11 @@ final class MainViewModel: KeyboardObservable {
             return !didSectionChanged
         }
         return didSectionChanged
+    }
+    
+    func updateUserDefaultsWithTableState() {
+        if tableState == .addingTask { tableState = .default }
+        UserDefaults.standard.set(tableState.rawValue, forKey: UserDefaultsKeys.tableState.getKey)
     }
     
     // MARK: MainTableDataSourceData

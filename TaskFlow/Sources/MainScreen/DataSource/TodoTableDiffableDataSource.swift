@@ -77,5 +77,5 @@ final class TodoTableDiffableDataSource: NSObject {
         dataSource?.apply(snapshot)
     }
     
-    func updateColor() { cells.forEach { $0.updateColor() } }
+    func updateColor(updatedColor color: UIColor) { cells.forEach { $0.updateColor(updatedColor: color) } }
 }

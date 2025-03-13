@@ -37,24 +37,19 @@ final class MainController: UIViewController {
         setupViewModelBindings()
         setupViewModelObserver()
         setupViewActions()
+        
+        setupNotification()
     }
-    
-    override func viewDidAppear(_ animated: Bool) { mainViewModel.updateBothViewData() }
     
     deinit {
         mainViewModel.saveDataOnScreenDisappearing()
-    }
-}
-
-// MARK: ColorUpdatable protocol extension
-extension MainController: ColorUpdatable {
-    
-    func updateBackgroundColor() {
+        mainViewModel.updateUserDefaultsWithTableState()
         
-        mainView.updateBackgroundColor()
-        mainTableViewDelegate.updateHeadersBackgroundColor()
-        mainTableViewDataSource.updateCellsColor()
+        deleteNotification()
     }
+    
+    
+    override func viewDidAppear(_ animated: Bool) { mainViewModel.updateBothViewData() }
 }
 
 // MARK: Private methods
@@ -82,8 +77,8 @@ private extension MainController {
         
         mainView.addActionToAddTodoButton(configureActionToAddTodoOrHideKeyboardButton(state: .addingTask))
         mainView.addActionToHideKeyboardButton(configureActionToAddTodoOrHideKeyboardButton(state: .default))
-        mainView.addActionToSettingsButton(goToSettingsScreenAction())
-        mainView.addActionToChartsButton(goToChartsScreenAction())
+        mainView.addActionToSettingsButton(presentSettingsScreen())
+        mainView.addActionToChartsButton(presentArchiveScreen())
     }
     
     func setupViewModelBindings() {
@@ -137,28 +132,28 @@ private extension MainController {
         mainViewModel.updateBackground?(.sooner)
     }
     
-    func goToSettingsScreenAction() -> UIAction {
-        UIAction { [weak self] _ in
-            let settingsController = SettingsController(settingsViewModel: SettingsViewModel())
+    func presentSettingsScreen() -> UIAction {
+        UIAction { [weak self] _ in guard let self else { return }
             let transitionDelegate = SPLarkTransitioningDelegate()
-            
+            let settingsController = SettingsController(settingsViewModel: SettingsViewModel())
             transitionDelegate.customHeight = UIScreen.main.bounds.height / 10
             settingsController.transitioningDelegate = transitionDelegate
             settingsController.modalPresentationStyle = .custom
             settingsController.modalPresentationCapturesStatusBarAppearance = true
-            self?.present(settingsController, animated: true)
+            present(settingsController, animated: true)
         }
     }
     
-    func goToChartsScreenAction() -> UIAction {
+    func presentArchiveScreen() -> UIAction {
         UIAction { [weak self] _ in
             guard let self else { return }
-            
-            let staticticViewModel = StatisticViewModel(todoService: mainViewModel.todoService,
-                                                        onTodoRestoringCompletion: { [weak self] todo, shouldRestore in
-                                                            self?.restoreTodo(todo, shouldRestore: shouldRestore)
-                                                        },
-                                                        finishedData: mainViewModel.finishedTodos)
+            let staticticViewModel = StatisticViewModel(
+                todoService: mainViewModel.todoService,
+                onTodoRestoringCompletion: { [weak self] todo, shouldRestore in
+                    self?.restoreTodo(todo, shouldRestore: shouldRestore)
+                },
+                finishedData: mainViewModel.finishedTodos
+            )
             staticticViewModel.onUpdateViewModelData = { [weak self] todo in
                 self?.mainViewModel.finishedTodos.removeAll(where: { $0.id == todo.id })
             }
@@ -182,5 +177,26 @@ private extension MainController {
         } else {
             mainTableViewDataSource.laterSectionDataSource.appendElementToSection(todo: todo, to: .later)
         }
+    }
+    
+    // MARK: Notification methods
+    func setupNotification() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(colorUpdateNotification(_:)),
+            name: Notification.Name(NotificationName.updateAccentColorNotification.getName),
+            object: nil)
+    }
+    
+    @objc func colorUpdateNotification(_ notification: NSNotification) {
+        guard let updatedColor = notification.userInfo?[NotificationName.updateAccentColorKey.getName] as? UIColor
+        else { return }
+        mainView.updateBackgroundColor(updatedColor: updatedColor)
+        mainTableViewDelegate.updateHeadersBackgroundColor(updatedColor: updatedColor)
+        mainTableViewDataSource.updateCellsColor(updatedColor: updatedColor)
+    }
+    
+    func deleteNotification() {
+        NotificationCenter.default.removeObserver(self)
     }
 }

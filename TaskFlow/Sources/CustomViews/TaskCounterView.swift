@@ -9,10 +9,10 @@ import UIKit
 
 final class TaskCounterView: UIView {
     
-    private lazy var taskCount: UILabel = {
+    lazy var taskCount: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = SelectedColor.backgroundColor
+        label.textColor = .label
         label.text = "0"
         label.font = .boldSystemFont(ofSize: Fonts.small.value)
         return label
