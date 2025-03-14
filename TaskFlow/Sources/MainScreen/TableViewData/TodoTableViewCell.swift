@@ -85,6 +85,8 @@ final class TodoTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         functionalButton.removeTarget(nil, action: nil, for: .allEvents)
+        todoScrollViewDelegate = nil
+        todoTextFieldDelegate = nil
     }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

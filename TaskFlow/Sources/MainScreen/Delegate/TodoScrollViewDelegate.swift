@@ -18,6 +18,8 @@ final class TodoScrollViewDelegate: NSObject, UIScrollViewDelegate {
     private var currentTodo: Todo
     private var isTodoActive: Bool
     
+    var didCompleted = false
+    
     init(with todo: Todo,
          onTodoComplete onTodoCompleteCompletion: @escaping OnTodoCompleteType,
          onUIupdate onUIUpdateCompletion: @escaping OnUIUpdateType,
@@ -39,8 +41,9 @@ final class TodoScrollViewDelegate: NSObject, UIScrollViewDelegate {
         } else {
             let currentLoaded = isTodoActive ? xOffset / maxTreshold : 1 - xOffset / maxTreshold
             onUIUpdateCompletion(currentLoaded)
-            if !scrollView.isDragging && (currentLoaded >= 0.8 && isTodoActive || currentLoaded < 0.2 && !isTodoActive) {
+            if !didCompleted && (!scrollView.isDragging && (currentLoaded >= 0.8 && isTodoActive || currentLoaded < 0.2 && !isTodoActive)) {
                 onTodoComplete(currentTodo)
+                didCompleted = true
             }
         }
     }

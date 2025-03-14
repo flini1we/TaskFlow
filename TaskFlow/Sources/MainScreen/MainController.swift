@@ -99,6 +99,14 @@ private extension MainController {
         mainViewModel.onDragDelegateUpdate = { [weak self] section in
             self?.mainTableViewDataSource.updateDragDropDelegateIn(section: section)
         }
+        
+        mainViewModel.updateDisplayingCells = { [weak self] indexPath, section in guard let self = self else { return }
+            if section == .sooner {
+                mainTableViewDataSource.soonerCell.tasksTable.scrollToRow(at: indexPath, at: .top, animated: true)
+            } else {
+                mainTableViewDataSource.laterCell.tasksTable.scrollToRow(at: indexPath, at: .top, animated: true)
+            }
+        }
     }
     
     func setupViewModelObserver() {
@@ -147,17 +155,17 @@ private extension MainController {
     func presentArchiveScreen() -> UIAction {
         UIAction { [weak self] _ in
             guard let self else { return }
-            let staticticViewModel = StatisticViewModel(
+            let statisticViewModel = StatisticViewModel(
                 todoService: mainViewModel.todoService,
                 onTodoRestoringCompletion: { [weak self] todo, shouldRestore in
                     self?.restoreTodo(todo, shouldRestore: shouldRestore)
                 },
                 finishedData: mainViewModel.finishedTodos
             )
-            staticticViewModel.onUpdateViewModelData = { [weak self] todo in
+            statisticViewModel.onUpdateViewModelData = { [weak self] todo in
                 self?.mainViewModel.finishedTodos.removeAll(where: { $0.id == todo.id })
             }
-            let statisticController = StatisticController(statsticViewModel: staticticViewModel)
+            let statisticController = StatisticController(statsticViewModel: statisticViewModel)
             let statisticNavigationController = UINavigationController(rootViewController: statisticController)
             statisticNavigationController.modalPresentationStyle = .formSheet
             present(statisticNavigationController, animated: true)
@@ -166,8 +174,19 @@ private extension MainController {
     
     func restoreTodo(_ todo: Todo, shouldRestore: Bool) {
         mainViewModel.restoreTodo(todo: todo, shouldRestore: shouldRestore)
+        
         if shouldRestore {
             self.appendTodoDueToSection(todo: todo)
+        } else {
+            if todo.section == .sooner {
+                mainViewModel.soonerTodos.removeAll {
+                    $0.id == todo.id
+                }
+            } else {
+                mainViewModel.laterTodos.removeAll {
+                    $0.id == todo.id
+                }
+            }
         }
     }
     

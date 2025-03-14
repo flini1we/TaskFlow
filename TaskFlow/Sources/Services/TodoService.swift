@@ -12,56 +12,25 @@ class TodoService {
     
     private var coreDataManager: CoreDataManager
     
-    private var soonerTodos: [Todo] {
-        didSet {
-            coreDataManager.replaceTodosInSection(todos: soonerTodos, at: .sooner)
-        }
-    }
-    private var laterTodos: [Todo] {
-        didSet {
-            coreDataManager.replaceTodosInSection(todos: laterTodos, at: .later)
-        }
-    }
-    
+    private var soonerTodos: [Todo]
+    private var laterTodos: [Todo]
     private var finishedTodos: [Todo]
     
     init(coreDataManager: CoreDataManager = CoreDataManager.shared) {
         self.coreDataManager = coreDataManager
         
-        let soonerTodosFetchRequestResult = coreDataManager.obtainActiveTodosInSelectedSection(in: .sooner)
-        switch soonerTodosFetchRequestResult {
-        case .success(let todos):
-            self.soonerTodos = todos
-        case .failure(let failure):
-            print(failure.errorDescription)
-            self.soonerTodos = []
-        }
-        
-        let laterTodosFetchRequestResult = coreDataManager.obtainActiveTodosInSelectedSection(in: .later)
-        switch laterTodosFetchRequestResult {
-        case .success(let todos):
-            self.laterTodos = todos
-        case .failure(let failure):
-            print(failure.errorDescription)
-            self.laterTodos = []
-        }
-        
-        let finishedFetchRequestResult = coreDataManager.obtainFinishedTodos()
-        switch finishedFetchRequestResult {
-        case .success(let todos):
-            self.finishedTodos = todos
-        case .failure(let failure):
-            print(failure.errorDescription)
-            self.finishedTodos = []
-        }
+        let storedData = coreDataManager.obtainTodos()
+        soonerTodos = storedData.sooner
+        laterTodos = storedData.later
+        finishedTodos = storedData.finished
     }
     
     func getFinishedTodosFetchedResultsController() -> NSFetchedResultsController<TodoEntity> {
         coreDataManager.obtaingFinishedTodosFetchedResultsController()
     }
     
-    func restoreFinishedTodoFromStorage(todo: Todo) {
-        coreDataManager.removeFinishedTodo(withId: todo.id)
+    func restoreFinishedTodoFromStorage(todo: Todo, withRestoring: Bool) {
+        coreDataManager.removeFinishedTodo(withId: todo.id, withRestoring: withRestoring)
     }
 }
 
@@ -80,13 +49,15 @@ extension TodoService {
     }
     
     func saveUpdatedData(sooner: [Todo], later: [Todo]) {
-        
-        self.soonerTodos = sooner
-        self.laterTodos = later
+        coreDataManager.saveData(sooner: sooner, later: later)
     }
     
     func saveFinishedTodo(finishedTodo: Todo) {
         guard finishedTodo.finishedAt != nil else { return }
         coreDataManager.saveFinishedTodo(todo: finishedTodo)
+    }
+    
+    func updateTitle(todo: Todo, updateTitle: String) {
+        coreDataManager.resaveEditedTodo(todo, updatedTitle: updateTitle)
     }
 }

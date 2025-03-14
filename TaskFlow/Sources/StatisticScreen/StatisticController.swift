@@ -55,8 +55,7 @@ final class StatisticController: UIViewController {
     
     override func loadView() {
         view = StatisticView(
-            viewModel: statisticViewModel,
-            initialTableHeight: (TodoCellSize.default.value + 2.5) * CGFloat(statisticViewModel.finishedData.count)
+            viewModel: statisticViewModel
         )
     }
     

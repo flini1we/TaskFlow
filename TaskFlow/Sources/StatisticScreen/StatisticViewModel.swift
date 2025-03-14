@@ -32,7 +32,8 @@ final class StatisticViewModel: NSObject {
     
     init(todoService: TodoService,
          onTodoRestoringCompletion: @escaping ((Todo, Bool) -> Void),
-         finishedData: [Todo]) {
+         finishedData: [Todo]
+    ) {
         self.todoService = todoService
         self.finishedTodosFethedResultsController = todoService.getFinishedTodosFetchedResultsController()
         self.onTodoRestoring = onTodoRestoringCompletion
@@ -65,8 +66,12 @@ final class StatisticViewModel: NSObject {
         onTodoRestoring(todo, shouldRestore)
         finishedData.removeAll { $0.id == todo.id }
         onUpdateViewModelData?(todo)
-        let validatedHeight = !finishedData.isEmpty ? (TodoCellSize.default.value + 5) * CGFloat(finishedData.count) : 0
+        let validatedHeight = !finishedData.isEmpty ? getHeight() : 0
         onUpdateTableHeight?(validatedHeight)
+    }
+    
+    func getHeight() -> CGFloat {
+        (TodoCellSize.default.value + 2.5) * CGFloat(finishedData.count)
     }
 }
 

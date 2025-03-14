@@ -31,10 +31,10 @@ final class StatisticView: UIView {
         return table
     }()
     
-    init(viewModel: StatisticViewModel, initialTableHeight: CGFloat) {
+    init(viewModel: StatisticViewModel) {
         self.statisticViewModel = viewModel
         super.init(frame: .zero)
-        setup(initialTableHeight: initialTableHeight)
+        setup(initialTableHeight: statisticViewModel.getHeight())
     }
     
     required init?(coder: NSCoder) {

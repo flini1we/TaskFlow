@@ -13,6 +13,7 @@ enum CoreDataErrors: Error {
     case failedToObtainFinishedTodos
     case failedToSaveDataInContext(CoreDataContextTypes)
     case failedToObtainFinishedTodosDueToTodoFinishedAtFieldIsNil(Todo)
+    case failedToObtainData(CoreDataContextTypes)
     
     var errorDescription: String {
         switch self {
@@ -24,6 +25,8 @@ enum CoreDataErrors: Error {
             return "Oops.. Failed to load data from \(context)."
         case .failedToObtainFinishedTodosDueToTodoFinishedAtFieldIsNil(let todo):
             return "Oops.. Such todo with id: \(todo.id) isn't finished yet. Try to finish it first."
+        case .failedToObtainData(let context):
+            return "Oops.. Failed to obtain data from \(context)."
         }
     }
 }

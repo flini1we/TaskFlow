@@ -36,87 +36,153 @@ class CoreDataManager {
     
     private init() { }
     
-    func obtainActiveTodosInSelectedSection(in section: TodoTypes) -> Result<[Todo], CoreDataErrors> {
-        let todosInSectionFetchRequest = TodoEntity.fetchRequest()
-        todosInSectionFetchRequest.predicate = NSPredicate(format: "section == %@ AND finishedAt == nil", section.rawValue)
-        todosInSectionFetchRequest.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)]
+    func obtainTodos() -> (sooner: [Todo], later: [Todo], finished: [Todo]) {
+        let fetchRequest = TodoEntity.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)]
         
         do {
-            let todoEntities = try viewContext.fetch(todosInSectionFetchRequest)
-            let todos = todoEntities.compactMap { castTodoEntityIntoTodo(entity: $0) }
-            return .success(todos)
-        } catch {
-            print(CoreDataErrors.failedToObtainActiveTodosFromSection(section).errorDescription)
-        }
-        return .failure(CoreDataErrors.failedToObtainActiveTodosFromSection(section))
-    }
-    
-    func obtainFinishedTodos() -> Result<[Todo], CoreDataErrors> {
-        let finishedTodosFetchRequest = TodoEntity.fetchRequest()
-        finishedTodosFetchRequest.predicate = NSPredicate(format: "finishedAt != nil")
-        
-        do {
-            let todoEntities = try viewContext.fetch(finishedTodosFetchRequest)
-            let todos = todoEntities.compactMap { castTodoEntityIntoTodo(entity: $0) }
-            return .success(todos)
-        } catch {
-            print(CoreDataErrors.failedToObtainFinishedTodos.errorDescription)
-        }
-        return .failure(CoreDataErrors.failedToObtainFinishedTodos)
-    }
-    
-    func replaceTodosInSection(todos: [Todo], at section: TodoTypes) {
-        let bgContext = backgroundContext
-        bgContext.performAndWait {
+            let todoEntities = try viewContext.fetch(fetchRequest)
+            var todosToople: ([Todo], [Todo], [Todo]) = (sooner: [], later: [], finished: [])
             
-            let deleteTodosFetchRequest = TodoEntity.fetchRequest()
-            deleteTodosFetchRequest.predicate = NSPredicate(format: "section == %@ AND finishedAt == nil", section.rawValue)
+            todoEntities.forEach {
+                let todo = castTodoEntityIntoTodo(entity: $0)
+                if todo.finishedAt != nil {
+                    todosToople.2.append(todo)
+                } else if todo.section == .sooner {
+                    todosToople.0.append(todo)
+                } else {
+                    todosToople.1.append(todo)
+                }
+            }
+            return todosToople
+        } catch {
+            print("Error of obtaining data from storage: \(error.localizedDescription)")
+        }
+        return ([], [], [])
+    }
+    
+    func saveData(sooner: [Todo], later: [Todo]) {
+        let fetchRequest = TodoEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "finishedAt == nil")
+        
+        do {
+            let todoEntities = try viewContext.fetch(fetchRequest)
+            let todoDictionary = Dictionary(uniqueKeysWithValues: todoEntities.map { ($0.id, $0) })
+            
+            for soonerTodo in sooner {
+                if let soonerTodoEntity = todoDictionary[soonerTodo.id] {
+                    
+                    if soonerTodoEntity.section != "sooner" {
+                        soonerTodoEntity.section = "sooner"
+                    }
+                    
+                    if soonerTodoEntity.title != soonerTodo.title {
+                        soonerTodoEntity.title = soonerTodo.title
+                    }
+                } else {
+                    self.castTodoToTodoEntity(in: viewContext, with: soonerTodo)
+                }
+            }
+            
+            for laterTodo in later {
+                if let laterTodoEntity = todoDictionary[laterTodo.id] {
+                    
+                    if laterTodoEntity.section != "later" {
+                        laterTodoEntity.section = "later"
+                    }
+                    
+                    if laterTodoEntity.title != laterTodo.title {
+                        laterTodoEntity.title = laterTodo.title
+                    }
+                } else {
+                    self.castTodoToTodoEntity(in: viewContext, with: laterTodo)
+                }
+            }
             
             do {
-                let soonerTodoEntities = try bgContext.fetch(deleteTodosFetchRequest)
-                soonerTodoEntities.forEach { bgContext.delete($0) }
-                try bgContext.save()
-                
-                saveTodos(todos: todos, context: bgContext)
+                try viewContext.save()
             } catch {
-                print("Error during deleting entities from storage: \(error.localizedDescription)")
+                print(CoreDataErrors.failedToSaveDataInContext(.viewContext).errorDescription)
             }
+        } catch {
+            print(CoreDataErrors.failedToSaveDataInContext(.viewContext).errorDescription)
         }
     }
     
     func saveFinishedTodo(todo: Todo) {
         guard todo.finishedAt != nil else { return }
-        
         let bgContext = backgroundContext
-        
-        bgContext.performAndWait {
-            self.castTodoToTodoEntity(in: bgContext, with: todo)
-            
-            do {
-                try bgContext.save()
-            } catch {
-                print(CoreDataErrors.failedToSaveDataInContext(.someBackgroundContext).errorDescription)
+        var shouldCreate = true
+        // if already exists
+        let fetchRquest = TodoEntity.fetchRequest()
+        fetchRquest.predicate = NSPredicate(format: "finishedAt == nil AND id == %@", todo.id.uuidString)
+        do {
+            if let activeTodo = try bgContext.fetch(fetchRquest).first {
+                activeTodo.finishedAt = Date()
+                do {
+                    shouldCreate = false
+                    try bgContext.save()
+                } catch {
+                    print(CoreDataErrors.failedToSaveDataInContext(.viewContext).errorDescription)
+                }
+            }
+        } catch {
+            print(CoreDataErrors.failedToSaveDataInContext(.viewContext).errorDescription)
+        }
+        if shouldCreate {
+            bgContext.perform {
+                self.castTodoToTodoEntity(in: bgContext, with: todo)
+                
+                do {
+                    try bgContext.save()
+                } catch {
+                    print(CoreDataErrors.failedToSaveDataInContext(.someBackgroundContext).errorDescription)
+                }
             }
         }
     }
     
-    func removeFinishedTodo(withId id: UUID) {
+    func resaveEditedTodo(_ todo: Todo, updatedTitle: String) {
+        let bgContext = backgroundContext
+        
+        let fetchRquest = TodoEntity.fetchRequest()
+        fetchRquest.predicate = NSPredicate(format: "finishedAt == nil AND id == %@", todo.id.uuidString)
+        
+        do {
+            if let todoEntity = try bgContext.fetch(fetchRquest).first {
+                todoEntity.title = updatedTitle
+                do {
+                    try bgContext.save()
+                } catch {
+                    print(CoreDataErrors.failedToSaveDataInContext(.someBackgroundContext).errorDescription)
+                }
+            }
+        } catch {
+            print(CoreDataErrors.failedToObtainData(.someBackgroundContext).errorDescription)
+        }
+    }
+    
+    func removeFinishedTodo(withId id: UUID, withRestoring: Bool) {
         let finishedTodosFetchRequest = TodoEntity.fetchRequest()
         finishedTodosFetchRequest.predicate = NSPredicate(format: "id == %@", id.uuidString)
         finishedTodosFetchRequest.fetchLimit = 1
         let bgContext = backgroundContext
-        bgContext.performAndWait {
+        bgContext.perform {
             do {
-                if let entitieToDelete = try bgContext.fetch(finishedTodosFetchRequest).first {
-                    bgContext.delete(entitieToDelete)
+                if let finishedTodoEntity = try bgContext.fetch(finishedTodosFetchRequest).first {
+                    if withRestoring {
+                        finishedTodoEntity.finishedAt = nil
+                    } else {
+                        bgContext.delete(finishedTodoEntity)
+                    }
                     do {
                         try bgContext.save()
                     } catch {
-                        print("Error of saving data in bgContext: \(error.localizedDescription)")
+                        print(CoreDataErrors.failedToSaveDataInContext(.someBackgroundContext).errorDescription)
                     }
                 }
             } catch {
-                print("Entitie with such id is not located in storage: \(error.localizedDescription)")
+                print("Error of finding todo with such id in storage: \(error.localizedDescription)")
             }
         }
     }
@@ -135,19 +201,6 @@ class CoreDataManager {
 
 private extension CoreDataManager {
     
-    func saveTodos(todos: [Todo], context: NSManagedObjectContext) {
-        
-        return context.performAndWait {
-            for todo in todos { castTodoToTodoEntity(in: context, with: todo) }
-            
-            do {
-                try context.save()
-            } catch {
-                print("Error during saving data from backgroundContext: \(error.localizedDescription)")
-            }
-        }
-    }
-    
     func castTodoEntityIntoTodo(entity todoEntity: TodoEntity) -> Todo {
         Todo(id: todoEntity.id,
              title: todoEntity.title,
@@ -165,3 +218,169 @@ private extension CoreDataManager {
         todoEntity.finishedAt = todo.finishedAt
     }
 }
+
+/*
+ //
+ //  CoreDataManager.swift
+ //  ToDo
+ //
+ //  Created by Тагир Файрушин on 01.03.2025.
+ //
+
+ import Foundation
+ import CoreData
+
+ class CoreDataManager {
+     
+     static var shared: CoreDataManager = CoreDataManager()
+     
+     lazy var persistentContainer: NSPersistentContainer = {
+         
+         let container = NSPersistentContainer(name: "ToDo")
+         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+             if let error = error as NSError? {
+                 
+                 fatalError("Unresolved error \(error), \(error.userInfo)")
+             }
+         })
+         return container
+     }()
+     
+     lazy var viewContext: NSManagedObjectContext = {
+         let context = persistentContainer.viewContext
+         context.automaticallyMergesChangesFromParent = true
+         return context
+     }()
+     
+     private init() {}
+     
+     func saveCompletedTodo(todo: Todo) {
+         let backgroundContext = persistentContainer.newBackgroundContext()
+         backgroundContext.perform {
+             do {
+                 let fetchRequest = TodoEntity.fetchRequest()
+                 fetchRequest.predicate = NSPredicate(format: "id == %@", todo.id.uuidString)
+                 
+                 let results = try backgroundContext.fetch(fetchRequest)
+                 
+                 let entity: TodoEntity
+                 if let existingEntity = results.first {
+                     entity = existingEntity
+                 } else {
+                     entity = TodoEntity(context: backgroundContext)
+                 }
+                 
+                 entity.merge(todo: todo)
+                 entity.finishedDate = Date()
+                 
+                 try backgroundContext.save()
+             } catch {
+                 print("Error save completed todo: \(error)")
+             }
+         }
+     }
+     
+     func createFetchResultController() -> NSFetchedResultsController<TodoEntity> {
+         let fetchRequest = TodoEntity.fetchRequest()
+         fetchRequest.predicate = NSPredicate(format: "finishedDate != nil")
+         fetchRequest.sortDescriptors = []
+         
+         let fetchResultController = NSFetchedResultsController(
+             fetchRequest: fetchRequest,
+             managedObjectContext: viewContext,
+             sectionNameKeyPath: nil,
+             cacheName: nil)
+         
+         return fetchResultController
+     }
+     
+     func obtainTodos() -> (sooner: [Todo], later: [Todo]) {
+         let fetchRequest = TodoEntity.fetchRequest()
+         
+         do {
+             let result = try viewContext.fetch(fetchRequest)
+             var soonerTodos: [Todo] = []
+             var laterTodos: [Todo] = []
+             
+             for entity in result  {
+                 if entity.finishedDate == nil {
+                     
+                     let todo = Todo(id: entity.id,
+                                     title: entity.title,
+                                     section: entity.section == "soon" ? .soon : .later,
+                                     creationData: entity.createdDate)
+                     
+                     switch todo.section {
+                     case .soon: soonerTodos.append(todo)
+                     case .later: laterTodos.append(todo)
+                     }
+                     
+                 }
+             }
+             return (sooner: soonerTodos, later: laterTodos)
+         } catch {
+             print(" Fetch error: \(error.localizedDescription)")
+             return (sooner: [], later: [])
+         }
+     }
+ 
+ func saveTodos(soonerTodos: [Todo], laterTodos: [Todo]) {
+         let fetchRequest = TodoEntity.fetchRequest()
+         do {
+             let results = try viewContext.fetch(fetchRequest)
+             let dictionaryTodos = Dictionary(uniqueKeysWithValues: results.map { ($0.id, $0) })
+             
+             var processedIds: Set<UUID> = []
+             
+             for todo in soonerTodos {
+                 if let entity = dictionaryTodos[todo.id] {
+                     
+                     if entity.section != "soon" {
+                         entity.section = "soon"
+                     }
+                     
+                     if entity.title != todo.title {
+                         entity.title = todo.title
+                     }
+                     
+                 } else {
+                     let newTodo = TodoEntity(context: viewContext)
+                     newTodo.merge(todo: todo)
+                 }
+                 processedIds.insert(todo.id)
+             }
+             
+             for todo in laterTodos {
+                 if let entity = dictionaryTodos[todo.id] {
+                     
+                     if entity.section != "later" {
+                         entity.section = "later"
+                     }
+                     
+                     if entity.title != todo.title {
+                         entity.title = todo.title
+                     }
+                     
+                 } else {
+                     let newTodo = TodoEntity(context: viewContext)
+                     newTodo.merge(todo: todo)
+                 }
+                 
+                 processedIds.insert(todo.id)
+             }
+             
+             for (id, entity) in dictionaryTodos where !processedIds.contains(id) {
+                 if entity.finishedDate == nil {
+                     viewContext.delete(entity)
+                 }
+             }
+             
+             try viewContext.save()
+         } catch {
+             print("Error save context")
+         }
+         
+     }
+ }
+ `
+ */

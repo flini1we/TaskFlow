@@ -12,7 +12,7 @@ final class MainTableDataSource: NSObject, UITableViewDataSource {
     private var mainViewModel: MainViewModel
     
     var soonerCell: MainTableViewCell!
-    private var laterCell: MainTableViewCell!
+    var laterCell: MainTableViewCell!
     
     private(set) var soonerSectionDataSource: TodoTableDiffableDataSource
     private(set) var laterSectionDataSource: TodoTableDiffableDataSource

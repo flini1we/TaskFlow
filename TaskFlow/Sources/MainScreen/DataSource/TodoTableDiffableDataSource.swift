@@ -29,7 +29,11 @@ final class TodoTableDiffableDataSource: NSObject {
             let cell = table.dequeueReusableCell(withIdentifier: TodoTableViewCell.identifier, for: indexPath) as! TodoTableViewCell
             cell.configureWithTodo(todo, isActive: true)
             
-            cell.setDelegateToTextField(textFieldDelegate: TodoTextFieldDelegate(viewModel: mainViewModel, currentTodo: todo))
+            cell.setDelegateToTextField(textFieldDelegate: TodoTextFieldDelegate(
+                viewModel: mainViewModel,
+                currentTodo: todo,
+                todoIndexPath: indexPath))
+            
             cell.setDelegateToScrollView(scrollViewDelegate: TodoScrollViewDelegate(
                 with: todo,
                 onTodoComplete: { self.onTodoFinishing?($0) },

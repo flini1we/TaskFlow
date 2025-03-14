@@ -9,6 +9,8 @@ import Foundation
 
 final class MainViewModel: KeyboardObservable {
     
+    var updateDisplayingCells: ((IndexPath, MainTableSections) -> Void)?
+    
     // MARK: MainTableDelegateData
     var keyboardObserver: KeyboardObserver?
     var lastSectionTapped: MainTableSections?
@@ -106,7 +108,6 @@ final class MainViewModel: KeyboardObservable {
                 self.lastSectionTapped = .later
             case .upperOpened:
                 tableState = .default
-                self.lastSectionTapped = .later
             case .addingTask:
                 tableState = .lowerOpened
                 self.lastSectionTapped = .later
@@ -119,14 +120,10 @@ final class MainViewModel: KeyboardObservable {
             case .addingTask: fallthrough
             case .default:
                 tableState = .upperOpened
-                self.lastSectionTapped = .later
-            case .upperOpened:
-                tableState = .default
-                self.lastSectionTapped = .later
+                self.lastSectionTapped = .sooner
             case .lowerOpened:
                 tableState = .default
-                self.lastSectionTapped = .later
-            }
+            default: break }
             
             return !didSectionChanged
         }
@@ -164,6 +161,10 @@ final class MainViewModel: KeyboardObservable {
         
         updateViewData(.sooner)
         updateViewData(.later)
+    }
+    
+    func scrollTableData(indexPath: IndexPath, section: MainTableSections) {
+        updateDisplayingCells?(indexPath, section)
     }
     
     func getTodos(in section: MainTableSections) -> [Todo] {
@@ -218,10 +219,11 @@ final class MainViewModel: KeyboardObservable {
             laterTodos[index].editTitle(updatedTitle: title)
             updateDatoSourceWithEditedData?(todo, laterTodos[index])
         }
+        todoService.updateTitle(todo: todo, updateTitle: title)
     }
     
     func restoreTodo(todo: Todo, shouldRestore: Bool) {
-        todoService.restoreFinishedTodoFromStorage(todo: todo)
+        todoService.restoreFinishedTodoFromStorage(todo: todo, withRestoring: shouldRestore)
         var todo = todo
         todo.restoreTodo()
         
