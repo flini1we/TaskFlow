@@ -159,8 +159,7 @@ private extension MainController {
                 todoService: mainViewModel.todoService,
                 onTodoRestoringCompletion: { [weak self] todo, shouldRestore in
                     self?.restoreTodo(todo, shouldRestore: shouldRestore)
-                },
-                finishedData: mainViewModel.finishedTodos
+                }
             )
             statisticViewModel.onUpdateViewModelData = { [weak self] todo in
                 self?.mainViewModel.finishedTodos.removeAll(where: { $0.id == todo.id })

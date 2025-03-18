@@ -21,7 +21,7 @@ final class CustomHeightPresentationController: UIPresentationController {
     
     override var frameOfPresentedViewInContainerView: CGRect {
         guard let containerView = containerView else { return .zero }
-        let height = UIScreen.main.bounds.height / 2.5
+        let height = UIScreen.main.bounds.height / 2.75
         
         return CGRect(x: 0,
                       y: containerView.bounds.height - height,

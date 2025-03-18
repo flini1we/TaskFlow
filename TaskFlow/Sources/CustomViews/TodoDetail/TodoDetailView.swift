@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 final class TodoDetailView: UIView {
     
@@ -46,7 +47,7 @@ final class TodoDetailView: UIView {
         button.backgroundColor = .systemRed
         button.titleLabel?.font = .boldSystemFont(ofSize: Fonts.default.value)
         button.layer.cornerRadius = Constants.paddingSmall.value
-        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 44).isActive = true
         button.setTitle("Delete Todo", for: .normal)
         return button
     }()
@@ -139,7 +140,7 @@ final class TodoDetailView: UIView {
         ])
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
-        stack.spacing = Constants.paddingSmall.value
+        stack.spacing = Constants.paddingTiny.value
         stack.alignment = .leading
         return stack
     }()
@@ -152,44 +153,17 @@ final class TodoDetailView: UIView {
         ])
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
-        stack.spacing = Constants.paddingSmall.value
+        stack.spacing = Constants.paddingTiny.value
         stack.alignment = .trailing
         return stack
     }()
     
-    private lazy var arrowLeftPart: UIImageView = {
-        let image = UIImageView(image: UIImage(systemName: "minus"))
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.tintColor = .secondaryLabel
-        return image
-    }()
-    
-    private lazy var arrowRightPart: UIImageView = {
-        let image = UIImageView(image: UIImage(systemName: "arrow.right"))
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.tintColor = .secondaryLabel
-        return image
-    }()
-    
     private lazy var timeOfDoingTodo: UILabel = {
         let title = UILabel()
-        title.font = .systemFont(ofSize: Fonts.default.value)
+        title.font = .systemFont(ofSize: Fonts.small.value)
         title.textColor = .secondaryLabel
         title.translatesAutoresizingMaskIntoConstraints = false
         return title
-    }()
-    
-    private lazy var timeDifferenceStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [
-            arrowLeftPart,
-            timeOfDoingTodo,
-            arrowRightPart
-        ])
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .horizontal
-        stack.spacing = 5
-        stack.alignment = .center
-        return stack
     }()
     
     private lazy var todoDateStackView: UIStackView = {
@@ -201,6 +175,14 @@ final class TodoDetailView: UIView {
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.distribution = .equalSpacing
         return stack
+    }()
+    
+    private lazy var firstSeparator: UIView = {
+        getViewSeparator()
+    }()
+    
+    private lazy var secondSeparator: UIView = {
+        getViewSeparator()
     }()
     
     // MARK: DataStackView
@@ -250,7 +232,9 @@ private extension TodoDetailView {
     func setupSubviews() {
         addSubview(bgView)
         bgView.addSubview(dateStackView)
-        bgView.addSubview(timeDifferenceStack)
+        bgView.addSubview(timeOfDoingTodo)
+        bgView.addSubview(firstSeparator)
+        bgView.addSubview(secondSeparator)
     }
     
     func setupConstraints() {
@@ -268,8 +252,30 @@ private extension TodoDetailView {
         ])
         
         NSLayoutConstraint.activate([
-            timeDifferenceStack.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            timeDifferenceStack.centerYAnchor.constraint(equalTo: todoDateStackView.centerYAnchor),
+            timeOfDoingTodo.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            timeOfDoingTodo.centerYAnchor.constraint(equalTo: todoDateStackView.centerYAnchor),
+            
+            firstSeparator.leadingAnchor.constraint(equalTo: dayOfCreatingLabel.trailingAnchor, constant: Constants.paddingSmall.value),
+            firstSeparator.trailingAnchor.constraint(equalTo: timeOfDoingTodo.leadingAnchor, constant: -Constants.paddingSmall.value),
+            firstSeparator.centerYAnchor.constraint(equalTo: todoDateStackView.centerYAnchor),
+            
+            secondSeparator.trailingAnchor.constraint(equalTo: dayOfFinishingLabel.leadingAnchor, constant: -Constants.paddingSmall.value),
+            secondSeparator.leadingAnchor.constraint(equalTo: timeOfDoingTodo.trailingAnchor, constant: Constants.paddingSmall.value),
+            secondSeparator.centerYAnchor.constraint(equalTo: todoDateStackView.centerYAnchor),
         ])
     }
+    
+    func getViewSeparator() -> UIView {
+        let view =  UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray4
+        view.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        return view
+    }
+}
+
+#Preview {
+    let view = TodoDetailView()
+    view.setupWithTodo(Todo(id: UUID(), title: "Lol", section: .sooner, createdAt: Date(), finishedAt: Date()))
+    return view
 }

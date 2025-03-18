@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 final class StatisticView: UIView {
     
@@ -13,6 +14,20 @@ final class StatisticView: UIView {
     
     var presentTodoInfoScreen: ((Todo) -> Void)?
     private var tableHeightAnchor: NSLayoutConstraint!
+    
+    private lazy var scrollView: UIScrollView = {
+        let scroll = UIScrollView()
+        scroll.translatesAutoresizingMaskIntoConstraints = false
+        scroll.showsVerticalScrollIndicator = false
+        return scroll
+    }()
+    
+    private lazy var chartsSwiftUIView: UIHostingController<TodoCharts> = {
+        let hostingController = UIHostingController(
+            rootView: TodoCharts(statisticViewModel: self.statisticViewModel)
+        )
+        return hostingController
+    }()
     
     private(set) lazy var finishedTodosTableView: UITableView = {
         let table = UITableView()
@@ -29,6 +44,17 @@ final class StatisticView: UIView {
         table.layer.cornerRadius = Constants.paddingSmall.value + 5
         table.contentInset = UIEdgeInsets(top: Constants.paddingTiny.value, left: 0, bottom: Constants.paddingTiny.value, right: 0)
         return table
+    }()
+    
+    private lazy var dataStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [
+            chartsSwiftUIView.view,
+            finishedTodosTableView
+        ])
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.spacing = 5
+        return stack
     }()
     
     init(viewModel: StatisticViewModel) {
@@ -90,17 +116,26 @@ private extension StatisticView {
     }
     
     func setupSubviews() {
-        addSubview(finishedTodosTableView)
+        addSubview(scrollView)
+        scrollView.addSubview(dataStackView)
     }
     
     func setupLayout(initialTableHeight: CGFloat) {
         tableHeightAnchor = finishedTodosTableView.heightAnchor.constraint(equalToConstant: initialTableHeight)
         
         NSLayoutConstraint.activate([
-            finishedTodosTableView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: Constants.paddingSmall.value),
-            finishedTodosTableView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.paddingTiny.value),
-            finishedTodosTableView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -Constants.paddingTiny.value),
-            tableHeightAnchor
+            scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+        ])
+        
+        NSLayoutConstraint.activate([
+            dataStackView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: Constants.paddingSmall.value),
+            dataStackView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            dataStackView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.95),
+            tableHeightAnchor,
+            dataStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
         ])
     }
 }

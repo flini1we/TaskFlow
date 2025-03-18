@@ -39,6 +39,7 @@ final class TodoDetailController: UIViewController {
         todoDetailView.setupWithTodo(todo)
         
         todoDetailView.deleteTodoButton.addAction(UIAction { [weak self] _ in
+            FeedBackService.occurreVibration(style: .light)
             self?.statisticViewModel.onTodoRestore(todo: todo, shouldRestore: false)
             self?.dismiss(animated: true)
         }, for: .touchUpInside)

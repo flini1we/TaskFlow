@@ -60,6 +60,10 @@
 		CFD41ECA2D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41EC92D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift */; };
 		CFD41ED02D5B42E900AEBC57 /* KeyboardObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41ECF2D5B42E900AEBC57 /* KeyboardObserver.swift */; };
 		CFD41ED32D5B761700AEBC57 /* SwipeDirections.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD41ED22D5B761700AEBC57 /* SwipeDirections.swift */; };
+		CFD8E4A72D8853FB006CD0C3 /* TimeRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD8E4A62D8853FB006CD0C3 /* TimeRange.swift */; };
+		CFD8E4A92D88597C006CD0C3 /* TodoCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD8E4A82D88597B006CD0C3 /* TodoCharts.swift */; };
+		CFD8E4AB2D887BEF006CD0C3 /* ChartDataPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD8E4AA2D887BEF006CD0C3 /* ChartDataPoint.swift */; };
+		CFF3451C2D88C1CC009E81D2 /* BarMarkSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF3451B2D88C1CC009E81D2 /* BarMarkSize.swift */; };
 		CFF426D92D771C9A001DDD0C /* CoreDataErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF426D82D771C9A001DDD0C /* CoreDataErrors.swift */; };
 /* End PBXBuildFile section */
 
@@ -118,6 +122,10 @@
 		CFD41EC92D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableDiffableDataSource.swift; sourceTree = "<group>"; };
 		CFD41ECF2D5B42E900AEBC57 /* KeyboardObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardObserver.swift; sourceTree = "<group>"; };
 		CFD41ED22D5B761700AEBC57 /* SwipeDirections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeDirections.swift; sourceTree = "<group>"; };
+		CFD8E4A62D8853FB006CD0C3 /* TimeRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeRange.swift; sourceTree = "<group>"; };
+		CFD8E4A82D88597B006CD0C3 /* TodoCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoCharts.swift; sourceTree = "<group>"; };
+		CFD8E4AA2D887BEF006CD0C3 /* ChartDataPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartDataPoint.swift; sourceTree = "<group>"; };
+		CFF3451B2D88C1CC009E81D2 /* BarMarkSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarMarkSize.swift; sourceTree = "<group>"; };
 		CFF426D82D771C9A001DDD0C /* CoreDataErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataErrors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -152,12 +160,12 @@
 			path = TodoDetail;
 			sourceTree = "<group>";
 		};
-		CF41E4432D80A31E00F9526A /* CustomPresentationControllers */ = {
+		CF41E4432D80A31E00F9526A /* PresentationControllers */ = {
 			isa = PBXGroup;
 			children = (
 				CF41E4442D80A35200F9526A /* CustomHeightPresentationController.swift */,
 			);
-			path = CustomPresentationControllers;
+			path = PresentationControllers;
 			sourceTree = "<group>";
 		};
 		CF63BE412D82E71A006811B5 /* NameSpace */ = {
@@ -218,7 +226,7 @@
 				CF7512A32D50F722009775B5 /* Utilities */,
 				CF7512C22D536DB3009775B5 /* Model */,
 				CF7512AA2D51371A009775B5 /* CustomViews */,
-				CF41E4432D80A31E00F9526A /* CustomPresentationControllers */,
+				CF41E4432D80A31E00F9526A /* PresentationControllers */,
 				CF75129E2D50F6EC009775B5 /* MainScreen */,
 				CFA68D172D70727A000DDE70 /* SettingsScreen */,
 				CF00C46C2D785B70002102D1 /* StatisticScreen */,
@@ -246,7 +254,7 @@
 				CFD41ED12D5B760D00AEBC57 /* GestureDirections */,
 				CF9EB9612D560FCC00F6C843 /* SystemImages */,
 				CF9EB9602D560E1E00F6C843 /* UIElementsSize */,
-				CF9EB95F2D560E0E00F6C843 /* Sections */,
+				CF9EB95F2D560E0E00F6C843 /* Enums */,
 				CF9EB95E2D560E0000F6C843 /* Constants */,
 				CF9EB95D2D560DF300F6C843 /* Colors */,
 			);
@@ -280,6 +288,7 @@
 				CF7512BA2D5170E9009775B5 /* TaskCounterView.swift */,
 				CF9197522D6E3D570089220C /* AddingTodoView.swift */,
 				CF41E4402D80982E00F9526A /* TodoDetail */,
+				CFD8E4A82D88597B006CD0C3 /* TodoCharts.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -297,6 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				CF7512C12D536DB3009775B5 /* Todo.swift */,
+				CFD8E4AA2D887BEF006CD0C3 /* ChartDataPoint.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -327,7 +337,7 @@
 			path = Constants;
 			sourceTree = "<group>";
 		};
-		CF9EB95F2D560E0E00F6C843 /* Sections */ = {
+		CF9EB95F2D560E0E00F6C843 /* Enums */ = {
 			isa = PBXGroup;
 			children = (
 				CF9EB9572D55149600F6C843 /* TableStates.swift */,
@@ -335,8 +345,9 @@
 				CF621BBA2D70E4C800B8969D /* AppearanceModes.swift */,
 				CF76B97E2D73654300659104 /* TodoTypes.swift */,
 				CF3ADE372D77247700B3DACC /* CoreDataContextTypes.swift */,
+				CFD8E4A62D8853FB006CD0C3 /* TimeRange.swift */,
 			);
-			path = Sections;
+			path = Enums;
 			sourceTree = "<group>";
 		};
 		CF9EB9602D560E1E00F6C843 /* UIElementsSize */ = {
@@ -347,6 +358,7 @@
 				CF6DF3292D53E7D600D5F369 /* UIInsets.swift */,
 				CF9EB95B2D55389F00F6C843 /* ElementsSize.swift */,
 				CF2760AB2D58D516002A6DED /* TodoCellSize.swift */,
+				CFF3451B2D88C1CC009E81D2 /* BarMarkSize.swift */,
 			);
 			path = UIElementsSize;
 			sourceTree = "<group>";
@@ -499,6 +511,7 @@
 				CFA68D212D707EC3000DDE70 /* AccentColorCollectionViewCell.swift in Sources */,
 				CFD41ECA2D5A6C4C00AEBC57 /* TodoTableDiffableDataSource.swift in Sources */,
 				CFD41ED32D5B761700AEBC57 /* SwipeDirections.swift in Sources */,
+				CFD8E4A92D88597C006CD0C3 /* TodoCharts.swift in Sources */,
 				CF9EB9632D560FD700F6C843 /* SystemImages.swift in Sources */,
 				CF6DF32A2D53E7D600D5F369 /* UIInsets.swift in Sources */,
 				CF63BE432D82E726006811B5 /* NotificationName.swift in Sources */,
@@ -515,6 +528,7 @@
 				CFD41ED02D5B42E900AEBC57 /* KeyboardObserver.swift in Sources */,
 				CF7512B02D513950009775B5 /* Fonts.swift in Sources */,
 				CFF426D92D771C9A001DDD0C /* CoreDataErrors.swift in Sources */,
+				CFD8E4AB2D887BEF006CD0C3 /* ChartDataPoint.swift in Sources */,
 				CF6DF32C2D53E80300D5F369 /* HeaderSize.swift in Sources */,
 				CFBCA01F2D6B3B0D0099B4DF /* TodoEntity+CoreDataProperties.swift in Sources */,
 				CF7512B72D51476E009775B5 /* MainTableViewCell.swift in Sources */,
@@ -522,9 +536,11 @@
 				CF41E43F2D8092BF00F9526A /* TodoDetailView.swift in Sources */,
 				CF75129C2D50F6AF009775B5 /* MainController.swift in Sources */,
 				CFAA64772D7B6A96009D126A /* StatisticController.swift in Sources */,
+				CFF3451C2D88C1CC009E81D2 /* BarMarkSize.swift in Sources */,
 				CF76B97F2D73654300659104 /* TodoTypes.swift in Sources */,
 				CF65827A2D6B09EC00576B4E /* CoreDataManager.swift in Sources */,
 				CF9EB95C2D55389F00F6C843 /* ElementsSize.swift in Sources */,
+				CFD8E4A72D8853FB006CD0C3 /* TimeRange.swift in Sources */,
 				CFAA64752D7B6938009D126A /* StatisticView.swift in Sources */,
 				CF7512A22D50F71E009775B5 /* MainViewModel.swift in Sources */,
 				CF41E4452D80A35200F9526A /* CustomHeightPresentationController.swift in Sources */,
