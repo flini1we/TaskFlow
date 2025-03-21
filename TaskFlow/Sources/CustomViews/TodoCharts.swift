@@ -86,11 +86,12 @@ struct TodoCharts: View {
                         VStack(alignment: .leading) {
                             Text("Finished:")
                                 .font(.title3)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.gray)
                             
                             Text("\(selectedChartData.count)")
                                 .bold()
                                 .font(.title2)
+                                .foregroundStyle(.background)
                         }
                         .background(
                             RoundedRectangle(cornerRadius: 20)
@@ -124,22 +125,36 @@ struct TodoCharts: View {
             }
         }
         .chartXSelection(value: $rawSelectedChartData.animation(.easeInOut))
-        .frame(height: 200)
+        .frame(height: UIScreen.main.bounds.height / 4)
         .padding()
         .padding(.vertical, 8)
         .background(backgroundRectangleView)
         .padding(.horizontal, 8)
         .scaleEffect(isChartVisible ? 1 : 0.5)
         .animation(.spring(response: 0.6, dampingFraction: 0.8), value: isChartVisible)
+        .chartXAxis {
+            if statisticViewModel.selectedTimeRange == .week {
+                AxisMarks(position: .bottom, values: statisticViewModel.chartData.map { $0.date }) { date in
+                    AxisValueLabel(format: .dateTime.weekday(.abbreviated))
+                }
+            } else if statisticViewModel.selectedTimeRange == .month {
+                AxisMarks()
+            }
+        }
     }
     
     private var backgroundRectangleView: some View {
         RoundedRectangle(cornerRadius: 16)
             .fill(Color(.systemBackground))
             .shadow(color: colorScheme == .dark ? .white.opacity(0.15)
-                    : .black.opacity(0.15),
+                                                : .black.opacity(0.15),
                     radius: 10,
                     x: 0,
                     y: 5)
-        }
     }
+}
+
+#Preview {
+    TodoCharts(statisticViewModel: StatisticViewModel(todoService: TodoService(), onTodoRestoringCompletion: { _, _ in }))
+}
+

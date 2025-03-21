@@ -79,7 +79,8 @@ final class StatisticViewModel: NSObject, ObservableObject {
     }
     
     func getHeight() -> CGFloat {
-        (TodoCellSize.default.value + 2.5) * CGFloat(finishedTodosCount)
+        guard finishedTodosCount != 0 else { return 0 }
+        return (TodoCellSize.default.value) * CGFloat(finishedTodosCount) + 10
     }
     
     func getPreparedTodos(for timeRange: TimeRange) -> [ChartDataPoint] {

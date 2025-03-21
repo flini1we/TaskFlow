@@ -17,7 +17,6 @@ enum SystemImages {
          newTodo,
          addTodo,
          hideKeyboard,
-//         info,
          charts,
          moveTodo(MainTableSections),
          checkmark,
@@ -57,7 +56,7 @@ enum SystemImages {
                 return UIImage(systemName: "chevron.down")!
             }
         case .checkmark:
-            return UIImage(systemName: "checkmark.square")!
+            return UIImage(systemName: "checkmark")!
         case .square:
             return UIImage(systemName: "square")!
         case .circle:

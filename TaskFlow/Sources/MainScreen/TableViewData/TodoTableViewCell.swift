@@ -18,6 +18,8 @@ final class TodoTableViewCell: UITableViewCell {
     var changeTodoSection: ((Todo) -> Void)?
     var showTodoInfo: ((Todo) -> Void)?
     
+    private var maskLayer: CAShapeLayer = CAShapeLayer()
+    
     private lazy var bgView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -46,18 +48,42 @@ final class TodoTableViewCell: UITableViewCell {
     private lazy var squareImageView: UIImageView = {
         let image = UIImageView(image: SystemImages.square.image)
         image.tintColor = SelectedColor.backgroundColor
+        image.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            image.heightAnchor.constraint(equalToConstant: Constants.paddingMedium.value),
+            image.widthAnchor.constraint(equalToConstant: Constants.paddingMedium.value),
+        ])
+        return image
+    }()
+    
+    private lazy var graySquareImage: UIImageView = {
+        let image = UIImageView(image: SystemImages.square.image)
+        image.tintColor = .systemGray6
+        NSLayoutConstraint.activate([
+            image.heightAnchor.constraint(equalToConstant: Constants.paddingMedium.value),
+            image.widthAnchor.constraint(equalToConstant: Constants.paddingMedium.value),
+        ])
+        image.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(squareImageView)
         return image
     }()
     
     private lazy var squareWithCheckMarkImage: UIImageView = {
         let image = UIImageView(image: SystemImages.checkmark.image)
         image.tintColor = SelectedColor.backgroundColor
+        image.preferredSymbolConfiguration = UIImage.SymbolConfiguration(weight: .bold)
+        NSLayoutConstraint.activate([
+            image.heightAnchor.constraint(equalToConstant: Constants.paddingMedium.value),
+            image.widthAnchor.constraint(equalToConstant: Constants.paddingMedium.value),
+        ])
+        image.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+        image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
     
     private lazy var squareImageAndTitleStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [
-            squareImageView,
+            graySquareImage,
             todoScrollView
         ])
         stack.spacing = Constants.paddingSmall.value
@@ -108,8 +134,9 @@ final class TodoTableViewCell: UITableViewCell {
                 self?.changeTodoSection?(todo)
             }, for: .touchUpInside)
             squareWithCheckMarkImage.alpha = 0
-            
             self.backgroundColor = .systemGray6
+            
+            maskLayer.strokeEnd = 0
         } else {
             functionalButton.setImage(SystemImages.todoInfo.image, for: .normal)
             functionalButton.transform = CGAffineTransform(rotationAngle: .pi / 2)
@@ -122,6 +149,8 @@ final class TodoTableViewCell: UITableViewCell {
             self.backgroundColor = UIColor { traits in
                 traits.userInterfaceStyle == .dark ? UIColor.systemGray5 : UIColor.systemGray6
             }
+            
+            maskLayer.strokeEnd = 1
         }
     }
     
@@ -154,13 +183,18 @@ final class TodoTableViewCell: UITableViewCell {
     }
     
     func onUIUpdate(value: CGFloat, isActive: Bool) {
+        let progress = isActive ? value : 1 - value
+
+        maskLayer.strokeEnd = isActive ? progress : 1 - progress
         squareWithCheckMarkImage.alpha = value
-        
+        print(progress)
         UIView.animate(withDuration: 0.1) {
-            if value >= 0.85 && isActive || value < 0.025 && !isActive {
+            if progress >= 0.85 && isActive || 1 - progress < 0.025 && !isActive {
                 self.squareImageView.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
+                self.graySquareImage.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
             } else {
                 self.squareImageView.transform = .identity
+                self.graySquareImage.transform = .identity
             }
         }
     }
@@ -172,15 +206,16 @@ private extension TodoTableViewCell {
     func setupData() {
         setupSubviews()
         setupLayout()
+        setupMask()
     }
     
     func setupSubviews() {
         self.selectionStyle = .none
-//        backgroundColor = .systemGray6
         
         contentView.addSubview(bgView)
         bgView.addSubview(dataStackView)
-        squareImageView.addSubview(squareWithCheckMarkImage)
+        // squareImageView.addSubview(squareWithCheckMarkImage)
+        graySquareImage.addSubview(squareWithCheckMarkImage)
     }
     
     func setupLayout() {
@@ -213,6 +248,25 @@ private extension TodoTableViewCell {
             todoTextField.heightAnchor.constraint(equalTo: todoScrollView.heightAnchor),
             todoTextField.trailingAnchor.constraint(equalTo: functionalButton.leadingAnchor)
         ])
+        
+        NSLayoutConstraint.activate([
+            squareImageView.centerXAnchor.constraint(equalTo: graySquareImage.centerXAnchor),
+            squareImageView.centerYAnchor.constraint(equalTo: graySquareImage.centerYAnchor),
+        ])
+    }
+    
+    func setupMask() {
+        let radius: CGFloat = 10
+        let path = UIBezierPath(arcCenter: squareImageView.center,
+                                radius: radius,
+                                startAngle: .pi / -2,
+                                endAngle: .pi * 1.5,
+                                clockwise: true)
+        maskLayer.path = path.cgPath
+        maskLayer.fillColor = UIColor.clear.cgColor
+        maskLayer.strokeColor = UIColor.white.cgColor
+        maskLayer.lineWidth = 15
+        squareImageView.layer.mask = maskLayer
     }
     
     func backToDefaultAnimation() {
