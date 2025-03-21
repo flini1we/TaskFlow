@@ -34,9 +34,7 @@ final class TodoDetailView: UIView {
     private lazy var bgView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor { traits in
-            traits.userInterfaceStyle == .dark ? UIColor.systemGray5 : UIColor.systemGray6
-        }
+        view.backgroundColor = .secondarySystemBackground
         view.layer.cornerRadius = Constants.paddingMedium.value
         return view
     }()
@@ -83,7 +81,7 @@ final class TodoDetailView: UIView {
     private lazy var beginedAtTitle: UILabel = {
         let title = UILabel()
         title.font = .systemFont(ofSize: Fonts.default.value)
-        title.textColor = .secondaryLabel
+        title.textColor = .secondarySystemBackground
         title.text = "Created"
         title.translatesAutoresizingMaskIntoConstraints = false
         return title

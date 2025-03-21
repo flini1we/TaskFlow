@@ -27,7 +27,7 @@ final class AccentColorCollectionViewCell: UICollectionViewCell {
         image.translatesAutoresizingMaskIntoConstraints = false
         image.heightAnchor.constraint(equalToConstant: ElementsSize.accentColorImageSize.value / 2).isActive = true
         image.widthAnchor.constraint(equalToConstant: ElementsSize.accentColorImageSize.value / 2).isActive = true
-        image.tintColor = .systemGray6
+        image.tintColor = .secondarySystemBackground
         return image
     }()
     

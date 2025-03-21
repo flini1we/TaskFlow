@@ -58,7 +58,7 @@ final class TodoTableViewCell: UITableViewCell {
     
     private lazy var graySquareImage: UIImageView = {
         let image = UIImageView(image: SystemImages.square.image)
-        image.tintColor = .systemGray6
+        image.tintColor = .secondarySystemBackground
         NSLayoutConstraint.activate([
             image.heightAnchor.constraint(equalToConstant: Constants.paddingMedium.value),
             image.widthAnchor.constraint(equalToConstant: Constants.paddingMedium.value),
@@ -134,8 +134,6 @@ final class TodoTableViewCell: UITableViewCell {
                 self?.changeTodoSection?(todo)
             }, for: .touchUpInside)
             squareWithCheckMarkImage.alpha = 0
-            self.backgroundColor = .systemGray6
-            
             maskLayer.strokeEnd = 0
         } else {
             functionalButton.setImage(SystemImages.todoInfo.image, for: .normal)
@@ -144,14 +142,10 @@ final class TodoTableViewCell: UITableViewCell {
                 self?.showTodoInfo?(todo)
             }, for: .touchUpInside)
             squareWithCheckMarkImage.alpha = 1
-            
             todoTextField.isUserInteractionEnabled = false
-            self.backgroundColor = UIColor { traits in
-                traits.userInterfaceStyle == .dark ? UIColor.systemGray5 : UIColor.systemGray6
-            }
-            
             maskLayer.strokeEnd = 1
         }
+        backgroundColor = .secondarySystemBackground
     }
     
     func setDelegateToScrollView(scrollViewDelegate: TodoScrollViewDelegate) {
@@ -184,10 +178,9 @@ final class TodoTableViewCell: UITableViewCell {
     
     func onUIUpdate(value: CGFloat, isActive: Bool) {
         let progress = isActive ? value : 1 - value
-
         maskLayer.strokeEnd = isActive ? progress : 1 - progress
         squareWithCheckMarkImage.alpha = value
-        print(progress)
+        
         UIView.animate(withDuration: 0.1) {
             if progress >= 0.85 && isActive || 1 - progress < 0.025 && !isActive {
                 self.squareImageView.transform = CGAffineTransform(scaleX: 1.25, y: 1.25)

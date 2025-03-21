@@ -21,7 +21,7 @@ final class SettingsView: UIView, UICollectionViewDataSource {
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.register(AccentColorCollectionViewCell.self, forCellWithReuseIdentifier: AccentColorCollectionViewCell.identifier)
-        collectionView.backgroundColor = .systemGray6
+        collectionView.backgroundColor = .secondarySystemBackground
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.dataSource = self
@@ -74,7 +74,7 @@ final class SettingsView: UIView, UICollectionViewDataSource {
 private extension SettingsView {
     
     func setup() {
-        backgroundColor = .systemGray6
+        backgroundColor = .secondarySystemBackground
         
         setupSubviews()
         setupConstraints()

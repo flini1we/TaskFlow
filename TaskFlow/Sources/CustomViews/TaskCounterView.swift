@@ -21,7 +21,7 @@ final class TaskCounterView: UIView {
     private lazy var backgrounView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = .secondarySystemBackground
         view.layer.cornerRadius = Constants.paddingMedium.value / 2
         view.clipsToBounds = true
         return view

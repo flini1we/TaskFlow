@@ -66,16 +66,6 @@ struct TodoCharts: View {
     
     private var chartsView: some View {
         Chart {
-            RuleMark(y: .value("Average", averagePerTimeIntervar))
-                .lineStyle(StrokeStyle(lineWidth: 2, dash: [5]))
-                .foregroundStyle(Color.mint)
-                .opacity(statisticViewModel.selectedTimeRange == .day ? 0 : 1)
-                .annotation(position: .top, alignment: .trailing, spacing: 5) {
-                    Text("Average per \(statisticViewModel.selectedTimeRange.rawValue): \(averagePerTimeIntervar)")
-                        .font(.caption)
-                        .foregroundColor(.mint)
-                        .opacity(statisticViewModel.selectedTimeRange == .day ? 0 : 1)
-                }
             
             if let selectedChartData {
                 RuleMark(x: .value("Selected day", selectedChartData.date, unit: .day))
@@ -123,6 +113,17 @@ struct TodoCharts: View {
                     }
                 }
             }
+            
+            RuleMark(y: .value("Average", averagePerTimeIntervar))
+                .lineStyle(StrokeStyle(lineWidth: 2, dash: [5]))
+                .foregroundStyle(Color.mint)
+                .opacity(statisticViewModel.selectedTimeRange == .day ? 0 : (rawSelectedChartData == nil ? 1 : 0))
+                .annotation(position: .top, alignment: .trailing, spacing: 5) {
+                    Text("Average per \(statisticViewModel.selectedTimeRange.rawValue): \(averagePerTimeIntervar)")
+                        .font(.caption)
+                        .foregroundColor(.mint)
+                        .opacity(statisticViewModel.selectedTimeRange == .day ? 0 : (rawSelectedChartData == nil ? 1 : 0))
+                }
         }
         .chartXSelection(value: $rawSelectedChartData.animation(.easeInOut))
         .frame(height: UIScreen.main.bounds.height / 4)

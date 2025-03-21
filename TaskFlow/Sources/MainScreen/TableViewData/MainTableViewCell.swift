@@ -23,7 +23,7 @@ final class MainTableViewCell: UITableViewCell {
         table.backgroundView?.isHidden = true
         table.dragInteractionEnabled = true
         table.translatesAutoresizingMaskIntoConstraints = false
-        table.backgroundColor = .systemGray6
+        table.backgroundColor = .secondarySystemBackground
         table.layer.cornerRadius = Constants.paddingSmall.value + 4
         table.delegate = self
         table.showsVerticalScrollIndicator = false

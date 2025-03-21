@@ -38,9 +38,7 @@ final class StatisticView: UIView {
         table.delegate = self
         table.rowHeight = TodoCellSize.default.value
         table.separatorStyle = .none
-        table.backgroundColor = UIColor { traits in
-            traits.userInterfaceStyle == .dark ? UIColor.systemGray5 : UIColor.systemGray6
-        }
+        table.backgroundColor = .secondarySystemBackground
         table.layer.cornerRadius = Constants.paddingSmall.value + 5
         table.contentInset = UIEdgeInsets(top: Constants.paddingTiny.value, left: 0, bottom: Constants.paddingTiny.value, right: 0)
         return table
