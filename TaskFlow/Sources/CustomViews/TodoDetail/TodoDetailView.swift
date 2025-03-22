@@ -81,7 +81,7 @@ final class TodoDetailView: UIView {
     private lazy var beginedAtTitle: UILabel = {
         let title = UILabel()
         title.font = .systemFont(ofSize: Fonts.default.value)
-        title.textColor = .secondarySystemBackground
+        title.textColor = .secondaryLabel
         title.text = "Created"
         title.translatesAutoresizingMaskIntoConstraints = false
         return title

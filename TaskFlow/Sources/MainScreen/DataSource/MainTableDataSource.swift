@@ -39,8 +39,10 @@ final class MainTableDataSource: NSObject, UITableViewDataSource {
             switch section {
             case .sooner:
                 self?.soonerSectionDataSource.replaceExistingElementWithUpdated(oldElement: oldTodo, newElementTodo: newTodo)
+                self?.soonerSectionDragDropDelegate.updateData(mainViewModel.soonerTodos)
             case .later:
                 self?.laterSectionDataSource.replaceExistingElementWithUpdated(oldElement: oldTodo, newElementTodo: newTodo)
+                self?.laterSectionDragDropDelegate.updateData(mainViewModel.laterTodos)
             }
         }
     }
